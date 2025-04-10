@@ -191,7 +191,10 @@
 
 	// Update parseTileMap to use drawCharacter for the character
 	function parseTileMap(tileMap, tileSize, context, image) {
-		context.clearRect(character.realX - 100, character.realY - 100, 250, 250);
+		gl.fillStyle = "#849198"; // Set the fill color to black
+		gl.fillRect(0, 0, canvas.width, canvas.height); // Fill the entire canvas
+		// context.clearRect(0, 0, canvas.width, canvas.height);
+		// context.clearRect(character.realX - 100, character.realY - 100, 250, 250);
 		const rows = gridRows;
 		const cols = gridCols;
 
@@ -230,10 +233,10 @@
 		// 	canvas.height // Destination height (stretch to fit canvas)
 		// );
 		gl.drawImage(
-			// mapImg,
-			boundaryImg,
-			camera.x, // Source X (camera position)
-			camera.y, // Source Y (camera position)
+			mapImg,
+			// boundaryImg,
+			character.realX - camera.width / 2, // Source X (character centered horizontally)
+			character.realY - camera.height / 2, // Source Y (character centered vertically)
 			camera.width, // Source width
 			camera.height, // Source height
 			0, // Destination X
@@ -271,29 +274,30 @@
 		// );
 		// gl.fill();
 		// Draw a dot at the character's location
-		gl.fillStyle = "red";
-		gl.beginPath();
-		gl.arc(
-			character.realX - camera.x, // Adjust X position relative to the camera
-			character.realY - camera.y, // Adjust Y position relative to the camera
-			5, // Radius of the dot
-			0,
-			Math.PI * 2
-		);
-		gl.fill();
+		// gl.fillStyle = "red";
+		// gl.beginPath();
+		// gl.arc(
+		// 	character.realX, // Adjust X position relative to the camera
+		// 	character.realY, // Adjust Y position relative to the camera
+		// 	5, // Radius of the dot
+		// 	0,
+		// 	Math.PI * 2
+		// );
+		// gl.fill();
 
 		// Draw barriers or other elements if needed
-		// gl.drawImage(
-		// 	barriersImg,
-		// 	camera.x,
-		// 	camera.y,
-		// 	camera.width,
-		// 	camera.height,
-		// 	0,
-		// 	0,
-		// 	canvas.width,
-		// 	canvas.height
-		// );
+		gl.drawImage(
+			barriersImg,
+			// boundaryImg,
+			character.realX - camera.width / 2, // Source X (character centered horizontally)
+			character.realY - camera.height / 2, // Source Y (character centered vertically)
+			camera.width, // Source width
+			camera.height, // Source height
+			0, // Destination X
+			0, // Destination Y
+			canvas.width, // Destination width (stretch to fit canvas)
+			canvas.height // Destination height (stretch to fit canvas)
+		);
 
 		// context.fillStyle = "red";
 		// context.beginPath();
@@ -391,8 +395,8 @@
 		// console.log(`${scaleX} x ${scaleY}`);
 
 		// Scale the relative position to match the boundary map's resolution
-		const pixelX = Math.floor(x * camera.scale);
-		const pixelY = Math.floor(y * camera.scale);
+		const pixelX = Math.floor(x);
+		const pixelY = Math.floor(y);
 
 		// console.log(`B D:${boundaryWidth} x ${boundaryHeight}`);
 		// console.log(`${x} x ${y}`);
@@ -431,17 +435,17 @@
 
 	function moveBox() {
 		// Calculate the center-bottom position of the character
-		// const centerX = character.realX + character.width / 2;
-		// const bottomY = character.realY + character.height;
-		const centerX = character.realX;
-		const bottomY = character.realY;
+		const centerX = character.realX + character.width / 2;
+		const bottomY = character.realY + character.height;
+		// const centerX = character.realX;
+		// const bottomY = character.realY;
 
 		// Horizontal movement
 		if (keys.ArrowLeft) {
 			const nextRealX = character.realX - character.speed;
 
 			// Check collision at the new center-bottom position
-			if (!isBlocked(nextRealX, bottomY)) {
+			if (!isBlocked(nextRealX - character.width, bottomY)) {
 				character.realX = nextRealX;
 				character.face = 1;
 			}
@@ -451,7 +455,7 @@
 			const nextRealX = character.realX + character.speed;
 
 			// Check collision at the new center-bottom position
-			if (!isBlocked(nextRealX, bottomY)) {
+			if (!isBlocked(nextRealX + character.width, bottomY)) {
 				character.realX = nextRealX;
 				character.face = 0;
 			}
@@ -462,7 +466,7 @@
 			const nextRealY = character.realY - character.speed;
 
 			// Check collision at the new center-bottom position
-			if (!isBlocked(centerX, nextRealY)) {
+			if (!isBlocked(centerX, nextRealY - character.height)) {
 				character.realY = nextRealY;
 			}
 		}
@@ -471,7 +475,7 @@
 			const nextRealY = character.realY + character.speed;
 
 			// Check collision at the new center-bottom position\
-			if (!isBlocked(centerX, nextRealY)) {
+			if (!isBlocked(centerX, nextRealY + character.height * 1.5)) {
 				character.realY = nextRealY;
 			}
 		}
