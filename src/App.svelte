@@ -6,6 +6,8 @@
 	import rock from "./assets/rock.png";
 	import map from "./assets/map.png";
 	import boundary_map from "./assets/boundary-map.png";
+	import barriers_map from "./assets/barriers.png";
+	import { scale } from "svelte/transition";
 
 	const mapsImg = new Image();
 	mapsImg.src = map;
@@ -13,17 +15,20 @@
 	const boundaryImg = new Image();
 	boundaryImg.src = boundary_map;
 
+	const barriersImg = new Image();
+	barriersImg.src = barriers_map;
+
 	let boundaryData; // To store pixel data for collision detection
 
 	let character = {
-		realX: 100, // Actual X position in pixels
-		realY: 100, // Actual Y position in pixels
+		realX: 500, // Actual X position in pixels
+		realY: 500, // Actual Y position in pixels
 		gridX: 2, // Grid position (column)
 		gridY: 2, // Grid position (row)
 		width: 50,
 		height: 50,
 		color: "#646cff",
-		speed: 2, // pixel per frame// Grid movement speed
+		speed: 5, // pixel per frame// Grid movement speed
 		face: 0,
 		state: 0,
 		// "Standing" | "Walking" | "Jumping",
@@ -78,8 +83,8 @@
 				39, // Source height
 				-x - character.width, // Adjust X position for flipped image
 				y, // Destination Y position
-				character.width, // Destination width
-				character.height // Destination height
+				character.width * camera.scale, // Destination width
+				character.height * camera.scale // Destination height
 			);
 			context.restore(); // Restore the context state
 		} else {
@@ -91,10 +96,12 @@
 				39, // Source height
 				x, // Adjust X position for flipped image
 				y, // Destination Y position
-				character.width, // Destination width
-				character.height // Destination height
+				character.width * camera.scale, // Destination width
+				character.height * camera.scale // Destination height
 			);
 		}
+		// console.log(`${x} x ${y}`);
+		// console.log(`${x * camera.scale} x ${y * camera.scale}`);
 	}
 
 	function drawWalkingCharacter(context, x, y) {
@@ -111,8 +118,8 @@
 				39, // Source height
 				-x - character.width, // Adjust X position for flipped image
 				y, // Destination Y position
-				character.width, // Destination width
-				character.height // Destination height
+				character.width * camera.scale, // Destination width
+				character.height * camera.scale // Destination height
 			);
 			context.restore(); // Restore the context state
 		} else {
@@ -124,8 +131,8 @@
 				39, // Source height
 				x, // Adjust X position for flipped image
 				y, // Destination Y position
-				character.width, // Destination width
-				character.height // Destination height
+				character.width * camera.scale, // Destination width
+				character.height * camera.scale // Destination height
 			);
 		}
 	}
@@ -182,94 +189,119 @@
 		drawBox();
 	};
 
-	const tileHandlers = {
-		1: (context, row, col) => {
-			// Draw floor
-			// console.log("drawing floor");
-			let tileSize = 96;
-			drawSprite(
-				context,
-				mapImg,
-				tileSize * 0,
-				tileSize * 2, // Source coordinates for floor
-				tileSize,
-				tileSize, // Source size
-				col * 50,
-				row * 50, // Destination coordinates
-				50,
-				50 // Destination size
-			);
-		},
-		// 2: (context) => {
-		// 	// Draw character
-		// 	drawCharacter(context, character.realX, character.realY);
-		// },
-		3: (context, row, col) => {
-			// Draw wall
-			let tileSize = 96;
-			drawSprite(
-				context,
-				mapImg,
-				tileSize * 0,
-				tileSize * 5, // Source coordinates for floor
-				tileSize,
-				tileSize, // Source size
-				col * 50,
-				row * 50, // Destination coordinates
-				50,
-				50 // Destination size
-			);
-		},
-		4: (context, row, col) => {
-			// Draw wall
-			let tileSize = 96;
-			drawSprite(
-				context,
-				mapImg,
-				tileSize * 1,
-				tileSize * 2, // Source coordinates for floor
-				tileSize,
-				tileSize, // Source size
-				col * 50,
-				row * 50, // Destination coordinates
-				50,
-				50 // Destination size
-			);
-		},
-		// Add more handlers for other tile types as needed
-	};
-
 	// Update parseTileMap to use drawCharacter for the character
 	function parseTileMap(tileMap, tileSize, context, image) {
-		// context.clearRect(0, 0, canvas.width, canvas.height);
-		const rows = tileMap.length;
-		const cols = tileMap[0].length;
+		context.clearRect(character.realX - 100, character.realY - 100, 250, 250);
+		const rows = gridRows;
+		const cols = gridCols;
 
 		// console.log(`${rows} x ${cols}`);
 
-		for (let row = 0; row < rows; row++) {
-			for (let col = 0; col < cols; col++) {
-				const tileType = tileMap[row][col];
+		// for (let row = 0; row < rows; row++) {
+		// 	for (let col = 0; col < cols; col++) {
+		// 		const tileType = tileMap[row][col];
 
-				if (tileType.floor) {
-					tileHandlers[tileType.floor](context, row, col);
-				}
+		// 		if (tileType.floor) {
+		// 			tileHandlers[tileType.floor](context, row, col);
+		// 		}
 
-				if (tileType.object) {
-					tileHandlers[tileType.object](context, row, col);
-				}
-			}
-		}
+		// 		if (tileType.object) {
+		// 			tileHandlers[tileType.object](context, row, col);
+		// 		}
+		// 	}
+		// }
 
-		for (let row = 0; row < rows; row++) {
-			for (let col = 0; col < cols; col++) {
-				const tileType = tileMap[row][col];
+		// context.drawImage(boundaryImg, 0, 0, canvas.width, canvas.height);
+		// for (let row = 0; row < rows; row++) {
+		// for (let col = 0; col < cols; col++) {
+		// const tileType = tileMap[row][col];
+		// if (tileType.character) {
 
-				if (tileType.character) {
-					drawCharacter(context, character.realX, character.realY);
-				}
-			}
-		}
+		// Draw the visible portion of the map
+		// gl.drawImage(
+		// 	mapsImg,
+		// 	camera.x, // Source X (camera position)
+		// 	camera.y, // Source Y (camera position)
+		// 	camera.width, // Source width
+		// 	camera.height, // Source height
+		// 	0, // Destination X
+		// 	0, // Destination Y
+		// 	canvas.width, // Destination width (stretch to fit canvas)
+		// 	canvas.height // Destination height (stretch to fit canvas)
+		// );
+		gl.drawImage(
+			// mapImg,
+			boundaryImg,
+			camera.x, // Source X (camera position)
+			camera.y, // Source Y (camera position)
+			camera.width, // Source width
+			camera.height, // Source height
+			0, // Destination X
+			0, // Destination Y
+			canvas.width, // Destination width (stretch to fit canvas)
+			canvas.height // Destination height (stretch to fit canvas)
+		);
+
+		// console.log(
+		// 	`Is equal: ${mapImg.width / mapImg.height} x ${boundaryImg.width / boundaryImg.height}`
+		// );
+
+		// note: check if canvas aspect ratio is equal to camera aspect ratio
+
+		// drawCharacter(
+		// 	gl,
+		// 	character.realX - camera.x, // Adjust X position relative to the camera
+		// 	character.realY - camera.y // Adjust Y position relative to the camera
+		// );
+		// Draw the character relative to the camera
+		drawCharacter(
+			gl,
+			canvas.width / 2 - character.width / 2, // Center X position on the canvas
+			canvas.height / 2 - character.height / 2 // Center Y position on the canvas
+		);
+		// Draw a dot at the character's location
+		// gl.fillStyle = "red";
+		// gl.beginPath();
+		// gl.arc(
+		// 	character.realX - camera.x + character.width / 2, // Adjust X position relative to the camera
+		// 	character.realY - camera.y + character.height, // Adjust Y position relative to the camera
+		// 	5, // Radius of the dot
+		// 	0,
+		// 	Math.PI * 2
+		// );
+		// gl.fill();
+		// Draw a dot at the character's location
+		gl.fillStyle = "red";
+		gl.beginPath();
+		gl.arc(
+			character.realX - camera.x, // Adjust X position relative to the camera
+			character.realY - camera.y, // Adjust Y position relative to the camera
+			5, // Radius of the dot
+			0,
+			Math.PI * 2
+		);
+		gl.fill();
+
+		// Draw barriers or other elements if needed
+		// gl.drawImage(
+		// 	barriersImg,
+		// 	camera.x,
+		// 	camera.y,
+		// 	camera.width,
+		// 	camera.height,
+		// 	0,
+		// 	0,
+		// 	canvas.width,
+		// 	canvas.height
+		// );
+
+		// context.fillStyle = "red";
+		// context.beginPath();
+		// context.arc(character.realX, character.realY, 5, 0, Math.PI * 2);
+		// context.fill();
+		// }
+		// }
+		// }
 	}
 	// let tileMap = [
 	//     [
@@ -292,14 +324,20 @@
 		return context.getImageData(0, 0, image.width, image.height);
 	}
 
+	let boundaryWidth;
+	let boundaryHeight;
+
 	boundaryImg.onload = () => {
 		boundaryData = getBoundaryData(boundaryImg);
 		console.log("Boundary map loaded");
+		boundaryWidth = boundaryData.width;
+		boundaryHeight = boundaryData.height;
 	};
 
-	function initializeGrid() {
-		// gridRows = Math.floor(canvas.height / 50);
-		// gridCols = Math.floor(canvas.width / 50);
+	function initializeGrid(context) {
+		gridRows = Math.floor(canvas.height / 50);
+		gridCols = Math.floor(canvas.width / 50);
+
 		// tileMap = Array.from({ length: gridRows }, (_, rowIndex) =>
 		// 	Array.from({ length: gridCols }, (_, colIndex) => ({
 		// 		floor: 1, // Default floor type
@@ -346,14 +384,64 @@
 		ArrowRight: false,
 	};
 
+	function isBlocked(x, y) {
+		if (!boundaryData) return false; // Boundary data not loaded yet
+
+		// Adjust the character's position relative to the camera
+		// console.log(`${scaleX} x ${scaleY}`);
+
+		// Scale the relative position to match the boundary map's resolution
+		const pixelX = Math.floor(x * camera.scale);
+		const pixelY = Math.floor(y * camera.scale);
+
+		// console.log(`B D:${boundaryWidth} x ${boundaryHeight}`);
+		// console.log(`${x} x ${y}`);
+		// console.log(`${pixelX} x ${pixelY}`);
+
+		// Ensure the coordinates are within bounds
+		if (
+			pixelX < 0 ||
+			pixelX >= boundaryWidth ||
+			pixelY < 0 ||
+			pixelY >= boundaryHeight
+		) {
+			console.log("OUT OF BOUNDS");
+			return true; // Treat out-of-bounds as blocked
+		}
+
+		const index = (pixelY * boundaryWidth + pixelX) * 4; // RGBA index
+		console.log(index);
+		const red = boundaryData.data[index]; // Red channel
+		console.log(red);
+
+		return red === 0; // Black pixels (R=0) are blocked
+	}
+
+	let camera = {
+		x: 0, // Top-left corner of the camera
+		y: 0, // Top-left corner of the camera
+		// width: 0, // Width of the visible area (adjust as needed)
+		// height: 0, // Height of the visible area (adjust as needed)
+		scale: 1.5,
+		// width_scale: 0,
+		// height_scale: 0,
+		width: 0,
+		height: 0,
+	};
+
 	function moveBox() {
+		// Calculate the center-bottom position of the character
+		// const centerX = character.realX + character.width / 2;
+		// const bottomY = character.realY + character.height;
+		const centerX = character.realX;
+		const bottomY = character.realY;
+
 		// Horizontal movement
 		if (keys.ArrowLeft) {
 			const nextRealX = character.realX - character.speed;
-			const nextGridX = Math.floor(nextRealX / 50);
 
-			// Check for barriers
-			if (!tileMap[character.gridY][nextGridX]?.object) {
+			// Check collision at the new center-bottom position
+			if (!isBlocked(nextRealX, bottomY)) {
 				character.realX = nextRealX;
 				character.face = 1;
 			}
@@ -361,10 +449,9 @@
 
 		if (keys.ArrowRight) {
 			const nextRealX = character.realX + character.speed;
-			const nextGridX = Math.floor((nextRealX + character.width) / 50);
 
-			// Check for barriers
-			if (!tileMap[character.gridY][nextGridX]?.object) {
+			// Check collision at the new center-bottom position
+			if (!isBlocked(nextRealX, bottomY)) {
 				character.realX = nextRealX;
 				character.face = 0;
 			}
@@ -373,27 +460,50 @@
 		// Vertical movement
 		if (keys.ArrowUp) {
 			const nextRealY = character.realY - character.speed;
-			const nextGridY = Math.floor(nextRealY / 50);
 
-			// Check for barriers
-			if (!tileMap[nextGridY][character.gridX]?.object) {
+			// Check collision at the new center-bottom position
+			if (!isBlocked(centerX, nextRealY)) {
 				character.realY = nextRealY;
 			}
 		}
 
 		if (keys.ArrowDown) {
 			const nextRealY = character.realY + character.speed;
-			const nextGridY = Math.floor((nextRealY + character.height) / 50);
 
-			// Check for barriers
-			if (!tileMap[nextGridY][character.gridX]?.object) {
+			// Check collision at the new center-bottom position\
+			if (!isBlocked(centerX, nextRealY)) {
 				character.realY = nextRealY;
 			}
 		}
 
 		// Update grid position based on real position
-		character.gridX = Math.round(character.realX / 50);
-		character.gridY = Math.round(character.realY / 50);
+		// character.gridX = Math.round(character.realX / 50);
+		// character.gridY = Math.round(character.realY / 50);
+		console.log(`CAMERA: ${camera.x} x ${camera.y}`);
+
+		// // Update camera position
+		// const padding = 500; // Padding before the camera starts moving
+
+		// if (character.realX < camera.x + padding) {
+		// 	camera.x = Math.max(0, character.realX - padding - character.speed);
+		// 	// return;
+		// }
+		// if (character.realX > camera.x + camera.width - padding) {
+		// 	camera.x = Math.min(
+		// 		mapImg.width - camera.width,
+		// 		character.realX - camera.width + padding + character.speed
+		// 	);
+		// }
+		// if (character.realY < camera.y + padding) {
+		// 	camera.y = Math.max(0, character.realY - padding - character.speed);
+		// 	// return;
+		// }
+		// if (character.realY > camera.y + camera.height - padding) {
+		// 	camera.y = Math.min(
+		// 		mapImg.height - camera.height,
+		// 		character.realY - camera.height + padding + character.speed
+		// 	);
+		// }
 
 		if (keys.ArrowLeft || keys.ArrowRight || keys.ArrowUp || keys.ArrowDown) {
 			character.state = 1;
@@ -402,6 +512,7 @@
 		}
 	}
 
+	let canvasAspectRatio;
 	onMount(() => {
 		canvas = document.getElementById("glCanvas");
 		gl = canvas.getContext("2d");
@@ -412,14 +523,36 @@
 		}
 
 		function resizeCanvas() {
-			canvas.width = Math.floor(window.innerWidth / 50) * 50;
-			canvas.height = Math.floor(window.innerHeight / 50) * 50;
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+
+			canvasAspectRatio = canvas.width / canvas.height;
+
+			// Set the scale so that the minimum height matches the image's height
+
+			// set the value from the with (but make is so that it will depend on who is smaller)
+			// camera.width = Math.floor(96 * 15);
+			// camera.height = Math.floor(camera.width / canvasAspectRatio);
+
+			// if (96 * 15 > mapImg.height) { // minimum 15 blocks height
+			//     camera.scale = mapImg.width / 96 * 15;
+			// } else {
+			// }
+
+			camera.scale = 1.5;
+			// camera.scale = mapImg.width / (96 * 30);
+			camera.width = canvas.width * camera.scale;
+			camera.height = canvas.height * camera.scale;
+
+			camera.width_scale = mapImg.width / camera.width;
+			camera.height_scale = mapImg.height / camera.height;
+			// console.log(`${camera.width_scale} x ${camera.height_scale}`);
 		}
 
 		resizeCanvas();
 		window.addEventListener("resize", resizeCanvas);
 
-		initializeGrid();
+		initializeGrid(gl);
 
 		// document.addEventListener("keydown", moveBox);
 
@@ -427,10 +560,10 @@
 			// console.log(`KEY DOWN: ${e.key}`);
 			if (keys.hasOwnProperty(e.key)) {
 				// console.log(`SETTING: ${e.key}`);
-				console.log(
-					`POSITION: ${character.realX + 20} ${character.realY + 20} `
-				);
-				console.log(`GRID: ${character.gridX} ${character.gridY} `);
+				// console.log(
+				// 	`POSITION: ${character.realX + 20} ${character.realY + 20} `
+				// );
+				// console.log(`GRID: ${character.gridX} ${character.gridY} `);
 				keys[e.key] = true;
 			}
 		});
@@ -446,6 +579,7 @@
 		img.onload = () => {
 			function gameLoop() {
 				moveBox();
+
 				drawBox();
 				requestAnimationFrame(gameLoop);
 			}
@@ -456,44 +590,9 @@
 </script>
 
 <main>
-	<!-- <div>
-		<a href="https://vite.dev" target="_blank" rel="noreferrer">
-			<img src={viteLogo} class="logo" alt="Vite Logo" />
-		</a>
-		<a href="https://svelte.dev" target="_blank" rel="noreferrer">
-			<img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-		</a>
-	</div> -->
-	<div class="hbox">
-		<h1>Welcome to PUP-knight</h1>
-		<a href="https://svelte.dev" target="_blank" rel="noreferrer">
-			<img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-		</a>
+	<div>
+		<canvas id="glCanvas"></canvas>
 	</div>
-
-	<canvas id="glCanvas"></canvas>
-
-	<!-- <div class="card">
-		<Counter />
-	</div> -->
-
-	<!-- <p>Things to plan:</p>
-
-	<ol>
-		<li>
-			Define the game mechanics
-			<ul>
-				<li>Player controls and movement</li>
-				<li>Combat system</li>
-				<li>Scoring and rewards</li>
-				<li>Win and lose conditions</li>
-			</ul>
-		</li>
-		<li>Design the characters and environment</li>
-		<li>Develop the levels and objectives</li>
-		<li>Test and refine the gameplay</li>
-		<li>Launch and gather feedback</li>
-	</ol> -->
 </main>
 
 <style>
@@ -518,10 +617,5 @@
 		margin: 0 auto;
 		width: fit-content;
 		display: none;
-	}
-
-	canvas {
-		width: 100vw;
-		height: 100vh;
 	}
 </style>
