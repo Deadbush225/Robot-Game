@@ -5,7 +5,7 @@ import mc from "./assets/robotFighter.png";
 const img = new Image();
 img.src = mc;
 export class Character {
-	constructor(scale) {
+	constructor(scale, healthBar) {
 		this.realX = 500; // Actual X position in pixels
 		this.realY = 500; // Actual Y position in pixels
 		this.gridX = 2; // Grid position (column)
@@ -22,6 +22,32 @@ export class Character {
 		this.gunAngle = 0;
 
 		this.bullets = [];
+		this.health = 100; // Character's health
+		this.isTakingDamage = false; // Flag to track if the character is taking damage
+		this.damageTimer = 0; // Timer to control the duration of the damaged state
+		this.healthBar = healthBar;
+	}
+
+	takeDamage(amount) {
+		if (!this.isTakingDamage) {
+			this.health -= amount;
+			if (this.health > 0) {
+				// this.state = 3; // Set state to "Damaged"
+				this.isTakingDamage = true;
+				this.damageTimer = Date.now(); // Start the damage timer
+			} else {
+				this.state = 3;
+			}
+			this.healthBar.setHealth(this.health);
+		}
+	}
+
+	updateState() {
+		// Automatically transition out of the damaged state after 500ms
+		if (this.isTakingDamage && Date.now() - this.damageTimer > 500) {
+			this.isTakingDamage = false;
+			this.state = 0; // Return to "Standing" state
+		}
 	}
 
 	animateSprite(frameCount, animationSpeed) {
@@ -35,7 +61,11 @@ export class Character {
 	}
 
 	draw(context, x, y) {
+		this.updateState();
 		switch (this.state) {
+			case 3:
+				this.drawKilled(context, x, y);
+				break;
 			case 2:
 			case 0:
 				this.drawStanding(context, x, y);
@@ -43,6 +73,40 @@ export class Character {
 			case 1:
 				this.drawWalking(context, x, y);
 				break;
+		}
+	}
+
+	drawKilled(context, x, y) {
+		this.animateSprite(4, 100);
+
+		if (this.face === 1) {
+			context.save(); // Save the current context state
+			context.scale(-1, 1); // Flip horizontally
+			context.drawImage(
+				img,
+				this.frame * frameWidth + 15 + (this.isTakingDamage ? 384 : 0), // Source X position (frame index * frame width)
+				64 * 2 + 60 + 11, // Source Y position (assuming single row sprite sheet)
+				31, // Source width
+				39, // Source height
+				-x - this.width, // Adjust X position for flipped image
+				y, // Destination Y position
+				this.width * this.camera_scale, // Destination width
+				this.height * this.camera_scale // Destination height
+			);
+
+			context.restore(); // Restore the context state
+		} else {
+			context.drawImage(
+				img,
+				this.frame * frameWidth + 15 + (this.isTakingDamage ? 384 : 0), // Source X position (frame index * frame width)
+				64 * 2 + 60 + 11, // Source Y position (assuming single row sprite sheet)
+				31, // Source width
+				39, // Source height
+				x, // Adjust X position for flipped image
+				y, // Destination Y position
+				this.width * this.camera_scale, // Destination width
+				this.height * this.camera_scale // Destination height
+			);
 		}
 	}
 
@@ -54,7 +118,7 @@ export class Character {
 			context.scale(-1, 1); // Flip horizontally
 			context.drawImage(
 				img,
-				this.frame * frameWidth + 15, // Source X position (frame index * frame width)
+				this.frame * frameWidth + 15 + (this.isTakingDamage ? 384 : 0), // Source X position (frame index * frame width)
 				11, // Source Y position (assuming single row sprite sheet)
 				31, // Source width
 				39, // Source height
@@ -63,11 +127,12 @@ export class Character {
 				this.width * this.camera_scale, // Destination width
 				this.height * this.camera_scale // Destination height
 			);
+
 			context.restore(); // Restore the context state
 		} else {
 			context.drawImage(
 				img,
-				this.frame * frameWidth + 15, // Source X position (frame index * frame width)
+				this.frame * frameWidth + 15 + (this.isTakingDamage ? 384 : 0), // Source X position (frame index * frame width)
 				11, // Source Y position (assuming single row sprite sheet)
 				31, // Source width
 				39, // Source height
