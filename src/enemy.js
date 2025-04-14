@@ -27,16 +27,15 @@ const enemyFrameData = {
 	dead: [{ x: 320, y: 256, width: 64, height: 64 }],
 };
 
-import enemySpriteSheet_url from "./assets/enemy.png";
+import { assets } from "./Assets";
 import { isBlocked, getAllowedCoordinates, getRandomAllowed } from "./boundary";
 
 export default class Enemy {
 	constructor(x, y, speed, health, damage) {
-		const enemySpriteSheet = new Image();
-		enemySpriteSheet.src = enemySpriteSheet_url;
+		const enemySpriteSheet = assets.enemy;
 		this.x = x; // Enemy's world X position
 		this.y = y; // Enemy's world Y position
-		this.speed = 0.3; // Movement speed
+		this.speed = 0.6; // Movement speed
 		this.health = health; // Enemy's health
 		this.damage = damage; // Damage dealt to the character
 		this.state = "idle"; // Current state: idle, running, attacking, damaged, killed, dead
@@ -52,6 +51,10 @@ export default class Enemy {
 	}
 
 	update(character, deltaTime) {
+		if (this.state == "dead") {
+			this.currentFrame = 0;
+			return;
+		}
 		this.updateState();
 		// Calculate distance to the character
 		const dx = character.realX - this.x;
@@ -128,7 +131,7 @@ export default class Enemy {
 	draw(gl, camera, canvas, character) {
 		// Convert world coordinates to screen coordinates
 		const screenX =
-			(this.x - this.enemySize - (character.realX - camera.width / 2)) *
+			(this.x - this.enemySize / 2 - (character.realX - camera.width / 2)) *
 			(canvas.width / camera.width);
 		const screenY =
 			(this.y - this.enemySize - (character.realY - camera.height / 2)) *
@@ -142,7 +145,7 @@ export default class Enemy {
 			return;
 		}
 		// console.log(`DRAWING: ${this.state}`);
-		let doFlip = this.face === 1 && this.state !== "dead";
+		let doFlip = this.face === 1;
 		if (doFlip) {
 			gl.save();
 			gl.scale(-1, 1);
@@ -157,7 +160,7 @@ export default class Enemy {
 			frame.y + 1, // Source Y (frame's position in the sprite sheet)
 			frame.width, // Frame width
 			frame.height, // Frame height
-			doFlip ? -screenX - 200 : screenX, // Destination X (centered on the enemy)
+			doFlip ? -screenX - this.enemySize : screenX, // Destination X (centered on the enemy)
 			screenY, // Destination Y (centered on the enemy)
 			this.enemySize, // Destination width
 			this.enemySize // Destination height
@@ -195,16 +198,18 @@ export default class Enemy {
 }
 
 export function spawnEnemy(spawn_origin_x, spawn_origin_y) {
-	// let { spawnX, spawnY } =
-	let coords = getRandomAllowed();
+	let spawnX, spawnY, coords;
 	// console.log(coords);
-	const radius = 1000;
+	// const radius = 1000;
 
-	// do {
-	// 	const angle = Math.random() * Math.PI * 2;
-	// 	spawnX = Math.floor(spawn_origin_x + Math.cos(angle) * radius);
-	// 	spawnY = Math.floor(spawn_origin_y + Math.sin(angle) * radius);
-	// } while (isBlocked(spawnX, spawnY)); // Ensure the spawn point is not blocked
+	do {
+		coords = getRandomAllowed();
+	} while (
+		isBlocked(coords.x, coords.y) &&
+		isBlocked(coords.x, coords.y + 200) &&
+		isBlocked(coords.x - 200, coords.y) &&
+		isBlocked(coords.x + 200, coords.y)
+	); // Ensure the spawn point is not blocked
 
 	// console.log(`${spawnX} x ${spawnY}`);
 	// return { x: spawnX, y: spawnY };

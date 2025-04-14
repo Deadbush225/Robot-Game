@@ -1,11 +1,10 @@
 const frameWidth = 64; // Width of each frame in the sprite sheet
 const frameHeight = 64; // Height of each frame in the sprite sheet
-import mc from "./assets/robotFighter.png";
+import { assets } from "./Assets";
 
-const img = new Image();
-img.src = mc;
 export class Character {
 	constructor(scale, healthBar) {
+		this.img = assets.character;
 		this.realX = 500; // Actual X position in pixels
 		this.realY = 500; // Actual Y position in pixels
 		this.gridX = 2; // Grid position (column)
@@ -13,7 +12,7 @@ export class Character {
 		this.width = 50;
 		this.height = 50;
 		this.color = "#646cff";
-		this.speed = 5; // pixel per frame
+		this.speed = 10; // pixel per frame
 		this.face = 0;
 		this.state = 0; // "Standing" | "Walking" | "Jumping"
 		this.lastFrameTime = 0;
@@ -44,7 +43,7 @@ export class Character {
 
 	updateState() {
 		// Automatically transition out of the damaged state after 500ms
-		if (this.isTakingDamage && Date.now() - this.damageTimer > 500) {
+		if (this.isTakingDamage && Date.now() - this.damageTimer > 200) {
 			this.isTakingDamage = false;
 			this.state = 0; // Return to "Standing" state
 		}
@@ -83,7 +82,7 @@ export class Character {
 			context.save(); // Save the current context state
 			context.scale(-1, 1); // Flip horizontally
 			context.drawImage(
-				img,
+				this.img,
 				this.frame * frameWidth + 15 + (this.isTakingDamage ? 384 : 0), // Source X position (frame index * frame width)
 				64 * 2 + 60 + 11, // Source Y position (assuming single row sprite sheet)
 				31, // Source width
@@ -97,7 +96,7 @@ export class Character {
 			context.restore(); // Restore the context state
 		} else {
 			context.drawImage(
-				img,
+				this.img,
 				this.frame * frameWidth + 15 + (this.isTakingDamage ? 384 : 0), // Source X position (frame index * frame width)
 				64 * 2 + 60 + 11, // Source Y position (assuming single row sprite sheet)
 				31, // Source width
@@ -117,7 +116,7 @@ export class Character {
 			context.save(); // Save the current context state
 			context.scale(-1, 1); // Flip horizontally
 			context.drawImage(
-				img,
+				this.img,
 				this.frame * frameWidth + 15 + (this.isTakingDamage ? 384 : 0), // Source X position (frame index * frame width)
 				11, // Source Y position (assuming single row sprite sheet)
 				31, // Source width
@@ -131,7 +130,7 @@ export class Character {
 			context.restore(); // Restore the context state
 		} else {
 			context.drawImage(
-				img,
+				this.img,
 				this.frame * frameWidth + 15 + (this.isTakingDamage ? 384 : 0), // Source X position (frame index * frame width)
 				11, // Source Y position (assuming single row sprite sheet)
 				31, // Source width
@@ -151,7 +150,7 @@ export class Character {
 			context.save(); // Save the current context state
 			context.scale(-1, 1); // Flip horizontally
 			context.drawImage(
-				img,
+				this.img,
 				this.frame * frameWidth + 15, // Source X position (frame index * frame width)
 				64 + 60 + 15, // Source Y position for walking animation
 				31, // Source width
@@ -164,7 +163,7 @@ export class Character {
 			context.restore(); // Restore the context state
 		} else {
 			context.drawImage(
-				img,
+				this.img,
 				this.frame * frameWidth + 15, // Source X position (frame index * frame width)
 				64 + 60 + 15, // Source Y position for walking animation
 				31, // Source width

@@ -29,11 +29,13 @@
 	}
 
 	.modal {
-		background: rgb(77, 73, 73);
+		background: linear-gradient(145deg, #5a5a5a, #3d3d3d);
 		padding: 2rem;
-		border-radius: 8px;
+		border-radius: 12px;
 		text-align: center;
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		box-shadow:
+			8px 8px 16px #2b2b2b,
+			-8px -8px 16px #6f6f6f;
 	}
 
 	.buttons {
@@ -46,11 +48,31 @@
 		padding: 0.5rem 1rem;
 		font-size: 1rem;
 		border: none;
-		border-radius: 4px;
+		border-radius: 8px;
 		cursor: pointer;
+		background: linear-gradient(145deg, #4caf50, #3a8e3f);
+		box-shadow:
+			4px 4px 8px #2b2b2b,
+			-4px -4px 8px #6f6f6f;
+		color: white;
+		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+		transition:
+			transform 0.2s,
+			box-shadow 0.2s;
 	}
 
 	button:hover {
-		background: #3d953e;
+		transform: translateY(-2px);
+		box-shadow:
+			6px 6px 12px #2b2b2b,
+			-6px -6px 12px #6f6f6f;
+		background: linear-gradient(145deg, #3a8e3f, #4caf50);
+	}
+
+	button:active {
+		transform: translateY(2px);
+		box-shadow:
+			inset 4px 4px 8px #2b2b2b,
+			inset -4px -4px 8px #6f6f6f;
 	}
 </style>

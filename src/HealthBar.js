@@ -1,13 +1,10 @@
-import healthsrc from "./assets/health.png";
-import healthbarsrc from "./assets/health bar.png";
+import { assets } from "./Assets";
 
 class HealthBar {
 	constructor() {
-		this.healthBarImg = new Image();
-		this.healthBarImg.src = healthbarsrc;
+		this.healthBarImg = assets.heath_base;
 
-		this.healthImg = new Image();
-		this.healthImg.src = healthsrc;
+		this.healthImg = assets.healthsrc;
 
 		this.healthWidth = this.healthImg.width; // Default health width
 	}
@@ -15,6 +12,7 @@ class HealthBar {
 	setHealth(healthPercentage) {
 		// Update the health width based on the percentage (0 to 100)
 		this.healthWidth = (healthPercentage / 100) * this.healthWidth;
+		console.log(this.healthWidth);
 	}
 
 	draw(gl) {

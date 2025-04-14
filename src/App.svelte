@@ -1,233 +1,30 @@
 <script>
-	import { onMount } from "svelte";
-	import rock from "./assets/rock.png";
-	import map from "./assets/map.png";
-	import barriers_map from "./assets/barriers.png";
-	import Character from "./character";
-	import gun from "./assets/gun.png";
-	import bulletsrc from "./assets/bullet.png";
-	import { isBlocked } from "./boundary";
-
+	import { assetLoader } from "./Assets";
 	import GameOver from "./modals/gameover.svelte";
+	import Game from "./Game";
 
-	import HealthBar from "./HealthBar";
-
-	const bulletImg = new Image();
-	bulletImg.src = bulletsrc;
-
-	const mapsImg = new Image();
-	mapsImg.src = map;
-
-	const barriersImg = new Image();
-	barriersImg.src = barriers_map;
-
-	import { spawnEnemy } from "./enemy";
-	let enemies = [];
-
-	const mapImg = new Image();
-	mapImg.src = map;
-
-	mapImg.onload = () => {
-		drawBox();
-	};
-
-	const rockImg = new Image();
-	rockImg.src = rock;
-
-	// rockImg.onload = () => {
-	// 	drawBox();
-	// };
-
-	const gunImg = new Image();
-	gunImg.src = gun;
-
-	let isGameOver = false;
-
-	let bullet = {
-		x: 0,
-		y: 0,
-		speed: 8,
-	};
-
-	// Update parseTileMap to use drawCharacter for the character
-	function parseTileMap(tileMap, tileSize, context, image) {
-		gl.fillStyle = "#849198"; // Set the fill color to black
-		gl.fillRect(0, 0, canvas.width, canvas.height); // Fill the entire canvas
-		// context.clearRect(0, 0, canvas.width, canvas.height);
-		// context.clearRect(character.realX - 100, character.realY - 100, 250, 250);
-		const rows = gridRows;
-		const cols = gridCols;
-
-		// console.log(`${rows} x ${cols}`);
-
-		// for (let row = 0; row < rows; row++) {
-		// 	for (let col = 0; col < cols; col++) {
-		// 		const tileType = tileMap[row][col];
-
-		// 		if (tileType.floor) {
-		// 			tileHandlers[tileType.floor](context, row, col);
-		// 		}
-
-		// 		if (tileType.object) {
-		// 			tileHandlers[tileType.object](context, row, col);
-		// 		}
-		// 	}
-		// }
-
-		gl.drawImage(
-			mapImg,
-			// boundaryImg,
-			character.realX - camera.width / 2, // Source X (character centered horizontally)
-			character.realY - camera.height / 2, // Source Y (character centered vertically)
-			camera.width, // Source width
-			camera.height, // Source height
-			0, // Destination X
-			0, // Destination Y
-			canvas.width, // Destination width (stretch to fit canvas)
-			canvas.height // Destination height (stretch to fit canvas)
-		);
-
-		// Draw the character relative to the camera
-		character.draw(
-			gl,
-			canvas.width / 2 - character.width / 2, // Center X position on the canvas
-			canvas.height / 2 - character.height / 2 // Center Y position on the canvas
-		);
-
-		// Calculate the angle between the character and the mouse
-		// Save the current context state
-		gl.save();
-
-		// Translate to the character's position
-		gl.translate(
-			canvas.width / 2 + (character.width * 1) / 5,
-			canvas.height / 2 + (character.height * 2) / 5
-		);
-
-		// Rotate the canvas to the gun's angle
-		if (character.face === 1) {
-			gl.rotate(character.gunAngle + (135 * Math.PI) / 180);
-		} else {
-			gl.rotate(character.gunAngle + (45 * Math.PI) / 180);
-		}
-
-		// Draw the gun image, adjusting for its size
-		const time = Date.now() / 150; // Adjust the speed of the up and down motion
-		const amplitude = 3; // Adjust the amplitude of the motion
-		const shakeX = 0; // No horizontal movement
-		const shakeY = Math.sin(time) * amplitude; // Periodic up and down motion
-
-		if (character.face === 1) {
-			gl.scale(-1, 1); // Flip horizontally
-		}
-
-		gl.drawImage(
-			gunImg,
-			(-gunImg.width * camera.scale * 1.2) / 2 + shakeX,
-			(-gunImg.height * camera.scale * 1.2) / 2 + shakeY,
-			gunImg.width * camera.scale * 1.2,
-			gunImg.height * camera.scale * 1.2
-		);
-
-		if (character.face === 1) {
-			gl.scale(-1, 1); // Reset the horizontal flip
-		}
-
-		// Restore the context state
-		gl.restore();
-
-		// Draw bullets from the character's bullets array
-		if (character.bullets) {
-			character.bullets.forEach((bullet, index) => {
-				// Draw the bullet
-				const screenX =
-					(bullet.x - (character.realX - camera.width / 2)) *
-					(canvas.width / camera.width);
-				const screenY =
-					(bullet.y - (character.realY - camera.height / 2)) *
-					(canvas.height / camera.height);
-
-				// Save the current context state
-				gl.save();
-
-				// Translate to the bullet's position
-				gl.translate(screenX, screenY);
-
-				// Rotate the canvas to the bullet's angle
-				gl.rotate(bullet.angle);
-
-				// Draw the bullet image, adjusting for its size
-				gl.drawImage(
-					bulletImg,
-					-25, // Center the image horizontally
-					-25, // Center the image vertically
-					50, // Width of the bullet
-					50 // Height of the bullet
-				);
-
-				// Restore the context state
-				gl.restore();
-			});
-		}
-		// Draw a grid of dots with 100px gap
-		/* ━━━━━━━━━━━━━━ COPILOT ━━━━━━━━━━━━━━━ */
-		const gridGap = 100; // Gap between dots in pixels
-		const dotRadius = 2; // Radius of each dot
-
-		// Calculate the starting position of the grid based on the character's position and camera offset
-		const startX =
-			Math.floor((character.realX - camera.width / 2) / gridGap) * gridGap;
-		const startY =
-			Math.floor((character.realY - camera.height / 2) / gridGap) * gridGap;
-		const endX = character.realX + camera.width / 2;
-		const endY = character.realY + camera.height / 2;
-
-		// Loop through the visible portion of the world to draw the grid CLUTCHED BY COPILOT
-		for (let x = startX; x <= endX; x += gridGap) {
-			for (let y = startY; y <= endY; y += gridGap) {
-				// Convert world coordinates to screen coordinates
-				const screenX =
-					(x - (character.realX - camera.width / 2)) *
-					(canvas.width / camera.width);
-				const screenY =
-					(y - (character.realY - camera.height / 2)) *
-					(canvas.height / camera.height);
-
-				// Draw the dot
-				gl.fillStyle = isBlocked(x, y)
-					? "rgba(255, 255, 255, 0.5)"
-					: "rgba(255, 0, 255, 0)"; // Semi-transparent white
-				gl.beginPath();
-				gl.arc(screenX, screenY, dotRadius, 0, Math.PI * 2); // Draw a small circle
-				gl.fill();
-			}
-		}
-		/* ━━━━━━━━━━━━━━ COPILOT ━━━━━━━━━━━━━━━ */
-		enemies.forEach((enemy) => enemy.draw(gl, camera, canvas, character));
-
-		// Draw barriers or other elements if needed
-		gl.drawImage(
-			barriersImg,
-			character.realX - camera.width / 2, // Source X (character centered horizontally)
-			character.realY - camera.height / 2, // Source Y (character centered vertically)
-			camera.width, // Source width
-			camera.height, // Source height
-			0, // Destination X
-			0, // Destination Y
-			canvas.width, // Destination width (stretch to fit canvas)
-			canvas.height // Destination height (stretch to fit canvas)
-		);
-		healthBar.draw(gl);
-	}
+	import { isGameOver } from "./store";
+	import { onMount } from "svelte";
+	// let isGameOver = false;
 
 	let tileMap = [];
 	let gridRows;
 	let gridCols;
+	let loading = true;
+
+	let canvas, gl, game;
+
+	function restartGame() {
+		game.restartLevel();
+	}
+
+	function quitGame() {
+		console.log("Quit game");
+	}
 
 	function initializeGrid(context) {
-		gridRows = Math.floor(canvas.height / 50);
-		gridCols = Math.floor(canvas.width / 50);
-
+		// gridRows = Math.floor(canvas.height / 50);
+		// gridCols = Math.floor(canvas.width / 50);
 		// tileMap = Array.from({ length: gridRows }, (_, rowIndex) =>
 		// 	Array.from({ length: gridCols }, (_, colIndex) => ({
 		// 		floor: 1, // Default floor type
@@ -251,247 +48,23 @@
 		// console.log(tileMap);
 	}
 
-	let canvas;
-	let gl;
-
-	function drawBox() {
-		// moveBox();
-		parseTileMap(tileMap, 54, gl, rockImg);
-	}
-
-	const keys = {
-		ArrowUp: false,
-		ArrowDown: false,
-		ArrowLeft: false,
-		ArrowRight: false,
-	};
-
-	let camera = {
-		// x: 0, // Top-left corner of the camera
-		// y: 0, // Top-left corner of the camera
-		// width: 0, // Width of the visible area (adjust as needed)
-		// height: 0, // Height of the visible area (adjust as needed)
-		scale: 1.5,
-		width_scale: 0,
-		height_scale: 0,
-		width: 0,
-		height: 0,
-	};
-
-	function moveBox() {
-		// Note: we deal objects here in world position
-		// Calculate the center-bottom position of the character
-		if (character.state == 3) {
-			return;
-		}
-		const centerX = character.realX + character.width / 2;
-		const bottomY = character.realY + character.height;
-		// const centerX = character.realX;
-		// const bottomY = character.realY;
-
-		// Horizontal movement
-		if (keys.ArrowLeft) {
-			const nextRealX = character.realX - character.speed;
-
-			// Check collision at the new center-bottom position
-			if (!isBlocked(nextRealX - character.width, bottomY)) {
-				character.realX = nextRealX;
-				character.face = 1;
-			}
-		}
-
-		if (keys.ArrowRight) {
-			const nextRealX = character.realX + character.speed;
-
-			// Check collision at the new center-bottom position
-			if (!isBlocked(nextRealX + character.width, bottomY)) {
-				character.realX = nextRealX;
-				character.face = 0;
-			}
-		}
-
-		// Vertical movement
-		if (keys.ArrowUp) {
-			const nextRealY = character.realY - character.speed;
-
-			// Check collision at the new center-bottom position
-			if (!isBlocked(centerX, nextRealY)) {
-				character.realY = nextRealY;
-			}
-		}
-
-		if (keys.ArrowDown) {
-			const nextRealY = character.realY + character.speed;
-
-			// Check collision at the new center-bottom position\
-			if (!isBlocked(centerX, nextRealY + character.height * 1.5)) {
-				character.realY = nextRealY;
-			}
-		}
-
-		// Update grid position based on real position
-		// character.gridX = Math.round(character.realX / 50);
-		// character.gridY = Math.round(character.realY / 50);
-		// console.log(`Position: ${character.realX} x ${character.realY}`);
-
-		if (keys.ArrowLeft || keys.ArrowRight || keys.ArrowUp || keys.ArrowDown) {
-			character.state = 1;
-		} else if (character.state != 2) {
-			character.state = 0;
-		}
-		const deltaTime = 16; // Approximate time between frames (in ms)
-
-		updateBulletsAndEnemies(character.bullets, enemies, deltaTime);
-
-		if (character.bullets) {
-			character.bullets.forEach((bullet, index) => {
-				// Update bullet position
-				bullet.x += bullet.dx;
-				bullet.y += bullet.dy;
-
-				// Remove bullets that go out of bounds
-				if (isBlocked(bullet.x, bullet.y)) {
-					character.bullets.splice(index, 1);
-				}
-			});
-		}
-
-		enemies.forEach((enemy) => enemy.update(character, deltaTime));
-	}
-
-	let canvasAspectRatio;
-
-	let healthBar = new HealthBar();
-	let character = new Character(camera.scale, healthBar);
-
-	function checkCollision(bullet, enemy) {
-		const dx = bullet.x - enemy.x;
-		const dy = bullet.y - enemy.y;
-		const distance = Math.sqrt(dx * dx + dy * dy);
-
-		// Check if the distance is less than the sum of their radii
-		// console.log(`${distance} < ${enemy.enemySize / 2}`);
-		return distance < enemy.enemySize / 2;
-	}
-
-	function updateBulletsAndEnemies(bullets, enemies, deltaTime) {
-		bullets.forEach((bullet, bulletIndex) => {
-			// Update bullet position
-			// bullet.x += bullet.dx * deltaTime;
-			// bullet.y += bullet.dy * deltaTime;
-
-			// Check for collisions with enemies
-			enemies.forEach((enemy, enemyIndex) => {
-				if (enemy.state == "killed" || enemy.state == "dead") {
-					return;
-				}
-
-				if (checkCollision(bullet, enemy)) {
-					// Handle collision
-					// window.alert("HIT!");
-					enemy.takeDamage(100); // Enemy takes damage
-					bullets.splice(bulletIndex, 1); // Remove the bullet
-					if (enemy.health <= 0) {
-						enemy.state = "killed"; // Mark enemy as killed
-					}
-				}
-			});
-		});
-	}
-
-	function resizeCanvas() {
-		canvas.width = window.innerWidth;
-		canvas.height = window.innerHeight;
-
-		canvasAspectRatio = canvas.width / canvas.height;
-
-		// Set the scale so that the minimum height matches the image's height
-
-		// set the value from the with (but make is so that it will depend on who is smaller)
-		// camera.width = Math.floor(96 * 15);
-		// camera.height = Math.floor(camera.width / canvasAspectRatio);
-
-		// if (96 * 15 > mapImg.height) { // minimum 15 blocks height
-		//     camera.scale = mapImg.width / 96 * 15;
-		// } else {
-		// }
-
-		camera.scale = 1.5;
-		// camera.scale = mapImg.width / (96 * 30);
-		camera.width = canvas.width * camera.scale;
-		camera.height = canvas.height * camera.scale;
-
-		camera.width_scale = mapImg.width / camera.width;
-		camera.height_scale = mapImg.height / camera.height;
-	}
-
 	onMount(() => {
-		// drawHealthBar(gl); // Pass the gl context to draw the health bar
-		// Modify the game loop to include the health bar drawing
+		assetLoader(() => {
+			loading = false;
+			gl = canvas.getContext("2d");
 
-		canvas = document.getElementById("glCanvas");
-		gl = canvas.getContext("2d");
-
-		if (!gl) {
-			console.error("Unable to initialize 2D context.");
-			return;
-		}
-
-		resizeCanvas();
-		window.addEventListener("resize", resizeCanvas);
-
-		initializeGrid(gl);
-
-		document.addEventListener("keydown", (e) => {
-			if (keys.hasOwnProperty(e.key)) {
-				keys[e.key] = true;
+			if (!gl) {
+				console.error("Unable to initialize 2D context.");
+				return;
 			}
-		});
 
-		document.addEventListener("keyup", (e) => {
-			if (keys.hasOwnProperty(e.key)) {
-				keys[e.key] = false;
-			}
-		});
+			console.log("TEST");
 
-		canvas.addEventListener("mousemove", (event) => {
-			const rect = canvas.getBoundingClientRect();
-			const mouseX = event.clientX - rect.left;
-			const mouseY = event.clientY - rect.top;
-
-			const centerX = canvas.width / 2;
-			const centerY = canvas.height / 2;
-
-			const dx = mouseX - centerX;
-			const dy = mouseY - centerY;
-
-			character.gunAngle = Math.atan2(dy, dx);
-		});
-
-		canvas.addEventListener("mousedown", (event) => {
-			// Summon a bullet at the gun's location
-			const bulletX = character.realX + (character.width * 1) / 5;
-			const bulletY = character.realY + (character.height * 2) / 5;
-
-			// Calculate the direction of the bullet based on the gun's angle
-			const bulletSpeed = 10;
-			const bulletDx = Math.cos(character.gunAngle) * bulletSpeed;
-			const bulletDy = Math.sin(character.gunAngle) * bulletSpeed;
-
-			// Create a new bullet object
-			const newBullet = {
-				x: bulletX,
-				y: bulletY,
-				dx: bulletDx,
-				dy: bulletDy,
-				angle: character.gunAngle,
-			};
-
-			// Add the bullet to an array to track its movement
-			if (!character.bullets) {
-				character.bullets = [];
-			}
-			character.bullets.push(newBullet);
+			// assetLoader(() => {
+			game = new Game(canvas, gl);
+			game.createLevel(1);
+			// });
+			console.log("TEST2");
 		});
 
 		// canvas.addEventListener("mousedown", (event) => {
@@ -525,46 +98,39 @@
 		// 	}
 		// });
 
-		setInterval(() => {
-			if (enemies.length < 20) {
-				// Limit the number of enemiesconst
+		// mapImg.onload = () => {
+		// let enemy = spawnEnemy(character.realX, character.realY);
+		// enemies.push(enemy);
 
-				let enemy = spawnEnemy(character.realX, character.realY);
-				enemies.push(enemy);
-			}
-		}, 3000); // Spawn an enemy every 3 seconds
+		// function gameLoop() {
+		// moveBox();
 
-		// gl.beginPath();
-		// gl.arc(enemy.x, enemy.y, 5, 0, Math.PI * 2); // Draw a full circle
-		// gl.fillStyle = "rgba(0, 255, 0, 0.5)"; // Semi-transparent green
-		// gl.fill();
+		// drawBox();
 
-		mapImg.onload = () => {
-			let enemy = spawnEnemy(character.realX, character.realY);
-			enemies.push(enemy);
+		// requestAnimationFrame(gameLoop);
+		// }
 
-			function gameLoop() {
-				moveBox();
-
-				drawBox();
-
-				requestAnimationFrame(gameLoop);
-			}
-
-			requestAnimationFrame(gameLoop);
-		};
+		// requestAnimationFrame(gameLoop);
+		// };
 	});
 </script>
 
 <main>
-	<div>
-		<canvas id="glCanvas"></canvas>
-	</div>
-	{#if character.state == 3}
-		<GameOver message="Game Over! You died." />
-		<!-- onRestart={restartGame} -->
-		<!-- onQuit={quitGame} -->
+	<!-- {#if loading}
+		<div class="loading-screen">
+			<h1>Loading...</h1>
+		</div>
 	{/if}
+	<div>
+		<canvas id="glCanvas" bind:this={canvas}></canvas>
+	</div>
+	{#if $isGameOver} -->
+	<GameOver
+		message="Game Over! You died."
+		onRestart={restartGame}
+		onQuit={quitGame}
+	/>
+	<!-- {/if} -->
 </main>
 
 <style>
@@ -573,5 +139,19 @@
 		margin: 0 auto;
 		width: fit-content;
 		display: none;
+	}
+
+	.loading-screen {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 1);
+		color: white;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 2rem;
 	}
 </style>

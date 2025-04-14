@@ -33,7 +33,7 @@ function getBoundaryData(image) {
 			}
 		}
 	}
-	console.log(allowedCoordinates[0]);
+	// console.log(allowedCoordinates[0]);
 
 	return imageData;
 }
