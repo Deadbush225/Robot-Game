@@ -29,6 +29,7 @@ const enemyFrameData = {
 
 import { assets } from "./Assets";
 import { isBlocked, getAllowedCoordinates, getRandomAllowed } from "./boundary";
+import HealthBar from "./HealthBar";
 
 export default class Enemy {
 	constructor(x, y, speed, health, damage) {
@@ -170,6 +171,26 @@ export default class Enemy {
 			gl.restore();
 		}
 
+		/* ━━━━━━━━━━━━━━━━━━━━━━━ Health Bar ━━━━━━━━━━━━━━━━━━━━ */
+		const barWidth = 50; // Total width of the health bar
+		const barHeight = 5; // Height of the health bar
+		const healthPercentage = Math.max(this.health / 100, 0); // Ensure health is not negative
+
+		// Calculate the width of the filled portion of the health bar
+		const filledWidth = barWidth * healthPercentage;
+
+		// Position the health bar slightly above the enemy
+		const barX = screenX + this.enemySize / 2 - barWidth / 2;
+		const barY = screenY + 50; // 10 pixels above the enemy
+
+		// Draw the background of the health bar (empty portion)
+		gl.fillStyle = "red"; // Background color (empty health)
+		gl.fillRect(barX, barY, barWidth, barHeight);
+
+		// Draw the filled portion of the health bar
+		gl.fillStyle = "green"; // Foreground color (current health)
+		gl.fillRect(barX, barY, filledWidth, barHeight);
+
 		// Draw a circle at the enemy's position for debugging purposes
 		// gl.beginPath();
 		// gl.arc(screenX, screenY, 10, 0, Math.PI * 2);
@@ -191,7 +212,7 @@ export default class Enemy {
 	}
 
 	updateState() {
-		if (this.isTakingdamage && Date.now() - this.damageTimer > 500) {
+		if (this.isTakingdamage && Date.now() - this.damageTimer > 100) {
 			this.isTakingdamage = false;
 		}
 	}

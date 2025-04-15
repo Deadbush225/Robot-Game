@@ -48,6 +48,7 @@ export default class Game {
 			s: false,
 			d: false,
 		};
+		this.initialize();
 	}
 
 	initialize() {
@@ -75,6 +76,7 @@ export default class Game {
 		this.level = level;
 		this.initialize();
 
+		// setTimeout(() => {
 		// Add level-specific logic
 		if (level === 1) {
 			// Spawn initial enemies or set objectives
@@ -83,6 +85,7 @@ export default class Game {
 			// Different enemies, map, etc.
 			this.spawnEnemies(10);
 		}
+		// }, 5000);
 	}
 
 	restartLevel() {
@@ -424,11 +427,14 @@ export default class Game {
 
 				if (this.checkCollision(bullet, enemy)) {
 					// Handle collision
-					enemy.takeDamage(100); // Enemy takes damage
+					enemy.takeDamage(40); // Enemy takes damage
 					bullets.splice(bulletIndex, 1); // Remove the bullet
 					bulletIndex--; // Adjust index due to bullet removal
 					if (enemy.health <= 0) {
 						enemy.state = "killed"; // Mark enemy as killed
+						setTimeout(() => {
+							enemies.splice(enemyIndex, 1);
+						}, 7000);
 					}
 					break; // Exit inner loop after collision
 				}
