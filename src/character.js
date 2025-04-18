@@ -1,6 +1,7 @@
 const frameWidth = 64; // Width of each frame in the sprite sheet
 const frameHeight = 64; // Height of each frame in the sprite sheet
 import { assets } from "./Assets";
+import { Gun } from "./Gun";
 
 export class Character {
 	constructor(scale, healthBar) {
@@ -12,7 +13,7 @@ export class Character {
 		this.width = 50;
 		this.height = 50;
 		this.color = "#646cff";
-		this.speed = 10; // pixel per frame
+		this.speed = 350; // pixel per second
 		this.face = 0;
 		this.state = 0; // "Standing" | "Walking" | "Jumping"
 		this.lastFrameTime = 0;
@@ -21,24 +22,34 @@ export class Character {
 		this.gunAngle = 0;
 
 		this.bullets = [];
-		this.health = 100; // Character's health
+		// this.health = 100; // Character's health
 		this.isTakingDamage = false; // Flag to track if the character is taking damage
 		this.damageTimer = 0; // Timer to control the duration of the damaged state
 		this.healthBar = healthBar;
+		this.currentGun = new Gun("toxic");
+		this.coins = 0;
 	}
 
 	takeDamage(amount) {
 		if (!this.isTakingDamage) {
-			this.health -= amount;
-			if (this.health > 0) {
+			this.healthBar.updateHealth(-amount);
+			if (this.healthBar.health > 0) {
 				// this.state = 3; // Set state to "Damaged"
 				this.isTakingDamage = true;
 				this.damageTimer = Date.now(); // Start the damage timer
 			} else {
 				this.state = 3;
 			}
-			this.healthBar.setHealth(this.health);
+			// this.healthBar.setHealth(this.health);
 		}
+	}
+
+	heal(amount) {
+		this.healthBar.updateHealth(amount);
+		// this.healthBar.setHealth(this.health);
+		// console.log(this.healthBar);
+		// console.log(this.healthBar.healthWidth);
+		console.log("HEALED: " + this.healthBar.health);
 	}
 
 	updateState() {
@@ -110,17 +121,17 @@ export class Character {
 	}
 
 	drawStanding(context, x, y) {
-		this.animateSprite(6, 100);
+		this.animateSprite(6, 200);
 
 		if (this.face === 1) {
 			context.save(); // Save the current context state
 			context.scale(-1, 1); // Flip horizontally
 			context.drawImage(
 				this.img,
-				this.frame * frameWidth + 15 + (this.isTakingDamage ? 384 : 0), // Source X position (frame index * frame width)
-				11, // Source Y position (assuming single row sprite sheet)
-				31, // Source width
-				39, // Source height
+				this.frame * frameWidth /* +(this.isTakingDamage ? 384 : 0)*/, // Source X position (frame index * frame width)
+				0, // Source Y position (assuming single row sprite sheet)
+				64, // Source width
+				64, // Source height
 				-x - this.width, // Adjust X position for flipped image
 				y, // Destination Y position
 				this.width * this.camera_scale, // Destination width
@@ -131,10 +142,10 @@ export class Character {
 		} else {
 			context.drawImage(
 				this.img,
-				this.frame * frameWidth + 15 + (this.isTakingDamage ? 384 : 0), // Source X position (frame index * frame width)
-				11, // Source Y position (assuming single row sprite sheet)
-				31, // Source width
-				39, // Source height
+				this.frame * frameWidth /* + (this.isTakingDamage ? 384 : 0)*/, // Source X position (frame index * frame width)
+				0, // Source Y position (assuming single row sprite sheet)
+				64, // Source width
+				64, // Source height
 				x, // Adjust X position for flipped image
 				y, // Destination Y position
 				this.width * this.camera_scale, // Destination width
@@ -151,10 +162,10 @@ export class Character {
 			context.scale(-1, 1); // Flip horizontally
 			context.drawImage(
 				this.img,
-				this.frame * frameWidth + 15, // Source X position (frame index * frame width)
-				64 + 60 + 15, // Source Y position for walking animation
-				31, // Source width
-				39, // Source height
+				this.frame * frameWidth, // Source X position (frame index * frame width)
+				64 * 2, // Source Y position for walking animation
+				64, // Source width
+				64, // Source height
 				-x - this.width, // Adjust X position for flipped image
 				y, // Destination Y position
 				this.width * this.camera_scale, // Destination width
@@ -164,16 +175,30 @@ export class Character {
 		} else {
 			context.drawImage(
 				this.img,
-				this.frame * frameWidth + 15, // Source X position (frame index * frame width)
-				64 + 60 + 15, // Source Y position for walking animation
-				31, // Source width
-				39, // Source height
+				this.frame * frameWidth, // Source X position (frame index * frame width)
+				64 * 2, // Source Y position for walking animation
+				64, // Source width
+				64, // Source height
 				x, // Adjust X position for flipped image
 				y, // Destination Y position
 				this.width * this.camera_scale, // Destination width
 				this.height * this.camera_scale // Destination height
 			);
 		}
+	}
+
+	pickUpGun(newGun) {
+		if (this.currentGun) {
+			// Drop the current gun at the player's position
+			this.droppedGun = {
+				gun: this.currentGun,
+				x: this.realX,
+				y: this.realY,
+			};
+		}
+
+		// Equip the new gun
+		this.currentGun = newGun;
 	}
 }
 

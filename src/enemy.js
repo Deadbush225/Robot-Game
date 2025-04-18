@@ -1,30 +1,44 @@
 const enemyFrameData = {
 	idle: [
-		{ x: 0, y: 0, width: 64, height: 64 },
-		{ x: 64, y: 0, width: 64, height: 64 },
+		{ x: 0, y: 30, width: 64, height: 75 },
+		{ x: 64, y: 30, width: 64, height: 75 },
+		{ x: 128, y: 30, width: 64, height: 75 },
+		{ x: 192, y: 30, width: 64, height: 75 },
+		{ x: 256, y: 30, width: 64, height: 75 },
+		{ x: 320, y: 30, width: 64, height: 75 },
+		{ x: 384, y: 30, width: 64, height: 75 },
+		{ x: 448, y: 30, width: 64, height: 75 },
 	],
 	running: [
-		{ x: 0, y: 64, width: 64, height: 64 },
-		{ x: 64, y: 64, width: 64, height: 64 },
-		{ x: 128, y: 64, width: 64, height: 64 },
+		{ x: 0, y: 30, width: 64, height: 75 },
+		{ x: 64, y: 30, width: 64, height: 75 },
+		{ x: 128, y: 30, width: 64, height: 75 },
+		{ x: 192, y: 30, width: 64, height: 75 },
+		{ x: 256, y: 30, width: 64, height: 75 },
+		{ x: 320, y: 30, width: 64, height: 75 },
+		{ x: 384, y: 30, width: 64, height: 75 },
+		{ x: 448, y: 30, width: 64, height: 75 },
 	],
 	attacking: [
-		{ x: 0, y: 128, width: 64, height: 64 },
-		{ x: 64, y: 128, width: 64, height: 64 },
-		{ x: 128, y: 128, width: 64, height: 64 },
-		{ x: 192, y: 128, width: 64, height: 64 },
-		{ x: 256, y: 128, width: 64, height: 64 },
+		{ x: 0, y: 159, width: 64, height: 75 },
+		{ x: 64, y: 159, width: 64, height: 75 },
+		{ x: 128, y: 159, width: 64, height: 75 },
+		{ x: 192, y: 159, width: 64, height: 75 },
+		{ x: 256, y: 159, width: 64, height: 75 },
+		{ x: 320, y: 159, width: 64, height: 75 },
+		{ x: 384, y: 159, width: 64, height: 75 },
+		{ x: 448, y: 159, width: 64, height: 75 },
 	],
-	damaged: [{ x: 0, y: 192, width: 64, height: 64 }],
+	// damaged: [{ x: 0, y: 192, width: 64, height: 64 }],
 	killed: [
-		{ x: 0, y: 256, width: 64, height: 64 },
-		{ x: 64, y: 256, width: 64, height: 64 },
-		{ x: 128, y: 256, width: 64, height: 64 },
-		{ x: 192, y: 256, width: 64, height: 64 },
-		{ x: 256, y: 256, width: 64, height: 64 },
-		{ x: 320, y: 256, width: 64, height: 64 },
+		{ x: 0, y: 287, width: 64, height: 128 },
+		{ x: 64, y: 287, width: 64, height: 128 },
+		{ x: 128, y: 287, width: 64, height: 128 },
+		{ x: 192, y: 287, width: 64, height: 128 },
+		{ x: 256, y: 287, width: 64, height: 128 },
+		{ x: 320, y: 287, width: 64, height: 128 },
 	],
-	dead: [{ x: 320, y: 256, width: 64, height: 64 }],
+	dead: [{ x: 320, y: 287, width: 64, height: 128 }],
 };
 
 import { assets } from "./Assets";
@@ -36,7 +50,7 @@ export default class Enemy {
 		const enemySpriteSheet = assets.enemy;
 		this.x = x; // Enemy's world X position
 		this.y = y; // Enemy's world Y position
-		this.speed = 0.6; // Movement speed
+		this.speed = 200; // Movement speed
 		this.health = health; // Enemy's health
 		this.damage = damage; // Damage dealt to the character
 		this.state = "idle"; // Current state: idle, running, attacking, damaged, killed, dead
@@ -46,7 +60,9 @@ export default class Enemy {
 		this.frameTimer = 0; // Timer to control animation speed
 		this.frameInterval = 100; // Time (ms) between frames
 
-		this.enemySize = 200;
+		// this.enemySize = 200;
+		this.sWidth = 64 * 1.4;
+		this.sHeight = 75 * 1.4;
 		this.face = 0;
 		this.damageTimer = 0;
 	}
@@ -109,7 +125,7 @@ export default class Enemy {
 
 		// Update animation frame
 		if (this.frameData[this.state]) {
-			this.frameTimer += deltaTime;
+			this.frameTimer += 16;
 			if (this.frameTimer > this.frameInterval) {
 				this.frameTimer = 0;
 				this.currentFrame++;
@@ -132,10 +148,10 @@ export default class Enemy {
 	draw(gl, camera, canvas, character) {
 		// Convert world coordinates to screen coordinates
 		const screenX =
-			(this.x - this.enemySize / 2 - (character.realX - camera.width / 2)) *
+			(this.x - this.sWidth / 2 - (character.realX - camera.width / 2)) *
 			(canvas.width / camera.width);
 		const screenY =
-			(this.y - this.enemySize - (character.realY - camera.height / 2)) *
+			(this.y - this.sHeight - (character.realY - camera.height / 2)) *
 			(canvas.height / camera.height);
 
 		// Get the current frame data
@@ -161,10 +177,10 @@ export default class Enemy {
 			frame.y + 1, // Source Y (frame's position in the sprite sheet)
 			frame.width, // Frame width
 			frame.height, // Frame height
-			doFlip ? -screenX - this.enemySize : screenX, // Destination X (centered on the enemy)
+			doFlip ? -screenX - this.sWidth : screenX, // Destination X (centered on the enemy)
 			screenY, // Destination Y (centered on the enemy)
-			this.enemySize, // Destination width
-			this.enemySize // Destination height
+			frame.width * 1.4, // Destination width
+			frame.height * 1.4 // Destination height
 		);
 
 		if (doFlip) {
@@ -180,8 +196,8 @@ export default class Enemy {
 		const filledWidth = barWidth * healthPercentage;
 
 		// Position the health bar slightly above the enemy
-		const barX = screenX + this.enemySize / 2 - barWidth / 2;
-		const barY = screenY + 50; // 10 pixels above the enemy
+		const barX = screenX + this.sWidth / 2 - barWidth / 2;
+		const barY = screenY - 30; // 30 pixels above the enemy
 
 		// Draw the background of the health bar (empty portion)
 		gl.fillStyle = "red"; // Background color (empty health)
@@ -200,15 +216,16 @@ export default class Enemy {
 	}
 
 	takeDamage(amount) {
-		if (!this.isTakingdamage) {
-			this.health -= amount;
-			if (this.health > 0) {
-				this.isTakingdamage = true; // Change state to damaged
-				this.damageTimer = Date.now();
-			} else {
-				this.state = "killed"; // Change state to killed
-			}
+		// if (!this.isTakingdamage) {
+		this.health -= amount;
+		console.log("TAKING DAMAGE!");
+		if (this.health > 0) {
+			this.isTakingdamage = true; // Change state to damaged
+			this.damageTimer = Date.now();
+		} else {
+			this.state = "killed"; // Change state to killed
 		}
+		// }
 	}
 
 	updateState() {

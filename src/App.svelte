@@ -52,7 +52,7 @@
 
 	onMount(() => {
 		assetLoader(() => {
-			// loading = false;
+			loading = false;
 			gl = canvas.getContext("2d");
 
 			if (!gl) {
@@ -120,14 +120,15 @@
 </script>
 
 <main>
-	{#if !gameStarted}
+	{#if loading}
+		<div class="loading-screen">
+			<h1>Loading...</h1>
+		</div>
+	{/if}
+	{#if !gameStarted && !loading}
 		<Menu onStart={gameStart}></Menu>
 	{/if}
-	<!-- {#if !gameStarted}
-    <div class="loading-screen">
-        <h1>Loading...</h1>
-		</div>
-        {/if} -->
+
 	<div>
 		<canvas id="glCanvas" bind:this={canvas}></canvas>
 	</div>

@@ -1,12 +1,17 @@
+import { assets } from "./Assets";
 import { spawnEnemy } from "./enemy";
-import { isBlocked } from "./boundary";
+import { isBlocked, getRandomAllowed } from "./boundary";
 import HealthBar from "./HealthBar";
 import Character from "./character";
+// import Portal from "./portal";
+import { GunMachine } from "./Gun";
+import { CoinManager } from "./coins";
+import { PotionManager } from "./potion";
+import Camera from "./Camera";
 
 import { isGameOver } from "./store";
 import { get } from "svelte/store";
-
-import { assets } from "./Assets";
+import { VendingMachine } from "./vendingMachine";
 
 export default class Game {
 	constructor(canvas, gl) {
@@ -17,16 +22,20 @@ export default class Game {
 		this.character = null;
 		this.enemies = [];
 		this.bullets = [];
+		this.guns = [];
+		this.enemySpawnInterval = null;
 		// this.isGameOver = false;
+		// this.gunMachine = new GunMachine();
 
 		// Camera
-		this.camera = {
-			scale: 1.5,
-			width: 0,
-			height: 0,
-			width_scale: 0,
-			height_scale: 0,
-		};
+		// this.camera = {
+		// 	scale: 1.5,
+		// 	width: 0,
+		// 	height: 0,
+		// 	width_scale: 0,
+		// 	height_scale: 0,
+		// };
+		this.camera = new Camera(canvas, 1.5);
 
 		// Assets
 		this.mapImg = assets.map;
@@ -34,8 +43,8 @@ export default class Game {
 		this.gunImg = assets.gun;
 		this.bulletImg = assets.bullet;
 
-		// Health bar
-		this.healthBar = new HealthBar();
+		// Portals
+		// this.portal = new Portal(200, 200);
 
 		// Movement
 		this.keys = {
@@ -52,20 +61,51 @@ export default class Game {
 	}
 
 	initialize() {
+		// Clear any existing enemy spawn interval
+		if (this.enemySpawnInterval) {
+			clearInterval(this.enemySpawnInterval);
+		}
+
 		isGameOver.set(false);
+		// Health bar
+		this.healthBar = new HealthBar();
+		this.gunMachine = new GunMachine();
+		this.coinManager = new CoinManager();
+		this.potionManager = new PotionManager();
+		this.vendingMachine = new VendingMachine(500, 150, this.gunMachine);
 		this.character = new Character(this.camera.scale, this.healthBar);
 		this.enemies = [];
 		this.bullets = [];
 		this.healthBar.setHealth(100);
 
-		setInterval(() => {
-			if (this.enemies.length < 20) {
-				// Limit the number of enemiesconst
+		// this.enemySpawnInterval = setInterval(() => {
+		// 	if (this.enemies.length < 20) {
+		// 		// Limit the number of enemiesconst
 
-				let enemy = spawnEnemy(this.character.realX, this.character.realY);
-				this.enemies.push(enemy);
-			}
-		}, 3000); // Spawn an enemy every 3 seconds
+		// 		let enemy = spawnEnemy(this.character.realX, this.character.realY);
+		// 		this.enemies.push(enemy);
+		// 	}
+		// }, 3000); // Spawn an enemy every 3 seconds
+		// Summon guns at random positions
+		for (let i = 0; i < 20; i++) {
+			let coords;
+			do {
+				coords = getRandomAllowed();
+			} while (
+				isBlocked(coords.x, coords.y) &&
+				isBlocked(coords.x, coords.y + 200) &&
+				isBlocked(coords.x - 200, coords.y) &&
+				isBlocked(coords.x + 200, coords.y)
+			);
+			console.log("x: " + coords.x + " y: " + coords.y);
+
+			// this.gunMachine.summonGun(coords.x, coords.y);
+			this.coinManager.spawnCoin(coords.x, coords.y);
+		}
+
+		for (let i = 0; i < 10; i++) {
+			this.potionManager.generatePotion();
+		}
 
 		this.resizeCanvas();
 		this.setupEventListeners();
@@ -80,7 +120,10 @@ export default class Game {
 		// Add level-specific logic
 		if (level === 1) {
 			// Spawn initial enemies or set objectives
-			this.spawnEnemies(5); // Example: Spawn 5 enemies
+			setTimeout(() => {
+				this.spawnEnemies(10); // Example: Spawn 5 enemies
+				// 	this.portal.activate();
+			}, 2000);
 		} else if (level === 2) {
 			// Different enemies, map, etc.
 			this.spawnEnemies(10);
@@ -96,21 +139,22 @@ export default class Game {
 		this.canvas.width = window.innerWidth;
 		this.canvas.height = window.innerHeight;
 
-		const canvasAspectRatio = this.canvas.width / this.canvas.height;
+		// const canvasAspectRatio = this.canvas.width / this.canvas.height;
 
-		this.camera.width = this.canvas.width * this.camera.scale;
-		this.camera.height = this.canvas.height * this.camera.scale;
+		// this.camera.width = this.canvas.width * this.camera.scale;
+		// this.camera.height = this.canvas.height * this.camera.scale;
 
-		this.camera.width_scale = this.mapImg.width / this.camera.width;
-		this.camera.height_scale = this.mapImg.height / this.camera.height;
+		// this.camera.width_scale = this.mapImg.width / this.camera.width;
+		// this.camera.height_scale = this.mapImg.height / this.camera.height;
+		this.camera.resize(this.mapImg.width, this.mapImg.height);
 	}
 
-	worldPosToScreenPos(worldPos) {
-		return (
-			(worldPos - this.camera.width / 2) *
-			(this.canvas.width / this.camera.width)
-		);
-	}
+	// worldPosToScreenPos(worldPos) {
+	// 	return (
+	// 		(worldPos - this.camera.width / 2) *
+	// 		(this.canvas.width / this.camera.width)
+	// 	);
+	// }
 
 	setupEventListeners() {
 		window.addEventListener("resize", () => this.resizeCanvas());
@@ -141,37 +185,87 @@ export default class Game {
 			this.character.gunAngle = Math.atan2(dy, dx);
 		});
 
+		let rows = null;
+		let burst = () => {
+			this.canvas.dispatchEvent(new MouseEvent("mousedown"));
+		};
+		let burstInterval = null;
+
 		this.canvas.addEventListener("mousedown", () => {
-			// Summon a bullet at the gun's location
+			// Summon bullets for burst fire with spread
 			const bulletX = this.character.realX + (this.character.width * 1) / 5;
 			const bulletY = this.character.realY + (this.character.height * 2) / 5;
 
-			// Calculate the direction of the bullet based on the gun's angle
-			const bulletSpeed = 20;
-			const bulletDx = Math.cos(this.character.gunAngle) * bulletSpeed;
-			const bulletDy = Math.sin(this.character.gunAngle) * bulletSpeed;
+			const gun = this.character.currentGun;
 
-			// Create a new bullet object
-			const newBullet = {
-				x: bulletX,
-				y: bulletY,
-				dx: bulletDx,
-				dy: bulletDy,
-				angle: this.character.gunAngle,
-			};
+			if (rows == null) {
+				rows = gun.rows;
+				// console.log("ROWS RESET ");
+				// console.log("ROWS: " + rows);
+			}
 
-			this.bullets.push(newBullet);
+			const bulletSpeed = 700; // px per second
+			const spreadAngle = 5 * (Math.PI / 180); // Spread angle in radians (10 degrees)
+
+			const burstCount = gun.spread; // Number of bullets in the burst (must be odd)
+
+			// Calculate the starting angle for the spread
+			const startAngle =
+				this.character.gunAngle - Math.floor(burstCount / 2) * spreadAngle;
+
+			for (let i = 0; i < burstCount; i++) {
+				const angle = startAngle + i * spreadAngle;
+
+				// Calculate the direction of the bullet based on the spread angle
+				const bulletDx = Math.cos(angle) * bulletSpeed;
+				const bulletDy = Math.sin(angle) * bulletSpeed;
+
+				// Create a new bullet object
+				const newBullet = {
+					x: bulletX,
+					y: bulletY,
+					dx: bulletDx,
+					dy: bulletDy,
+					angle: angle,
+					damage: gun.damage,
+				};
+
+				this.bullets.push(newBullet);
+			}
+			// Fire two additional mousedown events
+
+			if (rows > 0) {
+				if (!burstInterval) {
+					burstInterval = setInterval(burst, 100);
+				}
+				rows--;
+			} else {
+				clearInterval(burstInterval);
+				burstInterval = null;
+				rows = null;
+			}
 		});
 	}
 
+	goalCompleted(func) {}
+
 	startGameLoop() {
+		let lastTime = performance.now();
+
 		const gameLoop = () => {
+			const currentTime = performance.now();
+			const deltaTime = (currentTime - lastTime) / 1000;
+			lastTime = currentTime;
+			// console.log("D: " + deltaTime);
+
 			if (this.character.health <= 0 && !get(isGameOver)) {
 				isGameOver.set(true);
+				return;
 			}
 
 			if (!get(isGameOver)) {
-				this.update();
+				this.update(deltaTime);
+				// this.update();
 				this.draw();
 				requestAnimationFrame(gameLoop);
 			}
@@ -180,19 +274,19 @@ export default class Game {
 		requestAnimationFrame(gameLoop);
 	}
 
-	update() {
+	update(deltaTime) {
 		if (this.character.state == 3) {
 			return;
 		}
 
-		this.moveCharacter();
+		this.moveCharacter(deltaTime);
 
-		const deltaTime = 16; // Approximate time between frames (in ms)
+		// const deltaTime = 16; // Approximate time between frames (in ms)
 		this.updateBulletsAndEnemies(this.bullets, this.enemies, deltaTime);
 
 		this.bullets.forEach((bullet, index) => {
-			bullet.x += bullet.dx;
-			bullet.y += bullet.dy;
+			bullet.x += bullet.dx * deltaTime;
+			bullet.y += bullet.dy * deltaTime;
 
 			// Remove bullets that go out of bounds
 			if (isBlocked(bullet.x, bullet.y)) {
@@ -200,7 +294,19 @@ export default class Game {
 			}
 		});
 
-		this.enemies.forEach((enemy) => enemy.update(this.character, 16));
+		this.enemies.forEach((enemy) => enemy.update(this.character, deltaTime));
+
+		// this.portal.checkCollision(this.character);
+		// this.portal.update(deltaTime);
+		// Check if the player collides with a gun
+		this.gunMachine.checkPlayerCollision(this.character);
+		this.coinManager.update(performance.now(), this.character);
+
+		this.vendingMachine.isOverlapping(this.character);
+
+		this.potionManager.checkCollision(this.character);
+
+		this.potionManager.update(deltaTime);
 	}
 
 	draw() {
@@ -234,8 +340,13 @@ export default class Game {
 		for (let x = 0; x <= endX; x += gridGap) {
 			for (let y = 0; y <= endY; y += gridGap) {
 				// Convert world coordinates to screen coordinates
-				const screenX = this.worldPosToScreenPos(x - this.character.realX);
-				const screenY = this.worldPosToScreenPos(y - this.character.realY);
+				// const screenX = this.camera.worldToScreen(x - this.character.realX);
+				// const screenY = this.camera.worldToScreen(y - this.character.realY);
+				const { x: screenX, y: screenY } = this.camera.worldToScreen(
+					x,
+					y,
+					this.character
+				);
 
 				// Draw the dot
 				this.gl.fillStyle = isBlocked(x, y)
@@ -285,7 +396,7 @@ export default class Game {
 		}
 
 		this.gl.drawImage(
-			this.gunImg,
+			this.character.currentGun.image,
 			(-this.gunImg.width * this.camera.scale * 1.2) / 2 + shakeX,
 			(-this.gunImg.height * this.camera.scale * 1.2) / 2 + shakeY,
 			this.gunImg.width * this.camera.scale * 1.2,
@@ -309,7 +420,7 @@ export default class Game {
 				(this.canvas.height / this.camera.height);
 			this.gl.translate(screenX, screenY);
 			this.gl.rotate(bullet.angle);
-			this.gl.drawImage(this.bulletImg, -25, -25, 50, 50);
+			this.gl.drawImage(this.character.currentGun.bullet, -25, -25, 50, 50);
 			this.gl.restore();
 		});
 
@@ -326,11 +437,21 @@ export default class Game {
 			this.canvas.height // Destination height (stretch to fit canvas)
 		);
 
+		// Portals
+		// this.portal.draw(this.gl, this.camera, this.canvas, this.character);
+		this.gunMachine.draw(this.gl, this.camera, this.canvas, this.character);
+
+		this.potionManager.draw(this.gl, this.camera, this.character);
+
 		/* ━━━━━━━━━━━━━━━━━ Draw health bar ━━━━━━━━━━━━━━━━━ */
 		this.healthBar.draw(this.gl);
+
+		this.coinManager.draw(this.gl, this.camera, this.character);
+
+		this.vendingMachine.draw(this.gl, this.camera, this.character);
 	}
 
-	moveCharacter() {
+	moveCharacter(deltaTime) {
 		const centerX = this.character.realX + this.character.width / 2;
 		const bottomY = this.character.realY + this.character.height;
 		// const centerX = character.realX;
@@ -338,7 +459,7 @@ export default class Game {
 
 		// Horizontal movement
 		if (this.keys.ArrowLeft || this.keys.a) {
-			const nextRealX = this.character.realX - this.character.speed;
+			const nextRealX = this.character.realX - this.character.speed * deltaTime;
 
 			// Check collision at the new center-bottom position
 			if (!isBlocked(nextRealX - this.character.width, bottomY)) {
@@ -348,7 +469,7 @@ export default class Game {
 		}
 
 		if (this.keys.ArrowRight || this.keys.d) {
-			const nextRealX = this.character.realX + this.character.speed;
+			const nextRealX = this.character.realX + this.character.speed * deltaTime;
 
 			// Check collision at the new center-bottom position
 			if (!isBlocked(nextRealX + this.character.width, bottomY)) {
@@ -359,7 +480,7 @@ export default class Game {
 
 		// Vertical movement
 		if (this.keys.ArrowUp || this.keys.w) {
-			const nextRealY = this.character.realY - this.character.speed;
+			const nextRealY = this.character.realY - this.character.speed * deltaTime;
 
 			// Check collision at the new center-bottom position
 			if (!isBlocked(centerX, nextRealY)) {
@@ -368,7 +489,7 @@ export default class Game {
 		}
 
 		if (this.keys.ArrowDown || this.keys.s) {
-			const nextRealY = this.character.realY + this.character.speed;
+			const nextRealY = this.character.realY + this.character.speed * deltaTime;
 
 			// Check collision at the new center-bottom position\
 			if (!isBlocked(centerX, nextRealY + this.character.height * 1.5)) {
@@ -402,16 +523,17 @@ export default class Game {
 			const enemy = spawnEnemy(this.character.realX, this.character.realY);
 			this.enemies.push(enemy);
 		}
+		// console.log(this.enemies);
 	}
 
 	checkCollision(bullet, enemy) {
-		const dx = bullet.x - enemy.x;
-		const dy = bullet.y - enemy.y;
+		const dx = bullet.x - enemy.x + enemy.sWidth / 2;
+		const dy = bullet.y - enemy.y + enemy.sHeight / 2;
 		const distance = Math.sqrt(dx * dx + dy * dy);
 
 		// Check if the distance is less than the sum of their radii
 		// console.log(`${distance} < ${enemy.enemySize / 2}`);
-		return distance < enemy.enemySize / 2;
+		return distance < enemy.sHeight / 2;
 	}
 
 	updateBulletsAndEnemies(bullets, enemies, deltaTime) {
@@ -425,9 +547,11 @@ export default class Game {
 					continue;
 				}
 
+				// console.log("CHECKING COLLISION");
+
 				if (this.checkCollision(bullet, enemy)) {
 					// Handle collision
-					enemy.takeDamage(40); // Enemy takes damage
+					enemy.takeDamage(bullet.damage); // Enemy takes damage
 					bullets.splice(bulletIndex, 1); // Remove the bullet
 					bulletIndex--; // Adjust index due to bullet removal
 					if (enemy.health <= 0) {

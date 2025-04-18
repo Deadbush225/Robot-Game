@@ -5,14 +5,28 @@ class HealthBar {
 		this.healthBarImg = assets.heath_base;
 
 		this.healthImg = assets.healthsrc;
+		this.originalHealthWidth = this.healthImg.width;
 
 		this.healthWidth = this.healthImg.width; // Default health width
+		this.health = 100;
+	}
+
+	updateHealth(amount) {
+		this.health += amount;
+		this.health = Math.max(0, Math.min(100, this.health));
+
+		this.setHealth(this.health);
 	}
 
 	setHealth(healthPercentage) {
 		// Update the health width based on the percentage (0 to 100)
-		this.healthWidth = (healthPercentage / 100) * this.healthWidth;
-		console.log(this.healthWidth);
+
+		healthPercentage = Math.max(0, Math.min(100, healthPercentage));
+
+		this.healthWidth = Math.floor(
+			(healthPercentage / 100) * this.originalHealthWidth
+		);
+		console.log("HEALTH BAR: " + this.healthWidth);
 	}
 
 	draw(gl) {
