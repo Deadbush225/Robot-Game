@@ -3,9 +3,36 @@ const frameHeight = 64; // Height of each frame in the sprite sheet
 import { assets } from "./Assets";
 import { Gun } from "./Gun";
 
+class FloatingText {
+	constructor(text, color) {
+		this.text = text;
+		this.offset = 0; // offset to top
+		this.color = color;
+		this.alpha = 1;
+		this.lifetime = 1000; // ms
+		this.startTime = Date.now();
+	}
+
+	update() {
+		const elapsed = Date.now() - this.startTime;
+		this.offset -= 0.5; // Move up
+		this.alpha = 1 - elapsed / this.lifetime;
+		return elapsed < this.lifetime;
+	}
+
+	draw(context, x, y) {
+		context.save();
+		context.globalAlpha = this.alpha;
+		context.fillStyle = this.color;
+		context.font = "bold 30px Monogram";
+		context.fillText(this.text, x, y - this.offset);
+		context.restore();
+	}
+}
+
 export class Character {
-	constructor(scale, healthBar) {
-		this.img = assets.character;
+	constructor(scale, healthBar, characterProps) {
+		this.img = assets[characterProps.imgName];
 		this.realX = 500; // Actual X position in pixels
 		this.realY = 500; // Actual Y position in pixels
 		this.gridX = 2; // Grid position (column)
@@ -13,7 +40,7 @@ export class Character {
 		this.width = 50;
 		this.height = 50;
 		this.color = "#646cff";
-		this.speed = 350; // pixel per second
+		this.speed = characterProps.speed; // pixel per second
 		this.face = 0;
 		this.state = 0; // "Standing" | "Walking" | "Jumping"
 		this.lastFrameTime = 0;
@@ -22,17 +49,19 @@ export class Character {
 		this.gunAngle = 0;
 
 		this.bullets = [];
+		this.floatingTexts = [];
 		// this.health = 100; // Character's health
 		this.isTakingDamage = false; // Flag to track if the character is taking damage
 		this.damageTimer = 0; // Timer to control the duration of the damaged state
 		this.healthBar = healthBar;
-		this.currentGun = new Gun("toxic");
+		this.currentGun = new Gun(characterProps.gun);
 		this.coins = 0;
 	}
 
 	takeDamage(amount) {
 		if (!this.isTakingDamage) {
 			this.healthBar.updateHealth(-amount);
+			this.floatingTexts.push(new FloatingText(`-${amount}`, "red"));
 			if (this.healthBar.health > 0) {
 				// this.state = 3; // Set state to "Damaged"
 				this.isTakingDamage = true;
@@ -46,6 +75,8 @@ export class Character {
 
 	heal(amount) {
 		this.healthBar.updateHealth(amount);
+
+		this.floatingTexts.push(new FloatingText(`+${amount}`, "lime"));
 		// this.healthBar.setHealth(this.health);
 		// console.log(this.healthBar);
 		// console.log(this.healthBar.healthWidth);
@@ -71,6 +102,8 @@ export class Character {
 	}
 
 	draw(context, x, y) {
+		// Update and draw floating texts
+
 		this.updateState();
 		switch (this.state) {
 			case 3:
@@ -84,6 +117,12 @@ export class Character {
 				this.drawWalking(context, x, y);
 				break;
 		}
+
+		this.floatingTexts = this.floatingTexts.filter((ft) => {
+			ft.update();
+			ft.draw(context, x, y);
+			return ft.alpha > 0;
+		});
 	}
 
 	drawKilled(context, x, y) {

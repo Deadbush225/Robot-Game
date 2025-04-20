@@ -15,12 +15,15 @@
 	let loading = true;
 
 	let canvas, gl, game;
+	let saved_characterProps;
 
 	function restartGame() {
-		game.restartLevel();
+		gameStart(saved_characterProps);
 	}
 
 	function quitGame() {
+		gameStarted = false;
+		isGameOver.set(false);
 		console.log("Quit game");
 	}
 
@@ -59,17 +62,16 @@
 				console.error("Unable to initialize 2D context.");
 				return;
 			}
-			game = new Game(canvas, gl);
 		});
 	});
-	function gameStart() {
-		gameStarted = true;
 
-		// assetLoader(() => {
-		// setTimeout(() => {
+	function gameStart(characterProps) {
+		saved_characterProps = characterProps;
+
+		game = new Game(canvas, gl, characterProps);
 		game.createLevel(1);
-		// }, 5000);
-		// });
+
+		gameStarted = true;
 	}
 
 	// canvas.addEventListener("mousedown", (event) => {
@@ -129,9 +131,6 @@
 		<Menu onStart={gameStart}></Menu>
 	{/if}
 
-	<div>
-		<canvas id="glCanvas" bind:this={canvas}></canvas>
-	</div>
 	{#if $isGameOver}
 		<GameOver
 			message="Game Over! You died."
@@ -139,6 +138,9 @@
 			onQuit={quitGame}
 		/>
 	{/if}
+	<div>
+		<canvas id="glCanvas" bind:this={canvas}></canvas>
+	</div>
 </main>
 
 <style>

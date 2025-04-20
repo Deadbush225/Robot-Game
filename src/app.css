@@ -5,6 +5,11 @@
     /* Path to the font file */
 }
 
+@font-face {
+    font-family: 'Monogram-italic';
+    src: url('./assets/fonts/monogram-extended-italic.ttf') format('truetype');
+}
+
 * {
     font-family: "Monogram";
     /* font-size: 2em; */

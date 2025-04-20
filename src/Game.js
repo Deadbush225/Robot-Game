@@ -14,9 +14,10 @@ import { get } from "svelte/store";
 import { VendingMachine } from "./vendingMachine";
 
 export default class Game {
-	constructor(canvas, gl) {
+	constructor(canvas, gl, characterProps) {
 		this.canvas = canvas;
 		this.gl = gl;
+		this.characterProps = characterProps;
 
 		// Game state
 		this.character = null;
@@ -35,7 +36,8 @@ export default class Game {
 		// 	width_scale: 0,
 		// 	height_scale: 0,
 		// };
-		this.camera = new Camera(canvas, 1.5);
+		// this.camera = new Camera(canvas, 1.5);
+		// this.camera = new Camera(canvas, 1.5);
 
 		// Assets
 		this.mapImg = assets.map;
@@ -57,6 +59,7 @@ export default class Game {
 			s: false,
 			d: false,
 		};
+		this.setupEventListeners();
 		this.initialize();
 	}
 
@@ -68,15 +71,19 @@ export default class Game {
 
 		isGameOver.set(false);
 		// Health bar
-		this.healthBar = new HealthBar();
+		this.healthBar = new HealthBar(this.characterProps.health);
 		this.gunMachine = new GunMachine();
 		this.coinManager = new CoinManager();
 		this.potionManager = new PotionManager();
 		this.vendingMachine = new VendingMachine(500, 150, this.gunMachine);
-		this.character = new Character(this.camera.scale, this.healthBar);
+		this.camera = new Camera(this.canvas, 1.5);
+		this.character = new Character(
+			this.camera.scale,
+			this.healthBar,
+			this.characterProps
+		);
 		this.enemies = [];
 		this.bullets = [];
-		this.healthBar.setHealth(100);
 
 		// this.enemySpawnInterval = setInterval(() => {
 		// 	if (this.enemies.length < 20) {
@@ -97,7 +104,7 @@ export default class Game {
 				isBlocked(coords.x - 200, coords.y) &&
 				isBlocked(coords.x + 200, coords.y)
 			);
-			console.log("x: " + coords.x + " y: " + coords.y);
+			// console.log("x: " + coords.x + " y: " + coords.y);
 
 			// this.gunMachine.summonGun(coords.x, coords.y);
 			this.coinManager.spawnCoin(coords.x, coords.y);
@@ -108,7 +115,7 @@ export default class Game {
 		}
 
 		this.resizeCanvas();
-		this.setupEventListeners();
+		// this.setupEventListeners();
 		this.startGameLoop();
 	}
 
@@ -157,6 +164,13 @@ export default class Game {
 	// }
 
 	setupEventListeners() {
+		// Remove existing listeners to prevent duplicates
+		// window.removeEventListener("resize", this.resizeCanvas);
+		// document.removeEventListener("keydown", this.handleKeyDown);
+		// document.removeEventListener("keyup", this.handleKeyUp);
+		// this.canvas.removeEventListener("mousemove", this.handleMouseMove);
+		// this.canvas.removeEventListener("mousedown", this.handleMouseDown);
+
 		window.addEventListener("resize", () => this.resizeCanvas());
 
 		document.addEventListener("keydown", (e) => {
@@ -228,6 +242,8 @@ export default class Game {
 					dy: bulletDy,
 					angle: angle,
 					damage: gun.damage,
+					img: gun.bullet.src,
+					effect: gun.bullet.effect,
 				};
 
 				this.bullets.push(newBullet);
@@ -250,20 +266,51 @@ export default class Game {
 	goalCompleted(func) {}
 
 	startGameLoop() {
-		let lastTime = performance.now();
+		let lastTime;
+		let first = true;
+
+		// let frameCount = 0;
+		// let fps = 0;
+		// let fpsLastTime = performance.now();
 
 		const gameLoop = () => {
+			if (get(isGameOver)) {
+				return;
+			}
+
 			const currentTime = performance.now();
+			if (!lastTime) {
+				lastTime = currentTime; // Initialize lastTime on the first frame
+			}
 			const deltaTime = (currentTime - lastTime) / 1000;
+
+			// frameCount++;
+			// if (currentTime - fpsLastTime >= 1000) {
+			// 	fps = frameCount;
+			// 	frameCount = 0;
+			// 	fpsLastTime = currentTime;
+			// 	console.log(`FPS: ${fps}`);
+			// 	console.log("Delta: ", deltaTime);
+			// 	// Log the FPS to the console
+			// }
+
+			if (first) {
+				console.log("DELTA TIME: ", deltaTime);
+				console.log("current: ", currentTime);
+				console.log("last: ", lastTime);
+			}
 			lastTime = currentTime;
+
 			// console.log("D: " + deltaTime);
 
-			if (this.character.health <= 0 && !get(isGameOver)) {
+			if (this.character.healthBar.health <= 0 && !get(isGameOver)) {
 				isGameOver.set(true);
 				return;
 			}
 
 			if (!get(isGameOver)) {
+				first = false;
+				// this.update(0.06);
 				this.update(deltaTime);
 				// this.update();
 				this.draw();
@@ -420,7 +467,7 @@ export default class Game {
 				(this.canvas.height / this.camera.height);
 			this.gl.translate(screenX, screenY);
 			this.gl.rotate(bullet.angle);
-			this.gl.drawImage(this.character.currentGun.bullet, -25, -25, 50, 50);
+			this.gl.drawImage(bullet.img, -25, -25, 50, 50);
 			this.gl.restore();
 		});
 
@@ -527,13 +574,14 @@ export default class Game {
 	}
 
 	checkCollision(bullet, enemy) {
-		const dx = bullet.x - enemy.x + enemy.sWidth / 2;
-		const dy = bullet.y - enemy.y + enemy.sHeight / 2;
+		const offset = enemy.sHeight / 2;
+		const dx = bullet.x - enemy.x + offset;
+		const dy = bullet.y - enemy.y + offset;
 		const distance = Math.sqrt(dx * dx + dy * dy);
 
 		// Check if the distance is less than the sum of their radii
 		// console.log(`${distance} < ${enemy.enemySize / 2}`);
-		return distance < enemy.sHeight / 2;
+		return distance < enemy.sHeight;
 	}
 
 	updateBulletsAndEnemies(bullets, enemies, deltaTime) {
@@ -559,6 +607,23 @@ export default class Game {
 						setTimeout(() => {
 							enemies.splice(enemyIndex, 1);
 						}, 7000);
+					}
+
+					if (bullet.effect == "life-steal") {
+						this.character.heal(bullet.damage);
+					} else if (bullet.effect == "freeze") {
+						if (enemy.froze) {
+							return;
+						}
+						console.log("FREEZING:");
+						let origSpeed = enemy.speed;
+						enemy.speed = 0;
+						enemy.froze = true;
+
+						setTimeout(() => {
+							enemy.speed = origSpeed;
+							enemy.froze = false;
+						}, 1000);
 					}
 					break; // Exit inner loop after collision
 				}

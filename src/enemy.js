@@ -59,6 +59,7 @@ export default class Enemy {
 		this.currentFrame = 0; // Current animation frame
 		this.frameTimer = 0; // Timer to control animation speed
 		this.frameInterval = 100; // Time (ms) between frames
+		this.froze = false;
 
 		// this.enemySize = 200;
 		this.sWidth = 64 * 1.4;
@@ -171,9 +172,16 @@ export default class Enemy {
 		// +512 if damaged
 
 		// Draw the current frame from the sprite sheet
+		let offset = 0;
+		if (this.froze) {
+			offset += 512 * 2;
+		} else if (this.isTakingdamage) {
+			offset += 512;
+		}
+
 		gl.drawImage(
 			this.spriteSheet,
-			(this.isTakingdamage ? 512 : 0) + frame.x, // Source X (frame's position in the sprite sheet)
+			offset + frame.x, // Source X (frame's position in the sprite sheet)
 			frame.y + 1, // Source Y (frame's position in the sprite sheet)
 			frame.width, // Frame width
 			frame.height, // Frame height

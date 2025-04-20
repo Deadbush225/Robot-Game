@@ -15,7 +15,7 @@
 		background-size: cover;
 		background-position: center;
 
-		aspect-ratio: 301 / 121;
+		aspect-ratio: 239 / 85;
 		/* aspect-ratio: 301 / 121; */
 	}
 	button {

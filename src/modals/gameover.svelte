@@ -59,7 +59,7 @@
 		background-image: url("../assets/ui/Modal.png");
 		/* background-color: rgba(0, 0, 0, 0.341); */
 		background-position: center;
-		aspect-ratio: 905 / 503;
+		aspect-ratio: 905 / 573;
 	}
 
 	.buttons {

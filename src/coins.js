@@ -14,7 +14,7 @@ export class CoinManager {
 
 	spawnCoin(x, y) {
 		this.coins.push({ x, y });
-		console.log(this.coins);
+		// console.log(this.coins);
 	}
 
 	update(currentTime, player) {

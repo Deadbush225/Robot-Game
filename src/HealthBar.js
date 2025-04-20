@@ -1,14 +1,15 @@
 import { assets } from "./Assets";
 
 class HealthBar {
-	constructor() {
+	constructor(health) {
 		this.healthBarImg = assets.heath_base;
 
 		this.healthImg = assets.healthsrc;
 		this.originalHealthWidth = this.healthImg.width;
 
 		this.healthWidth = this.healthImg.width; // Default health width
-		this.health = 100;
+		this.health = health;
+		this.setHealth(this.health);
 	}
 
 	updateHealth(amount) {
