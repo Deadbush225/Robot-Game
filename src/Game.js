@@ -471,6 +471,18 @@ export default class Game {
 			this.gl.restore();
 		});
 
+		// Portals
+		// this.portal.draw(this.gl, this.camera, this.canvas, this.character);
+		this.gunMachine.draw(this.gl, this.camera, this.canvas, this.character);
+
+		this.potionManager.draw(this.gl, this.camera, this.character);
+
+		/* ━━━━━━━━━━━━━━━━━ Draw health bar ━━━━━━━━━━━━━━━━━ */
+
+		this.coinManager.draw(this.gl, this.camera, this.character);
+
+		this.vendingMachine.draw(this.gl, this.camera, this.character);
+
 		/* ━━━━━ Draw barriers or other elements if needed ━━━━ */
 		this.gl.drawImage(
 			this.barriersImg,
@@ -484,18 +496,28 @@ export default class Game {
 			this.canvas.height // Destination height (stretch to fit canvas)
 		);
 
-		// Portals
-		// this.portal.draw(this.gl, this.camera, this.canvas, this.character);
-		this.gunMachine.draw(this.gl, this.camera, this.canvas, this.character);
-
-		this.potionManager.draw(this.gl, this.camera, this.character);
-
-		/* ━━━━━━━━━━━━━━━━━ Draw health bar ━━━━━━━━━━━━━━━━━ */
 		this.healthBar.draw(this.gl);
 
-		this.coinManager.draw(this.gl, this.camera, this.character);
-
-		this.vendingMachine.draw(this.gl, this.camera, this.character);
+		// Draw reddish vignette on borders when taking damage
+		if (this.character.isTakingDamage) {
+			const alpha = 1; // Opacity of the vignette
+			const gradient = this.gl.createRadialGradient(
+				this.canvas.width / 2,
+				this.canvas.height / 2,
+				Math.min(this.canvas.width, this.canvas.height) / 2.5,
+				this.canvas.width / 2,
+				this.canvas.height / 2,
+				Math.max(this.canvas.width, this.canvas.height) / 1.1
+			);
+			gradient.addColorStop(0, "rgba(255,0,0,0)");
+			gradient.addColorStop(1, `rgba(180,0,0,${alpha})`);
+			this.gl.save();
+			this.gl.globalAlpha = 1;
+			// this.gl.globalCompositeOperation = "lighter";
+			this.gl.fillStyle = gradient;
+			this.gl.fillRect(0, 0, this.canvas.width, this.canvas.height);
+			this.gl.restore();
+		}
 	}
 
 	moveCharacter(deltaTime) {
