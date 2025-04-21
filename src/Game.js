@@ -125,12 +125,12 @@ export default class Game {
 
 		// setTimeout(() => {
 		// Add level-specific logic
+		setTimeout(() => {
+			this.spawnEnemies(10); // Example: Spawn 5 enemies
+			// 	this.portal.activate();
+		}, 2000);
 		if (level === 1) {
 			// Spawn initial enemies or set objectives
-			setTimeout(() => {
-				this.spawnEnemies(10); // Example: Spawn 5 enemies
-				// 	this.portal.activate();
-			}, 2000);
 		} else if (level === 2) {
 			// Different enemies, map, etc.
 			this.spawnEnemies(10);
@@ -592,7 +592,7 @@ export default class Game {
 			const enemy = spawnEnemy(this.character.realX, this.character.realY);
 			this.enemies.push(enemy);
 		}
-		// console.log(this.enemies);
+		console.log(this.enemies);
 	}
 
 	checkCollision(bullet, enemy) {

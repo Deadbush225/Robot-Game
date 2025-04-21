@@ -4,8 +4,8 @@ export class VendingMachine {
 	constructor(x, y, gunMachine) {
 		this.coins = [];
 		this.coinCount = 0;
-		this.frameWidth = 32; // Width of each frame in the sprite sheet
-		this.frameHeight = 64; // Height of each frame
+		this.frameWidth = 56; // Width of each frame in the sprite sheet
+		this.frameHeight = 41; // Height of each frame
 		this.frameCount = 1; // Number of frames in the animation
 		this.currentFrame = 0;
 		this.frameInterval = 100; // Milliseconds between frame changes
@@ -13,6 +13,7 @@ export class VendingMachine {
 		this.x = x;
 		this.y = y;
 		this.gunKeeper = gunMachine;
+		this.scale = 2;
 
 		this.lastVendingTime = 0;
 	}
@@ -37,14 +38,14 @@ export class VendingMachine {
 		// Draw the current frame of the coin animation
 		gl.drawImage(
 			assets.vending,
-			this.currentFrame,
+			this.currentFrame + 1,
 			0 + 11, // Source x, y
 			this.frameWidth,
-			this.frameHeight - 22, // Source width, height
+			this.frameHeight, // Source width, height
 			screenX,
 			screenY, // Destination x, y (centered)
-			this.frameWidth * 2,
-			(this.frameHeight - 22) * 2 // Destination width, height
+			this.frameWidth * this.scale,
+			this.frameHeight * this.scale // Destination width, height
 		);
 	}
 
@@ -61,10 +62,10 @@ export class VendingMachine {
 		const characterPoint = { x: character.realX, y: character.realY };
 
 		const vendingBounds = {
-			left: this.x - this.frameWidth * 2,
+			left: this.x - this.frameWidth * this.scale,
 			right: this.x + this.frameWidth * 4,
 			top: this.y + 11,
-			bottom: this.y + this.frameHeight * 2,
+			bottom: this.y + this.frameHeight * this.scale,
 		};
 
 		if (
