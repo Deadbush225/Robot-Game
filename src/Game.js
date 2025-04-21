@@ -12,6 +12,7 @@ import Camera from "./Camera";
 import { isGameOver } from "./store";
 import { get } from "svelte/store";
 import { VendingMachine } from "./vendingMachine";
+import Door from "./Door";
 
 export default class Game {
 	constructor(canvas, gl, characterProps) {
@@ -58,6 +59,7 @@ export default class Game {
 			a: false,
 			s: false,
 			d: false,
+			" ": false,
 		};
 		this.setupEventListeners();
 		this.initialize();
@@ -84,6 +86,9 @@ export default class Game {
 		);
 		this.enemies = [];
 		this.bullets = [];
+
+		// this.door = new Door(1152, 287, "Vertical", this.camera, this.character);
+		this.door = new Door(2784, 1056, "Horizontal", this.camera, this.character);
 
 		// this.enemySpawnInterval = setInterval(() => {
 		// 	if (this.enemies.length < 20) {
@@ -125,10 +130,10 @@ export default class Game {
 
 		// setTimeout(() => {
 		// Add level-specific logic
-		setTimeout(() => {
-			this.spawnEnemies(10); // Example: Spawn 5 enemies
-			// 	this.portal.activate();
-		}, 2000);
+		// setTimeout(() => {
+		// 	this.spawnEnemies(10); // Example: Spawn 5 enemies
+		// 	// 	this.portal.activate();
+		// }, 2000);
 		if (level === 1) {
 			// Spawn initial enemies or set objectives
 		} else if (level === 2) {
@@ -354,6 +359,8 @@ export default class Game {
 		this.potionManager.checkCollision(this.character);
 
 		this.potionManager.update(deltaTime);
+
+		this.door.update();
 	}
 
 	draw() {
@@ -518,6 +525,8 @@ export default class Game {
 			this.gl.fillRect(0, 0, this.canvas.width, this.canvas.height);
 			this.gl.restore();
 		}
+
+		this.door.draw(this.gl, this.camera, this.character);
 	}
 
 	moveCharacter(deltaTime) {
@@ -525,10 +534,22 @@ export default class Game {
 		const bottomY = this.character.realY + this.character.height;
 		// const centerX = character.realX;
 		// const bottomY = character.realY;
+		// Simple dash: just increase speed when space is held
+		let speedMultiplier = 1;
+		// if (!this.character.isDashing) {
+		if (this.keys[" "]) {
+			this.character.isDashing = true;
+			speedMultiplier = 4;
+			// this.character.state = 2; // dashing state
+		}
+		// }
+		// console.log(this.keys);
 
 		// Horizontal movement
 		if (this.keys.ArrowLeft || this.keys.a) {
-			const nextRealX = this.character.realX - this.character.speed * deltaTime;
+			const nextRealX =
+				this.character.realX -
+				this.character.speed * speedMultiplier * deltaTime;
 
 			// Check collision at the new center-bottom position
 			if (!isBlocked(nextRealX - this.character.width, bottomY)) {
@@ -538,7 +559,9 @@ export default class Game {
 		}
 
 		if (this.keys.ArrowRight || this.keys.d) {
-			const nextRealX = this.character.realX + this.character.speed * deltaTime;
+			const nextRealX =
+				this.character.realX +
+				this.character.speed * speedMultiplier * deltaTime;
 
 			// Check collision at the new center-bottom position
 			if (!isBlocked(nextRealX + this.character.width, bottomY)) {
@@ -549,7 +572,9 @@ export default class Game {
 
 		// Vertical movement
 		if (this.keys.ArrowUp || this.keys.w) {
-			const nextRealY = this.character.realY - this.character.speed * deltaTime;
+			const nextRealY =
+				this.character.realY -
+				this.character.speed * speedMultiplier * deltaTime;
 
 			// Check collision at the new center-bottom position
 			if (!isBlocked(centerX, nextRealY)) {
@@ -558,7 +583,9 @@ export default class Game {
 		}
 
 		if (this.keys.ArrowDown || this.keys.s) {
-			const nextRealY = this.character.realY + this.character.speed * deltaTime;
+			const nextRealY =
+				this.character.realY +
+				this.character.speed * speedMultiplier * deltaTime;
 
 			// Check collision at the new center-bottom position\
 			if (!isBlocked(centerX, nextRealY + this.character.height * 1.5)) {
@@ -589,7 +616,16 @@ export default class Game {
 
 	spawnEnemies(count) {
 		for (let i = 0; i < count; i++) {
-			const enemy = spawnEnemy(this.character.realX, this.character.realY);
+			const enemy = spawnEnemy(this.character.realX, this.character.realY, 0);
+			this.enemies.push(enemy);
+		}
+
+		// for (let i = 0; i < count; i++) {
+		// 	const enemy = spawnEnemy(this.character.realX, this.character.realY, 1);
+		// 	this.enemies.push(enemy);
+		// }
+		for (let i = 0; i < count; i++) {
+			const enemy = spawnEnemy(this.character.realX, this.character.realY, 2);
 			this.enemies.push(enemy);
 		}
 		console.log(this.enemies);
@@ -632,7 +668,7 @@ export default class Game {
 					}
 
 					if (bullet.effect == "life-steal") {
-						this.character.heal(bullet.damage);
+						this.character.heal(bullet.damage * 0.25);
 					} else if (bullet.effect == "freeze") {
 						if (enemy.froze) {
 							return;

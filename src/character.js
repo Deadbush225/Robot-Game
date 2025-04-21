@@ -39,7 +39,7 @@ export class Character {
 		this.gridY = 2; // Grid position (row)
 		this.width = 50;
 		this.height = 50;
-		this.color = "#646cff";
+		// this.color = "#646cff";
 		this.speed = characterProps.speed; // pixel per second
 		this.face = 0;
 		this.state = 0; // "Standing" | "Walking" | "Jumping"
@@ -56,6 +56,7 @@ export class Character {
 		this.healthBar = healthBar;
 		this.currentGun = new Gun(characterProps.gun);
 		this.coins = 0;
+		this.isDashing = false;
 	}
 
 	takeDamage(amount) {

@@ -20,6 +20,13 @@ import bullet_rifle2_src from "./assets/bullets/rifle2.png";
 import bullet_green_src from "./assets/bullets/green.png";
 import potion_src from "./assets/potion.png";
 
+import horizontal_door_src from "./assets/Door Horizontal.png";
+import vertical_door_src from "./assets/Door Vertical.png";
+
+import plasmaShoot_src from "./assets/sounds/enemyShoot.mp3";
+import bgm_src from "./assets/sounds/bgm.mp3";
+import ui_select_src from "./assets/sounds/ui-select.mp3";
+
 export let assets = {
 	map: map,
 	barriers: barriers_map,
@@ -41,8 +48,29 @@ export let assets = {
 	bullet_rifle2: bullet_rifle2_src,
 	bullet_green: bullet_green_src,
 	potion: potion_src,
+	hDoor: horizontal_door_src,
+	vDoor: vertical_door_src,
 };
+
+export let music = {
+	plasmaShoot: { src: plasmaShoot_src, audio: null, volume: 0.7 },
+	bgm: { src: bgm_src, audio: null, volume: 0.3 },
+	ui_select: { src: ui_select_src, audio: null, volume: 0.7 },
+};
+
 let loadedCount = 0;
+let totalAssets = Object.keys(assets).length + Object.keys(music).length;
+
+function updateCount(onAssetsLoaded) {
+	// console.log("Loaded: " + key);
+	loadedCount++;
+	if (loadedCount === totalAssets) {
+		// this.loading = false; // All assets are loaded
+		onAssetsLoaded(); // Callback to notify that loading is complete
+		console.log("Assets Loaded");
+		console.log(assets);
+	}
+}
 
 export function assetLoader(onAssetsLoaded) {
 	console.log(assets);
@@ -51,15 +79,19 @@ export function assetLoader(onAssetsLoaded) {
 		const img = new Image();
 		img.src = assets[key];
 		img.onload = () => {
-			// console.log("Loaded: " + key);
-			loadedCount++;
-			if (loadedCount === Object.keys(assets).length) {
-				// this.loading = false; // All assets are loaded
-				onAssetsLoaded(); // Callback to notify that loading is complete
-				console.log("Assets Loaded");
-				console.log(assets);
-			}
+			updateCount(onAssetsLoaded);
 		};
 		assets[key] = img;
+	});
+
+	Object.keys(music).forEach((key) => {
+		const audio = new Audio(music[key].src);
+		audio.volume = music[key].volume;
+		// audio.volume = 1;
+		// audio.volume = 0.03;
+		audio.oncanplaythrough = () => {
+			updateCount(onAssetsLoaded);
+		};
+		music[key].audio = audio;
 	});
 }

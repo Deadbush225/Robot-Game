@@ -1,6 +1,7 @@
 <script>
 	import Button from "./button.svelte";
 	import tv_man from "../assets/ui/tv man (1).gif";
+	import { soundManager } from "../Sounds";
 
 	export let message = "Robot Game!";
 	export let onStart = (characterProps) => {};
@@ -12,7 +13,8 @@
 			name: "TV man",
 			descriptions: ["Faster speed", "Lower health"],
 			speed: 350,
-			health: 130,
+			health: 100,
+			// health: 20,
 			gun: "pistol",
 			imgName: "character",
 		},
@@ -21,6 +23,7 @@
 			name: "Skibidi man",
 			descriptions: ["Lower speed", "Freezing Bullets"],
 			speed: 210,
+			// health: 20,
 			health: 400,
 			gun: "rifle",
 			imgName: "character",
@@ -30,6 +33,7 @@
 			name: "Toilet man",
 			descriptions: ["Life steal", "Lower speed"],
 			speed: 210,
+			// health: 20,
 			health: 150,
 			gun: "shotgun",
 			imgName: "character",
@@ -38,7 +42,7 @@
 
 	let selected = 1;
 	function select(number) {
-		console.log(number);
+		// console.log(number);
 		selected = number;
 	}
 </script>
@@ -51,6 +55,7 @@
 				<div
 					class="character-card"
 					onclick={() => {
+						soundManager.play("ui_select");
 						select(e);
 					}}
 					class:cselect={e === selected}

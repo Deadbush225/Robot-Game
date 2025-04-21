@@ -426,13 +426,6 @@ export class BossRangedEnemy extends RangedEnemy {
 		this.isBoss = true;
 	}
 
-	// update(character, deltaTime) {
-	// 	if (character.state == "dead") {
-	// 	}
-
-	// 	super.update();
-	// }
-
 	shootAt(character) {
 		// Shoot in all directions
 		// First bullet aimed directly at the character
@@ -463,7 +456,7 @@ export class BossRangedEnemy extends RangedEnemy {
 	}
 }
 
-export function spawnEnemy(spawn_origin_x, spawn_origin_y) {
+export function spawnEnemy(spawn_origin_x, spawn_origin_y, type) {
 	let spawnX, spawnY, coords;
 	// console.log(coords);
 	// const radius = 1000;
@@ -480,17 +473,45 @@ export function spawnEnemy(spawn_origin_x, spawn_origin_y) {
 	// console.log(`${spawnX} x ${spawnY}`);
 	// return { x: spawnX, y: spawnY };
 
-	const enemy = new BossRangedEnemy(
-		// spawnX,
-		coords.x,
-		coords.y
-		// 300,
-		// spawnY,
-		// 300,
-		// 200, // Speed
-		// 100, // Health
-		// 10 // Damage
-	);
+	let enemy;
+
+	if (type == 0)
+		enemy = new BossRangedEnemy(
+			// spawnX,
+			coords.x,
+			coords.y
+			// 300,
+			// spawnY,
+			// 300,
+			// 200, // Speed
+			// 100, // Health
+			// 10 // Damage
+		);
+	if (type == 1)
+		enemy = new RangedEnemy(
+			// spawnX,
+			coords.x,
+			coords.y,
+			// 300,
+			// spawnY,
+			// 300,
+			200, // Speed
+			100, // Health
+			20 // Damage
+		);
+	if (type == 2)
+		enemy = new MeleeEnemy(
+			// spawnX,
+			coords.x,
+			coords.y,
+			// 300,
+			// spawnY,
+			// 300,
+			200, // Speed
+			100, // Health
+			20 // Damage
+		);
+
 	// console.log(enemy);
 
 	return enemy;

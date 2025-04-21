@@ -20,8 +20,8 @@ function getBoundaryData(image) {
 
 	const imageData = context.getImageData(0, 0, image.width, image.height);
 
-	for (let y = 0; y < image.height; y++) {
-		for (let x = 0; x < image.width; x++) {
+	for (let y = 0; y < image.height; y += 5) {
+		for (let x = 0; x < image.width; x += 5) {
 			const index = (y * image.width + x) * 4; // RGBA index
 			const red = imageData.data[index];
 			const green = imageData.data[index + 1];
@@ -55,12 +55,43 @@ export function getAllowedCoordinates() {
 	return allowedCoordinates;
 }
 
+// List of rectangles to treat as blocked: {x, y, width, height, active}
+let tempBlockedRects = new Map();
+let tempBlockIdCounter = 1;
+
+export function addTempBlockedRect(rect) {
+	const id = tempBlockIdCounter++;
+	// rect._tempBlockId = id;
+	tempBlockedRects.set(id, rect);
+	return id;
+}
+
+export function removeTempBlockedRect(id) {
+	console.log("REMOVING TEMP BLOCKS");
+	console.log(tempBlockedRects);
+	tempBlockedRects.delete(id);
+	console.log(tempBlockedRects);
+}
+
 export function isBlocked(x, y) {
 	if (!boundaryData) return false; // Boundary data not loaded yet
 
 	// Scale the relative position to match the boundary map's resolution
 	const pixelX = Math.floor(x);
 	const pixelY = Math.floor(y);
+
+	// Check if (x, y) is inside any temp blocked rectangle
+	for (const rect of tempBlockedRects.values()) {
+		if (
+			rect.active && // Only block if active
+			pixelX >= rect.x &&
+			pixelX < rect.x + rect.width &&
+			pixelY >= rect.y &&
+			pixelY < rect.y + rect.height
+		) {
+			return true;
+		}
+	}
 
 	// Ensure the coordinates are within bounds
 	if (

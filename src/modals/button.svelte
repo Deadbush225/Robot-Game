@@ -1,9 +1,17 @@
 <script>
 	// export let text = "Button";
 	export let onClick = () => {};
+
+	import { soundManager } from "../Sounds";
 </script>
 
-<button class="button-skin" on:click={onClick}>
+<button
+	class="button-skin"
+	on:click={() => {
+		soundManager.play("ui_select");
+		onClick();
+	}}
+>
 	<span>
 		<slot></slot>
 	</span>

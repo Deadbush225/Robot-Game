@@ -6,6 +6,9 @@
 
 	import { isGameOver } from "./store";
 	import { onMount } from "svelte";
+
+	import { soundManager } from "./Sounds";
+
 	// let isGameOver = false;
 	let gameStarted = false;
 
@@ -53,6 +56,12 @@
 		// console.log(tileMap);
 	}
 
+	function handleUserInteraction() {
+		soundManager.play("bgm", true);
+		// Remove the event listener after first interaction
+		window.removeEventListener("click", handleUserInteraction);
+	}
+
 	onMount(() => {
 		assetLoader(() => {
 			loading = false;
@@ -62,10 +71,24 @@
 				console.error("Unable to initialize 2D context.");
 				return;
 			}
+
+			window.addEventListener("click", handleUserInteraction);
+			gameStart();
 		});
 	});
 
-	function gameStart(characterProps) {
+	function gameStart(
+		characterProps = {
+			name: "TV man",
+			descriptions: ["Faster speed", "Lower health"],
+			speed: 350,
+			health: 100,
+			// health: 20,
+			gun: "pistol",
+			imgName: "character",
+		}
+	) {
+		soundManager.setVolume("bgm", 1.0);
 		saved_characterProps = characterProps;
 
 		game = new Game(canvas, gl, characterProps);
@@ -122,7 +145,7 @@
 </script>
 
 <main>
-	{#if loading}
+	<!-- {#if loading}
 		<div class="loading-screen">
 			<h1>Loading...</h1>
 		</div>
@@ -137,7 +160,7 @@
 			onRestart={restartGame}
 			onQuit={quitGame}
 		/>
-	{/if}
+	{/if} -->
 	<div>
 		<canvas id="glCanvas" bind:this={canvas}></canvas>
 	</div>

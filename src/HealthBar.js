@@ -9,12 +9,13 @@ class HealthBar {
 
 		this.healthWidth = this.healthImg.width; // Default health width
 		this.health = health;
+		this.originalHealth = this.health;
 		this.setHealth(this.health);
 	}
 
 	updateHealth(amount) {
 		this.health += amount;
-		this.health = Math.max(0, Math.min(100, this.health));
+		this.health = Math.max(0, Math.min(this.originalHealthWidth, this.health));
 
 		this.setHealth(this.health);
 	}
@@ -22,10 +23,13 @@ class HealthBar {
 	setHealth(healthPercentage) {
 		// Update the health width based on the percentage (0 to 100)
 
-		healthPercentage = Math.max(0, Math.min(100, healthPercentage));
+		healthPercentage = Math.max(
+			0,
+			Math.min(this.originalHealth, healthPercentage)
+		);
 
 		this.healthWidth = Math.floor(
-			(healthPercentage / 100) * this.originalHealthWidth
+			(healthPercentage / this.originalHealth) * this.originalHealthWidth
 		);
 		console.log("HEALTH BAR: " + this.healthWidth);
 	}
