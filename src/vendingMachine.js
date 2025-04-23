@@ -44,8 +44,8 @@ export class VendingMachine {
 			this.frameHeight, // Source width, height
 			screenX,
 			screenY, // Destination x, y (centered)
-			this.frameWidth * this.scale,
-			this.frameHeight * this.scale // Destination width, height
+			this.frameWidth * 2.2,
+			this.frameHeight * 2.2 // Destination width, height
 		);
 	}
 

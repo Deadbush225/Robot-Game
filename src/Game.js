@@ -78,8 +78,8 @@ export default class Game {
 		this.gunMachine = new GunMachine();
 		this.coinManager = new CoinManager();
 		this.potionManager = new PotionManager();
-		this.vendingMachine = new VendingMachine(500, 150, this.gunMachine);
-		this.camera = new Camera(this.canvas, 1.5);
+		this.vendingMachine = new VendingMachine(170, 5424, this.gunMachine);
+		this.camera = new Camera(this.canvas);
 		this.character = new Character(
 			this.camera.scale,
 			this.healthBar,
@@ -184,6 +184,7 @@ export default class Game {
 		document.addEventListener("keydown", (e) => {
 			if (this.keys.hasOwnProperty(e.key)) {
 				this.keys[e.key] = true;
+				console.log("KEY: ", e.key);
 			}
 		});
 
@@ -226,7 +227,7 @@ export default class Game {
 				// console.log("ROWS: " + rows);
 			}
 
-			const bulletSpeed = 700; // px per second
+			const bulletSpeed = 500; // px per second
 			const spreadAngle = 5 * (Math.PI / 180); // Spread angle in radians (10 degrees)
 
 			const burstCount = gun.spread; // Number of bullets in the burst (must be odd)
@@ -387,35 +388,6 @@ export default class Game {
 			this.canvas.height // Destination height (stretch to fit canvas)
 		);
 
-		/* ━━━━━━━━━━━━━━━━━━━━━ Dotted Grid ━━━━━━━━━━━━━━━━━━━━ */
-		const gridGap = 100; // Gap between dots in pixels
-		const dotRadius = 2; // Radius of each dot
-
-		const endX = this.character.realX + this.camera.width / 2;
-		const endY = this.character.realY + this.camera.height / 2;
-
-		// Loop through the visible portion of the world to draw the grid CLUTCHED BY COPILOT
-		for (let x = 0; x <= endX; x += gridGap) {
-			for (let y = 0; y <= endY; y += gridGap) {
-				// Convert world coordinates to screen coordinates
-				// const screenX = this.camera.worldToScreen(x - this.character.realX);
-				// const screenY = this.camera.worldToScreen(y - this.character.realY);
-				const { x: screenX, y: screenY } = this.camera.worldToScreen(
-					x,
-					y,
-					this.character
-				);
-
-				// Draw the dot
-				this.gl.fillStyle = isBlocked(x, y)
-					? "rgba(255, 255, 255, 0.5)"
-					: "rgba(255, 0, 255, 0)"; // Semi-transparent white
-				this.gl.beginPath();
-				this.gl.arc(screenX, screenY, dotRadius, 0, Math.PI * 2); // Draw a small circle
-				this.gl.fill();
-			}
-		}
-
 		// Draw enemies
 		this.enemies.forEach((enemy) =>
 			enemy.draw(this.gl, this.camera, this.canvas, this.character)
@@ -455,10 +427,10 @@ export default class Game {
 
 		this.gl.drawImage(
 			this.character.currentGun.image,
-			(-this.gunImg.width * this.camera.scale * 1.2) / 2 + shakeX,
-			(-this.gunImg.height * this.camera.scale * 1.2) / 2 + shakeY,
-			this.gunImg.width * this.camera.scale * 1.2,
-			this.gunImg.height * this.camera.scale * 1.2
+			(-this.gunImg.width * 1.5 * 1.2) / 2 + shakeX,
+			(-this.gunImg.height * 1.5 * 1.2) / 2 + shakeY,
+			this.gunImg.width * 1.5 * 1.2,
+			this.gunImg.height * 1.5 * 1.2
 		);
 
 		if (this.character.face === 1) {
@@ -495,17 +467,17 @@ export default class Game {
 		this.vendingMachine.draw(this.gl, this.camera, this.character);
 
 		/* ━━━━━ Draw barriers or other elements if needed ━━━━ */
-		this.gl.drawImage(
-			this.barriersImg,
-			this.character.realX - this.camera.width / 2, // Source X (character centered horizontally)
-			this.character.realY - this.camera.height / 2, // Source Y (character centered vertically)
-			this.camera.width, // Source width
-			this.camera.height, // Source height
-			0, // Destination X
-			0, // Destination Y
-			this.canvas.width, // Destination width (stretch to fit canvas)
-			this.canvas.height // Destination height (stretch to fit canvas)
-		);
+		// this.gl.drawImage(
+		// 	this.barriersImg,
+		// 	this.character.realX - this.camera.width / 2, // Source X (character centered horizontally)
+		// 	this.character.realY - this.camera.height / 2, // Source Y (character centered vertically)
+		// 	this.camera.width, // Source width
+		// 	this.camera.height, // Source height
+		// 	0, // Destination X
+		// 	0, // Destination Y
+		// 	this.canvas.width, // Destination width (stretch to fit canvas)
+		// 	this.canvas.height // Destination height (stretch to fit canvas)
+		// );
 
 		this.healthBar.draw(this.gl);
 
@@ -531,6 +503,38 @@ export default class Game {
 		}
 
 		this.roomManager.draw(this.gl, this.camera, this.character);
+
+		/* ━━━━━━━━━━━━━━━━━━━━━ Dotted Grid ━━━━━━━━━━━━━━━━━━━━ */
+		const gridGap = 64; // Gap between dots in pixels
+		const dotRadius = 2; // Radius of each dot
+
+		const endX = this.character.realX + this.camera.width / 2;
+		const endY = this.character.realY + this.camera.height / 2;
+
+		// Loop through the visible portion of the world to draw the grid CLUTCHED BY COPILOT
+		for (let x = 32; x <= endX; x += gridGap) {
+			for (let y = 0; y <= endY; y += gridGap) {
+				// Convert world coordinates to screen coordinates
+				// const screenX = this.camera.worldToScreen(x - this.character.realX);
+				// const screenY = this.camera.worldToScreen(y - this.character.realY);
+				const { x: screenX, y: screenY } = this.camera.worldToScreen(
+					x,
+					y,
+					this.character
+				);
+
+				// Draw the dot
+				// this.gl.fillStyle = isBlocked(x, y)
+				// 	? "rgba(255, 255, 255, 0.5)"
+				// 	: "rgba(255, 0, 255, 0)"; // Semi-transparent white
+				this.gl.fillStyle = isBlocked(x, y)
+					? "rgba(255, 255, 255, 0.5)"
+					: "rgba(255, 0, 255, 1)"; // Semi-transparent white
+				this.gl.beginPath();
+				this.gl.arc(screenX, screenY, dotRadius, 0, Math.PI * 2); // Draw a small circle
+				this.gl.fill();
+			}
+		}
 	}
 
 	moveCharacter(deltaTime) {
@@ -556,7 +560,7 @@ export default class Game {
 				this.character.speed * speedMultiplier * deltaTime;
 
 			// Check collision at the new center-bottom position
-			if (!isBlocked(nextRealX - this.character.width, bottomY)) {
+			if (!isBlocked(nextRealX - this.character.width / 2, bottomY)) {
 				this.character.realX = nextRealX;
 				this.character.face = 1;
 			}
@@ -568,7 +572,7 @@ export default class Game {
 				this.character.speed * speedMultiplier * deltaTime;
 
 			// Check collision at the new center-bottom position
-			if (!isBlocked(nextRealX + this.character.width, bottomY)) {
+			if (!isBlocked(nextRealX + this.character.width / 2, bottomY)) {
 				this.character.realX = nextRealX;
 				this.character.face = 0;
 			}
@@ -592,7 +596,7 @@ export default class Game {
 				this.character.speed * speedMultiplier * deltaTime;
 
 			// Check collision at the new center-bottom position\
-			if (!isBlocked(centerX, nextRealY + this.character.height * 1.5)) {
+			if (!isBlocked(centerX, nextRealY + this.character.height / 2)) {
 				this.character.realY = nextRealY;
 			}
 		}

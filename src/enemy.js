@@ -375,7 +375,7 @@ export class RangedEnemy extends BaseEnemy {
 		const dx = character.realX - this.x;
 		const dy = character.realY - this.y;
 		const angle = Math.atan2(dy, dx);
-		const speed = 400;
+		const speed = 200;
 		this.projectiles.push({
 			x: this.x,
 			y: this.y,
@@ -478,7 +478,7 @@ export function spawnEnemy(spawn_origin_x, spawn_origin_y, type, room) {
 		isBlocked(coords.x + 200, coords.y)
 	); // Ensure the spawn point is not blocked
 
-	// console.log(`${spawnX} x ${spawnY}`);
+	console.log(`${coords.x} x ${coords.y}`);
 	// return { x: spawnX, y: spawnY };
 
 	let enemy;

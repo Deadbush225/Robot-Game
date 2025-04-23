@@ -33,8 +33,8 @@ class FloatingText {
 export class Character {
 	constructor(scale, healthBar, characterProps) {
 		this.img = assets[characterProps.imgName];
-		this.realX = 500; // Actual X position in pixels
-		this.realY = 500; // Actual Y position in pixels
+		this.realX = 422; // Actual X position in pixels
+		this.realY = 5674; // Actual Y position in pixels
 		this.gridX = 2; // Grid position (column)
 		this.gridY = 2; // Grid position (row)
 		this.width = 50;
@@ -57,6 +57,20 @@ export class Character {
 		this.currentGun = new Gun(characterProps.gun);
 		this.coins = 0;
 		this.isDashing = false;
+
+		this.animationMap = {
+			0: { frames: 6, speed: 200, sx: 0, sy: 0, sw: 64, sh: 64 }, // Standing
+			1: { frames: 3, speed: 100, sx: 0, sy: 128, sw: 64, sh: 64 }, // Walking
+			2: { frames: 6, speed: 200, sx: 0, sy: 0, sw: 64, sh: 64 }, // Standing (again)
+			3: {
+				frames: 4,
+				speed: 100,
+				sx: 15,
+				sy: 64 * 2 + 60 + 11,
+				sw: 31,
+				sh: 39,
+			}, // Killed
+		};
 	}
 
 	takeDamage(amount) {
@@ -103,20 +117,48 @@ export class Character {
 	}
 
 	draw(context, x, y) {
-		// Update and draw floating texts
-
 		this.updateState();
-		switch (this.state) {
-			case 3:
-				this.drawKilled(context, x, y);
-				break;
-			case 2:
-			case 0:
-				this.drawStanding(context, x, y);
-				break;
-			case 1:
-				this.drawWalking(context, x, y);
-				break;
+
+		// Map state to animation config
+
+		const anim = this.animationMap[this.state] || this.animationMap[0];
+		this.animateSprite(anim.frames, anim.speed);
+
+		let sx =
+			this.frame * frameWidth +
+			(this.state === 3 ? (this.isTakingDamage ? 384 : 0) : 0) +
+			(this.state === 3 ? 15 : 0);
+		let sy = anim.sy;
+		let sw = anim.sw;
+		let sh = anim.sh;
+
+		if (this.face === 1) {
+			context.save();
+			context.scale(-1, 1);
+			context.drawImage(
+				this.img,
+				sx,
+				sy,
+				sw,
+				sh,
+				-x - this.width,
+				y,
+				this.width * 1.5,
+				this.height * 1.5
+			);
+			context.restore();
+		} else {
+			context.drawImage(
+				this.img,
+				sx,
+				sy,
+				sw,
+				sh,
+				x,
+				y,
+				this.width * 1.5,
+				this.height * 1.5
+			);
 		}
 
 		this.floatingTexts = this.floatingTexts.filter((ft) => {
@@ -124,107 +166,6 @@ export class Character {
 			ft.draw(context, x, y);
 			return ft.alpha > 0;
 		});
-	}
-
-	drawKilled(context, x, y) {
-		this.animateSprite(4, 100);
-
-		if (this.face === 1) {
-			context.save(); // Save the current context state
-			context.scale(-1, 1); // Flip horizontally
-			context.drawImage(
-				this.img,
-				this.frame * frameWidth + 15 + (this.isTakingDamage ? 384 : 0), // Source X position (frame index * frame width)
-				64 * 2 + 60 + 11, // Source Y position (assuming single row sprite sheet)
-				31, // Source width
-				39, // Source height
-				-x - this.width, // Adjust X position for flipped image
-				y, // Destination Y position
-				this.width * this.camera_scale, // Destination width
-				this.height * this.camera_scale // Destination height
-			);
-
-			context.restore(); // Restore the context state
-		} else {
-			context.drawImage(
-				this.img,
-				this.frame * frameWidth + 15 + (this.isTakingDamage ? 384 : 0), // Source X position (frame index * frame width)
-				64 * 2 + 60 + 11, // Source Y position (assuming single row sprite sheet)
-				31, // Source width
-				39, // Source height
-				x, // Adjust X position for flipped image
-				y, // Destination Y position
-				this.width * this.camera_scale, // Destination width
-				this.height * this.camera_scale // Destination height
-			);
-		}
-	}
-
-	drawStanding(context, x, y) {
-		this.animateSprite(6, 200);
-
-		if (this.face === 1) {
-			context.save(); // Save the current context state
-			context.scale(-1, 1); // Flip horizontally
-			context.drawImage(
-				this.img,
-				this.frame * frameWidth /* +(this.isTakingDamage ? 384 : 0)*/, // Source X position (frame index * frame width)
-				0, // Source Y position (assuming single row sprite sheet)
-				64, // Source width
-				64, // Source height
-				-x - this.width, // Adjust X position for flipped image
-				y, // Destination Y position
-				this.width * this.camera_scale, // Destination width
-				this.height * this.camera_scale // Destination height
-			);
-
-			context.restore(); // Restore the context state
-		} else {
-			context.drawImage(
-				this.img,
-				this.frame * frameWidth /* + (this.isTakingDamage ? 384 : 0)*/, // Source X position (frame index * frame width)
-				0, // Source Y position (assuming single row sprite sheet)
-				64, // Source width
-				64, // Source height
-				x, // Adjust X position for flipped image
-				y, // Destination Y position
-				this.width * this.camera_scale, // Destination width
-				this.height * this.camera_scale // Destination height
-			);
-		}
-	}
-
-	drawWalking(context, x, y) {
-		this.animateSprite(3, 100);
-
-		if (this.face === 1) {
-			context.save(); // Save the current context state
-			context.scale(-1, 1); // Flip horizontally
-			context.drawImage(
-				this.img,
-				this.frame * frameWidth, // Source X position (frame index * frame width)
-				64 * 2, // Source Y position for walking animation
-				64, // Source width
-				64, // Source height
-				-x - this.width, // Adjust X position for flipped image
-				y, // Destination Y position
-				this.width * this.camera_scale, // Destination width
-				this.height * this.camera_scale // Destination height
-			);
-			context.restore(); // Restore the context state
-		} else {
-			context.drawImage(
-				this.img,
-				this.frame * frameWidth, // Source X position (frame index * frame width)
-				64 * 2, // Source Y position for walking animation
-				64, // Source width
-				64, // Source height
-				x, // Adjust X position for flipped image
-				y, // Destination Y position
-				this.width * this.camera_scale, // Destination width
-				this.height * this.camera_scale // Destination height
-			);
-		}
 	}
 
 	pickUpGun(newGun) {
