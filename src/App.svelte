@@ -7,7 +7,7 @@
 	import { isGameOver } from "./store";
 	import { onMount } from "svelte";
 
-	import { soundManager } from "./Sounds";
+	// import { soundManager } from "./Sounds";
 
 	// let isGameOver = false;
 	let gameStarted = false;
@@ -57,7 +57,7 @@
 	}
 
 	function handleUserInteraction() {
-		soundManager.play("bgm", true);
+		// soundManager.play("bgm", true);
 		// Remove the event listener after first interaction
 		window.removeEventListener("click", handleUserInteraction);
 	}
@@ -77,7 +77,7 @@
 		});
 	});
 
-	function gameStart(
+	function gameStart(characterProps) {
 		characterProps = {
 			name: "TV man",
 			descriptions: ["Faster speed", "Lower health"],
@@ -86,9 +86,8 @@
 			// health: 20,
 			gun: "pistol",
 			imgName: "character",
-		}
-	) {
-		soundManager.setVolume("bgm", 1.0);
+		};
+		// soundManager.setVolume("bgm", 1.0);
 		saved_characterProps = characterProps;
 
 		game = new Game(canvas, gl, characterProps);
@@ -152,7 +151,7 @@
 	{/if}
 	{#if !gameStarted && !loading}
 		<Menu onStart={gameStart}></Menu>
-	{/if}
+	{/if} -->
 
 	{#if $isGameOver}
 		<GameOver
@@ -160,7 +159,7 @@
 			onRestart={restartGame}
 			onQuit={quitGame}
 		/>
-	{/if} -->
+	{/if}
 	<div>
 		<canvas id="glCanvas" bind:this={canvas}></canvas>
 	</div>

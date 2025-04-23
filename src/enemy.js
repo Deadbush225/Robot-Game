@@ -42,7 +42,12 @@ const enemyFrameData = {
 };
 
 import { assets } from "./Assets";
-import { isBlocked, getAllowedCoordinates, getRandomAllowed } from "./boundary";
+import {
+	isBlocked,
+	getAllowedCoordinates,
+	getRandomAllowed,
+	getRandomAllowedRoom,
+} from "./boundary";
 
 class BaseEnemy {
 	constructor(x, y, speed, health, damage, frameData) {
@@ -456,13 +461,16 @@ export class BossRangedEnemy extends RangedEnemy {
 	}
 }
 
-export function spawnEnemy(spawn_origin_x, spawn_origin_y, type) {
+export function spawnEnemy(spawn_origin_x, spawn_origin_y, type, room) {
+	// implement summon only to the room coordinates
+
 	let spawnX, spawnY, coords;
 	// console.log(coords);
 	// const radius = 1000;
 
 	do {
-		coords = getRandomAllowed();
+		// coords = getRandomAllowed();
+		coords = getRandomAllowedRoom();
 	} while (
 		isBlocked(coords.x, coords.y) &&
 		isBlocked(coords.x, coords.y + 200) &&

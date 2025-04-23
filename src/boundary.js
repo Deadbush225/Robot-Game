@@ -1,13 +1,46 @@
+import { get } from "svelte/store";
 import boundary_map from "./assets/boundary-map.png";
+import { currentRoom } from "./store";
+import room_boundary from "./assets/rooms.png";
+
 const boundaryImg = new Image();
 boundaryImg.src = boundary_map;
 
+const roomImg = new Image();
+roomImg.src = room_boundary;
+
+let roomData;
 let boundaryData; // To store pixel data for collision detection
 
 let boundaryWidth;
 let boundaryHeight;
 
 let allowedCoordinates = [];
+
+export let rooms = {
+	topRight: {
+		positions: [],
+		doorPosition: { x: 2784, y: 1056, orientation: "Horizontal" },
+		cleared: false,
+		enemies: [],
+		x: 2496,
+		y: 96,
+		width: 1152,
+		height: 1056,
+		enemiesSpawned: false,
+	},
+	bottomRight: {
+		positions: [],
+		doorPosition: { x: 2400, y: 2016, orientation: "Vertical" },
+		cleared: false,
+		enemies: [],
+		x: 2496,
+		y: 1824,
+		width: 1152,
+		height: 1056,
+		enemiesSpawned: false,
+	},
+};
 
 function getBoundaryData(image) {
 	const canvas = document.createElement("canvas");
@@ -31,9 +64,17 @@ function getBoundaryData(image) {
 			if (red === 255 && green === 255 && blue === 255) {
 				allowedCoordinates.push({ x, y });
 			}
+			if (red === 59 && green === 226 && blue === 219) {
+				rooms.topRight.positions.push({ x, y });
+			} else if (red === 47 && green === 173 && blue === 168) {
+				rooms.bottomRight.positions.push({ x, y });
+			}
+			// } else if (red === 47 && green === 173 && blue === 168) {
+			// 	rooms.bottomLeft.positions.push({ x, y });
+			// }
 		}
 	}
-	// console.log(allowedCoordinates[0]);
+	// console.log(rooms.topRight.positions);
 
 	return imageData;
 }
@@ -45,9 +86,20 @@ boundaryImg.onload = () => {
 	boundaryHeight = boundaryData.height;
 };
 
+roomImg.onload = () => {
+	roomData = getBoundaryData(roomImg);
+};
+
 export function getRandomAllowed() {
 	return allowedCoordinates[
 		Math.floor(Math.random() * allowedCoordinates.length)
+	];
+}
+
+export function getRandomAllowedRoom() {
+	console.log("CURRENT ROOM: " + get(currentRoom));
+	return rooms[get(currentRoom)].positions[
+		Math.floor(Math.random() * rooms[get(currentRoom)].positions.length)
 	];
 }
 
@@ -59,6 +111,11 @@ export function getAllowedCoordinates() {
 let tempBlockedRects = new Map();
 let tempBlockIdCounter = 1;
 
+export function clearAllTempBlockedRects() {
+	tempBlockedRects.clear();
+}
+
+// why is there multiple (3) doors added even though we only add (2)
 export function addTempBlockedRect(rect) {
 	const id = tempBlockIdCounter++;
 	// rect._tempBlockId = id;
@@ -69,6 +126,7 @@ export function addTempBlockedRect(rect) {
 export function removeTempBlockedRect(id) {
 	console.log("REMOVING TEMP BLOCKS");
 	console.log(tempBlockedRects);
+	tempBlockedRects.get(id).active = false;
 	tempBlockedRects.delete(id);
 	console.log(tempBlockedRects);
 }
