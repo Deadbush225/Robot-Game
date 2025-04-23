@@ -14,6 +14,8 @@ import { get } from "svelte/store";
 import { VendingMachine } from "./vendingMachine";
 import Door from "./Door";
 
+import { soundManager } from "./Sounds";	
+
 export default class Game {
 	constructor(canvas, gl, characterProps) {
 		this.canvas = canvas;
@@ -59,6 +61,10 @@ export default class Game {
 			a: false,
 			s: false,
 			d: false,
+			W: false,
+			A: false,
+			S: false,
+			D: false,
 			" ": false,
 		};
 		this.setupEventListeners();
@@ -122,6 +128,20 @@ export default class Game {
 		this.resizeCanvas();
 		// this.setupEventListeners();
 		this.startGameLoop();
+	}
+
+	pause() {
+		this.isPaused = true;
+		console.log("Game is now paused");
+		// Pause all sounds
+		soundManager.pauseAll();
+	}
+	
+	resume() {
+		this.isPaused = false;
+		console.log("Game is now resumed");
+		// Resume sounds
+		soundManager.resumeAll();
 	}
 
 	createLevel(level) {
@@ -280,6 +300,11 @@ export default class Game {
 
 		const gameLoop = () => {
 			if (get(isGameOver)) {
+				return;
+			}
+
+			if (this.isPaused) {
+				requestAnimationFrame(gameLoop); // Keep the loop running but skip updates
 				return;
 			}
 
@@ -546,7 +571,7 @@ export default class Game {
 		// console.log(this.keys);
 
 		// Horizontal movement
-		if (this.keys.ArrowLeft || this.keys.a) {
+		if (this.keys.ArrowLeft || this.keys.a || this.keys.A) {
 			const nextRealX =
 				this.character.realX -
 				this.character.speed * speedMultiplier * deltaTime;
@@ -558,7 +583,7 @@ export default class Game {
 			}
 		}
 
-		if (this.keys.ArrowRight || this.keys.d) {
+		if (this.keys.ArrowRight || this.keys.d || this.keys.D) {
 			const nextRealX =
 				this.character.realX +
 				this.character.speed * speedMultiplier * deltaTime;
@@ -571,7 +596,7 @@ export default class Game {
 		}
 
 		// Vertical movement
-		if (this.keys.ArrowUp || this.keys.w) {
+		if (this.keys.ArrowUp || this.keys.w || this.keys.W) {
 			const nextRealY =
 				this.character.realY -
 				this.character.speed * speedMultiplier * deltaTime;
@@ -582,7 +607,7 @@ export default class Game {
 			}
 		}
 
-		if (this.keys.ArrowDown || this.keys.s) {
+		if (this.keys.ArrowDown || this.keys.s || this.keys.S) {
 			const nextRealY =
 				this.character.realY +
 				this.character.speed * speedMultiplier * deltaTime;
@@ -606,7 +631,11 @@ export default class Game {
 			this.keys.a ||
 			this.keys.d ||
 			this.keys.w ||
-			this.keys.s
+			this.keys.s ||
+			this.keys.A ||
+			this.keys.D ||
+			this.keys.W ||
+			this.keys.S
 		) {
 			this.character.state = 1;
 		} else if (this.character.state != 2) {

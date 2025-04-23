@@ -52,14 +52,18 @@ export let assets = {
 	vDoor: vertical_door_src,
 };
 
-export let music = {
-	plasmaShoot: { src: plasmaShoot_src, audio: null, volume: 0.7 },
+// separated bgm and sfx para madaling ma-toggle
+export let bgm = {
 	bgm: { src: bgm_src, audio: null, volume: 0.3 },
-	ui_select: { src: ui_select_src, audio: null, volume: 0.7 },
 };
+export let sfx = {
+	plasmaShoot: { src: plasmaShoot_src, audio: null, volume: 0.7 },
+	ui_select: { src: ui_select_src, audio: null, volume: 0.7 },
+}
+
 
 let loadedCount = 0;
-let totalAssets = Object.keys(assets).length + Object.keys(music).length;
+let totalAssets = Object.keys(assets).length + Object.keys(bgm).length + Object.keys(sfx).length;
 
 function updateCount(onAssetsLoaded) {
 	// console.log("Loaded: " + key);
@@ -73,25 +77,33 @@ function updateCount(onAssetsLoaded) {
 }
 
 export function assetLoader(onAssetsLoaded) {
-	console.log(assets);
+    // Load images
+    Object.keys(assets).forEach((key) => {
+        const img = new Image();
+        img.src = assets[key];
+        img.onload = () => {
+            updateCount(onAssetsLoaded);
+        };
+        assets[key] = img;
+    });
 
-	Object.keys(assets).forEach((key) => {
-		const img = new Image();
-		img.src = assets[key];
-		img.onload = () => {
-			updateCount(onAssetsLoaded);
-		};
-		assets[key] = img;
-	});
+    // Load BGM
+    Object.keys(bgm).forEach((key) => {
+        const audio = new Audio(bgm[key].src);
+        audio.volume = bgm[key].volume;
+        audio.oncanplaythrough = () => {
+            updateCount(onAssetsLoaded);
+        };
+        bgm[key].audio = audio;
+    });
 
-	Object.keys(music).forEach((key) => {
-		const audio = new Audio(music[key].src);
-		audio.volume = music[key].volume;
-		// audio.volume = 1;
-		// audio.volume = 0.03;
-		audio.oncanplaythrough = () => {
-			updateCount(onAssetsLoaded);
-		};
-		music[key].audio = audio;
-	});
+    // Load SFX
+    Object.keys(sfx).forEach((key) => {
+        const audio = new Audio(sfx[key].src);
+        audio.volume = sfx[key].volume;
+        audio.oncanplaythrough = () => {
+            updateCount(onAssetsLoaded);
+        };
+        sfx[key].audio = audio;
+    });
 }
