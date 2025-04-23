@@ -15,7 +15,7 @@ class HealthBar {
 
 	updateHealth(amount) {
 		this.health += amount;
-		this.health = Math.max(0, Math.min(this.originalHealthWidth, this.health));
+		this.health = Math.max(0, Math.min(this.originalHealth, this.health));
 
 		this.setHealth(this.health);
 	}

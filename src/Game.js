@@ -12,7 +12,8 @@ import Camera from "./Camera";
 import { isGameOver } from "./store";
 import { get } from "svelte/store";
 import { VendingMachine } from "./vendingMachine";
-import Door from "./Door";
+// import Door from "./Door";
+import { RoomManager } from "./rooms";
 
 import { soundManager } from "./Sounds";	
 
@@ -93,8 +94,10 @@ export default class Game {
 		this.enemies = [];
 		this.bullets = [];
 
+		this.roomManager = new RoomManager();
+
 		// this.door = new Door(1152, 287, "Vertical", this.camera, this.character);
-		this.door = new Door(2784, 1056, "Horizontal", this.camera, this.character);
+		// this.door = new Door(2784, 1056, "Horizontal", this.camera, this.character);
 
 		// this.enemySpawnInterval = setInterval(() => {
 		// 	if (this.enemies.length < 20) {
@@ -385,7 +388,8 @@ export default class Game {
 
 		this.potionManager.update(deltaTime);
 
-		this.door.update();
+		// this.door.update();
+		this.roomManager.update(this);
 	}
 
 	draw() {
@@ -551,7 +555,7 @@ export default class Game {
 			this.gl.restore();
 		}
 
-		this.door.draw(this.gl, this.camera, this.character);
+		this.roomManager.draw(this.gl, this.camera, this.character);
 	}
 
 	moveCharacter(deltaTime) {
@@ -653,10 +657,10 @@ export default class Game {
 		// 	const enemy = spawnEnemy(this.character.realX, this.character.realY, 1);
 		// 	this.enemies.push(enemy);
 		// }
-		for (let i = 0; i < count; i++) {
-			const enemy = spawnEnemy(this.character.realX, this.character.realY, 2);
-			this.enemies.push(enemy);
-		}
+		// for (let i = 0; i < count; i++) {
+		// 	const enemy = spawnEnemy(this.character.realX, this.character.realY, 2);
+		// 	this.enemies.push(enemy);
+		// }
 		console.log(this.enemies);
 	}
 
@@ -691,8 +695,12 @@ export default class Game {
 					bulletIndex--; // Adjust index due to bullet removal
 					if (enemy.health <= 0) {
 						enemy.state = "killed"; // Mark enemy as killed
+						const enemyToRemove = enemy;
 						setTimeout(() => {
-							enemies.splice(enemyIndex, 1);
+							const idx = enemies.indexOf(enemyToRemove);
+							if (idx !== -1) {
+								enemies.splice(idx, 1);
+							}
 						}, 7000);
 					}
 

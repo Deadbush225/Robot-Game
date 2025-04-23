@@ -10,6 +10,7 @@
 	import { soundManager } from "./Sounds";
 	import { togglePause, toggleMusic, toggleSFX } from "./pauseMenu";
 
+
 	// let isGameOver = false;
 	let gameStarted = false;
 	let isPaused = false;
@@ -61,10 +62,10 @@
 	}
 
 	function handleUserInteraction() {
-		soundManager.play("bgm", true, "bgm");
-		// Remove the event listener after first interaction
-		window.removeEventListener("click", handleUserInteraction);
-	}
+    soundManager.play("bgm", true, "bgm");
+    // Remove the event listener after first interaction
+    window.removeEventListener("click", handleUserInteraction);
+  }
 
 	onMount(() => {
 		assetLoader(() => {
@@ -164,7 +165,7 @@
 	{/if}
 	{#if !gameStarted && !loading}
 		<Menu onStart={gameStart}></Menu>
-	{/if}
+	{/if} -->
 
 	{#if $isGameOver}
 		<GameOver
@@ -172,7 +173,7 @@
 			onRestart={restartGame}
 			onQuit={quitGame}
 		/>
-	{/if} -->
+	{/if}
 	<div>
 		<canvas id="glCanvas" bind:this={canvas}></canvas>
 	</div>

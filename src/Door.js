@@ -41,14 +41,16 @@ export default class Door {
 		this.doorId = addTempBlockedRect(this.doorRect);
 
 		// Start timer to open after 10 seconds
-		setTimeout(() => {
-			// this.state = "opening";
-			// this.openStartTime = performance.now();
-			this.openDoor();
-		}, 10000);
-		console.log("width: ", this.width, " ", "height: ", this.height);
+		// setTimeout(() => {
+		// 	// this.state = "opening";
+		// 	// this.openStartTime = performance.now();
+		// 	this.openDoor();
+		// }, 10000);
+		// console.log("width: ", this.width, " ", "height: ", this.height);
 	}
 	openDoor() {
+		console.log("CLOSING DOOR:");
+		console.log(this.doorId);
 		this.state = "opening";
 		removeTempBlockedRect(this.doorId);
 	}
