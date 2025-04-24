@@ -371,7 +371,7 @@ export default class Game {
 	draw() {
 		this.gl.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		/* ━━━━━━━━━━━━━━━ Set the fill color ━━━━━━━━━━━━━━━━━━━ */
-		this.gl.fillStyle = "#849198";
+		this.gl.fillStyle = "#131b32";
 		this.gl.fillRect(0, 0, this.canvas.width, this.canvas.height); // Fill the entire canvas
 
 		/* ━━━━━━━━━━━━━━━━━━━ Draw the map ━━━━━━━━━━━━━━━━━━━━━ */
@@ -539,19 +539,39 @@ export default class Game {
 
 	moveCharacter(deltaTime) {
 		const centerX = this.character.realX + this.character.width / 2;
-		const bottomY = this.character.realY + this.character.height;
+		const bottomY = this.character.realY + this.character.height / 2;
 		// const centerX = character.realX;
 		// const bottomY = character.realY;
 		// Simple dash: just increase speed when space is held
+
+		this.character.moveTime += deltaTime;
+
 		let speedMultiplier = 1;
-		// if (!this.character.isDashing) {
-		if (this.keys[" "]) {
-			this.character.isDashing = true;
-			speedMultiplier = 4;
-			// this.character.state = 2; // dashing state
+
+		// Dash/cooldown timer update
+		if (this.character.dashTimer > 0) {
+			this.character.dashTimer -= deltaTime;
+			if (this.character.isDashing && this.character.dashTimer <= 0) {
+				// Dash just ended, start cooldown
+				this.character.isDashing = false;
+				this.character.dashTimer = this.character.dashCooldown;
+			}
 		}
-		// }
-		// console.log(this.keys);
+
+		// Start dash if space is pressed, not dashing, and not cooling down
+		if (
+			this.keys[" "] &&
+			!this.character.isDashing &&
+			this.character.dashTimer <= 0
+		) {
+			this.character.isDashing = true;
+			this.character.dashTimer = this.character.dashDuration;
+		}
+
+		// Apply dash speed if dashing
+		if (this.character.isDashing) {
+			speedMultiplier = 4;
+		}
 
 		// Horizontal movement
 		if (this.keys.ArrowLeft || this.keys.a) {

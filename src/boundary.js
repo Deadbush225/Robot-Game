@@ -18,17 +18,49 @@ let boundaryHeight;
 let allowedCoordinates = [];
 
 export let rooms = {
-	start: {
+	// basic: {
+	// 	positions: [],
+	// 	doorPosition: { x: 320, y: 4096, orientation: "Horizontal" },
+	// 	cleared: false,
+	// 	enemies: [],
+	// 	x: 95, // 1px outside the colored room coords
+	// 	y: 4189, //
+	// 	width: 706,
+	// 	height: 605,
+	// 	enemiesSpawned: false,
+	// 	summons: {
+	// 		range: { number: 5 },
+	// 	},
+	// },
+	// enemy_1_01: {
+	// 	positions: [],
+	// 	doorPosition: { x: 320, y: 2880, orientation: "Horizontal" },
+	// 	cleared: false,
+	// 	enemies: [],
+	// 	x: 95,
+	// 	y: 2935,
+	// 	width: 706,
+	// 	height: 605,
+	// 	enemiesSpawned: false,
+	// 	summons: {
+	// 		range: { number: 5 },
+	// 	},
+	// },
+	enemy_1_02: {
 		positions: [],
-		doorPosition: { x: 192, y: 4160, orientation: "Horizontal" },
+		doorPosition: { x: 800, y: 1888 - 32 - 1, orientation: "Vertical" },
 		cleared: false,
 		enemies: [],
 		x: 95,
-		y: 4189,
+		y: 1721,
 		width: 706,
 		height: 605,
 		enemiesSpawned: false,
+		summons: {
+			range: { number: 5 },
+		},
 	},
+
 	// bottomRight: {
 	// 	positions: [],
 	// 	doorPosition: { x: 2400, y: 2016, orientation: "Vertical" },
@@ -66,7 +98,13 @@ function getBoundaryData(image) {
 				allowedCoordinates.push({ x, y });
 			} else if (red === 255 && green === 119 && blue === 119) {
 				// console.log("ADDING");
-				rooms.start.positions.push({ x, y });
+				rooms.basic.positions.push({ x, y });
+			} else if (red === 230 && green === 95 && blue === 95) {
+				// rgb(230, 95, 95)
+				rooms.enemy_1_01.positions.push({ x, y });
+			} else if (red === 177 && green === 82 && blue === 82) {
+				// rgb(177, 82, 82)
+				rooms.enemy_1_02.positions.push({ x, y });
 			}
 			// if (
 			// 	!(red === 255 && green === 255 && blue === 255) &&
@@ -85,7 +123,7 @@ function getBoundaryData(image) {
 			// }
 		}
 	}
-	console.log(rooms.start.positions);
+	// console.log(rooms.start.positions);
 
 	return imageData;
 }

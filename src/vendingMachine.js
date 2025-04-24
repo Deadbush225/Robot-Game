@@ -47,6 +47,23 @@ export class VendingMachine {
 			this.frameWidth * 2.2,
 			this.frameHeight * 2.2 // Destination width, height
 		);
+		// Draw a dot at the vending machine origin (for debugging)
+		// gl.save();
+		// gl.fillStyle = "red";
+		// gl.beginPath();
+		// gl.arc(screenX, screenY, 5, 0, Math.PI * 2);
+		// gl.fill();
+		// gl.restore();
+		// gl.save();
+		// gl.strokeStyle = "yellow";
+		// gl.lineWidth = 2;
+		// gl.strokeRect(
+		// 	screenX,
+		// 	screenY - this.frameHeight / 2,
+		// 	(this.frameWidth / 2) * 2.2,
+		// 	this.frameHeight * 2.2
+		// );
+		// gl.restore();
 	}
 
 	isOverlapping(character) {
@@ -62,10 +79,10 @@ export class VendingMachine {
 		const characterPoint = { x: character.realX, y: character.realY };
 
 		const vendingBounds = {
-			left: this.x - this.frameWidth * this.scale,
-			right: this.x + this.frameWidth * 4,
-			top: this.y + 11,
-			bottom: this.y + this.frameHeight * this.scale,
+			left: this.x,
+			right: this.x + (this.frameWidth / 2) * 2.2,
+			top: this.y - this.frameHeight / 2,
+			bottom: this.y + this.frameHeight * 2.2 - this.frameHeight / 2,
 		};
 
 		if (

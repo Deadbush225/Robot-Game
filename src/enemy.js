@@ -297,6 +297,10 @@ export class RangedEnemy extends BaseEnemy {
 			proj.x += proj.dx * deltaTime;
 			proj.y += proj.dy * deltaTime;
 
+			if (isBlocked(proj.x, proj.y)) {
+				this.projectiles.splice(index, 1);
+			}
+
 			const projRadius = 10;
 			const charRadius = character.radius || 30; // Adjust as needed
 			const dist = Math.hypot(

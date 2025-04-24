@@ -33,8 +33,8 @@ class FloatingText {
 export class Character {
 	constructor(scale, healthBar, characterProps) {
 		this.img = assets[characterProps.imgName];
-		this.realX = 422; // Actual X position in pixels
-		this.realY = 5674; // Actual Y position in pixels
+		this.realX = 295; // Actual X position in pixels
+		this.realY = 5689; // Actual Y position in pixels
 		this.gridX = 2; // Grid position (column)
 		this.gridY = 2; // Grid position (row)
 		this.width = 50;
@@ -55,8 +55,14 @@ export class Character {
 		this.damageTimer = 0; // Timer to control the duration of the damaged state
 		this.healthBar = healthBar;
 		this.currentGun = new Gun(characterProps.gun);
-		this.coins = 0;
+		this.coins = 1000;
+
+		this.moveTime = 0;
+
 		this.isDashing = false;
+		this.dashDuration = 0.1; // seconds (100ms)
+		this.dashCooldown = 2.0; // seconds (1000ms)
+		this.dashTimer = 0; // time left for dash or cooldown
 
 		this.animationMap = {
 			0: { frames: 6, speed: 200, sx: 0, sy: 0, sw: 64, sh: 64 }, // Standing
