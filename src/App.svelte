@@ -1,25 +1,24 @@
 <script>
 	import { assetLoader } from "./Assets";
+	import Game from "./Game";
+
+	import Paused from "./modals/paused.svelte";
 	import GameOver from "./modals/gameover.svelte";
 	import Menu from "./modals/menu.svelte";
-	import Game from "./Game";
+	import Button from "./modals/button.svelte";
 
 	import { isGameOver } from "./store";
 	import { onMount } from "svelte";
 
 	import { soundManager } from "./Sounds";
-	import { togglePause, toggleMusic, toggleSFX } from "./pauseMenu";
-
+	import { togglePause } from "./pauseMenu";
 
 	// let isGameOver = false;
 	let gameStarted = false;
 	let isPaused = false;
-	let musicEnabled = true;
-	let sfxEnabled = true;
+	// let musicEnabled = true;
+	// let sfxEnabled = true;
 
-	let tileMap = [];
-	let gridRows;
-	let gridCols;
 	let loading = true;
 
 	let canvas, gl, game;
@@ -35,37 +34,11 @@
 		console.log("Quit game");
 	}
 
-	function initializeGrid(context) {
-		// gridRows = Math.floor(canvas.height / 50);
-		// gridCols = Math.floor(canvas.width / 50);
-		// tileMap = Array.from({ length: gridRows }, (_, rowIndex) =>
-		// 	Array.from({ length: gridCols }, (_, colIndex) => ({
-		// 		floor: 1, // Default floor type
-		// 		object: (() => {
-		// 			if (colIndex === 0 || colIndex === gridCols - 1) {
-		// 				return 4; // Walls on the left and right edges
-		// 			}
-		// 			if (rowIndex === 0 || rowIndex === gridRows - 1) {
-		// 				return 3; // Walls on the top and bottom edges
-		// 			}
-		// 			return 0; // Default case
-		// 		})(),
-		// 		character: false,
-		// 	}))
-		// );
-		// console.log(tileMap);
-		// // Add specific objects or walls
-		// // tileMap[2][2].object = 2; // Example: Add an object at (2, 2)
-		// // tileMap[3][3].object = 3; // Example: Add a wall at (3, 3)
-		// tileMap[character.gridY][character.gridX].character = true;
-		// console.log(tileMap);
-	}
-
 	function handleUserInteraction() {
-    soundManager.play("bgm", true, "bgm");
-    // Remove the event listener after first interaction
-    window.removeEventListener("click", handleUserInteraction);
-  }
+		soundManager.play("bgm", true, "bgm");
+		// Remove the event listener after first interaction
+		window.removeEventListener("click", handleUserInteraction);
+	}
 
 	onMount(() => {
 		assetLoader(() => {
@@ -89,7 +62,6 @@
 		});
 	});
 
-
 	function gameStart(characterProps) {
 		// characterProps = {
 		// 	name: "TV man",
@@ -109,52 +81,6 @@
 		gameStarted = true;
 		isPaused = false;
 	}
-
-	// canvas.addEventListener("mousedown", (event) => {
-	// 	// Debugging: Summon 10 bullets in all 360 directions
-	// 	// const bulletX = character.realX + (character.width * 1) / 5;
-	// 	// const bulletY = character.realY + (character.height * 2) / 5;
-	// 	const bulletX = character.realX;
-	// 	const bulletY = character.realY;
-	// 	// console.log(`BULLET ORIGIN: ${bulletX} x ${bulletY}`);
-
-	// 	const bulletSpeed = 10;
-	// 	const totalBullets = 10;
-
-	// 	for (let i = 0; i < totalBullets; i++) {
-	// 		const angle = (i * 2 * Math.PI) / totalBullets; // Divide 360 degrees into equal parts
-	// 		const bulletDx = Math.cos(angle) * bulletSpeed;
-	// 		const bulletDy = Math.sin(angle) * bulletSpeed;
-
-	// 		const newBullet = {
-	// 			x: bulletX,
-	// 			y: bulletY,
-	// 			dx: bulletDx,
-	// 			dy: bulletDy,
-	// 			angle: angle,
-	// 		};
-
-	// 		if (!character.bullets) {
-	// 			character.bullets = [];
-	// 		}
-	// 		character.bullets.push(newBullet);
-	// 	}
-	// });
-
-	// mapImg.onload = () => {
-	// let enemy = spawnEnemy(character.realX, character.realY);
-	// enemies.push(enemy);
-
-	// function gameLoop() {
-	// moveBox();
-
-	// drawBox();
-
-	// requestAnimationFrame(gameLoop);
-	// }
-
-	// requestAnimationFrame(gameLoop);
-	// };
 </script>
 
 <main>
@@ -163,6 +89,17 @@
 			<h1>Loading...</h1>
 		</div>
 	{/if}
+
+	{#if isPaused}
+		<Paused
+			onGamePause={() => {
+				isPaused = togglePause(game);
+				console.log("Paused: ", isPaused);
+			}}
+			{restartGame}
+		></Paused>
+	{/if}
+
 	{#if !gameStarted && !loading}
 		<Menu onStart={gameStart}></Menu>
 	{/if}
@@ -178,30 +115,17 @@
 		<canvas id="glCanvas" bind:this={canvas}></canvas>
 	</div>
 
-
 	<!-- Pause Button -->
-    {#if gameStarted && !isPaused && !$isGameOver}
-        <div class="pause-button">
-            <button on:click={() => (isPaused = togglePause(game))}>Pause</button>
-        </div>
-    {/if}
-    
-    <!-- Pause Menu -->
-    {#if gameStarted && isPaused && !$isGameOver}
-        <div class="pause-menu">
-            <h2>Game Paused</h2>
-            <div class="menu-buttons">
-                <button on:click={() => (isPaused = togglePause(game))}>Resume</button>
-                <button on:click={restartGame}>Restart</button>
-                <button on:click={() => (musicEnabled = toggleMusic())}>
-                    {musicEnabled ? "Mute Music" : "Unmute Music"}
-                </button>
-                <button on:click={() => (sfxEnabled = toggleSFX())}>
-                    {sfxEnabled ? "Mute SFX" : "Unmute SFX"}
-                </button>
-            </div>
-        </div>
-    {/if}
+	{#if gameStarted && !isPaused && !$isGameOver}
+		<div class="pause-button">
+			<Button
+				onClick={() => {
+					isPaused = togglePause(game);
+					console.log("Paused: ", isPaused);
+				}}>Pause</Button
+			>
+		</div>
+	{/if}
 </main>
 
 <style>
@@ -227,55 +151,17 @@
 	}
 
 	.pause-button {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-    }
-    
-    .pause-button button {
-        padding: 8px 16px;
-        background-color: #444;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    
-    .pause-menu {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.7);
-        color: white;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        z-index: 50;
-    }
-    
-    .menu-buttons {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-top: 20px;
-    }
-    
-    .menu-buttons button {
-        padding: 10px 20px;
-        background-color: #555;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: background-color 0.2s;
-        width: 200px;
-    }
-    
-    .menu-buttons button:hover {
-        background-color: #777;
-    }
+		position: absolute;
+		top: 20px;
+		right: 20px;
+	}
+
+	.pause-button button {
+		padding: 8px 16px;
+		background-color: #444;
+		color: white;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+	}
 </style>
