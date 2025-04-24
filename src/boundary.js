@@ -9,7 +9,7 @@ boundaryImg.src = boundary_map;
 const roomImg = new Image();
 roomImg.src = room_boundary;
 
-let roomData;
+let roomData; // stores it per room
 let boundaryData; // To store pixel data for collision detection
 
 let boundaryWidth;
@@ -18,28 +18,60 @@ let boundaryHeight;
 let allowedCoordinates = [];
 
 export let rooms = {
-	topRight: {
+	// basic: {
+	// 	positions: [],
+	// 	doorPosition: { x: 320, y: 4096, orientation: "Horizontal" },
+	// 	cleared: false,
+	// 	enemies: [],
+	// 	x: 95, // 1px outside the colored room coords
+	// 	y: 4189, //
+	// 	width: 706,
+	// 	height: 605,
+	// 	enemiesSpawned: false,
+	// 	summons: {
+	// 		range: { number: 5 },
+	// 	},
+	// },
+	// enemy_1_01: {
+	// 	positions: [],
+	// 	doorPosition: { x: 320, y: 2880, orientation: "Horizontal" },
+	// 	cleared: false,
+	// 	enemies: [],
+	// 	x: 95,
+	// 	y: 2935,
+	// 	width: 706,
+	// 	height: 605,
+	// 	enemiesSpawned: false,
+	// 	summons: {
+	// 		range: { number: 5 },
+	// 	},
+	// },
+	enemy_1_02: {
 		positions: [],
-		doorPosition: { x: 2784, y: 1056, orientation: "Horizontal" },
+		doorPosition: { x: 800, y: 1888 - 32 - 1, orientation: "Vertical" },
 		cleared: false,
 		enemies: [],
-		x: 2496,
-		y: 96,
-		width: 1152,
-		height: 1056,
+		x: 95,
+		y: 1721,
+		width: 706,
+		height: 605,
 		enemiesSpawned: false,
+		summons: {
+			range: { number: 5 },
+		},
 	},
-	bottomRight: {
-		positions: [],
-		doorPosition: { x: 2400, y: 2016, orientation: "Vertical" },
-		cleared: false,
-		enemies: [],
-		x: 2496,
-		y: 1824,
-		width: 1152,
-		height: 1056,
-		enemiesSpawned: false,
-	},
+
+	// bottomRight: {
+	// 	positions: [],
+	// 	doorPosition: { x: 2400, y: 2016, orientation: "Vertical" },
+	// 	cleared: false,
+	// 	enemies: [],
+	// 	x: 2496,
+	// 	y: 1824,
+	// 	width: 1152,
+	// 	height: 1056,
+	// 	enemiesSpawned: false,
+	// },
 };
 
 function getBoundaryData(image) {
@@ -48,13 +80,14 @@ function getBoundaryData(image) {
 
 	canvas.width = image.width;
 	canvas.height = image.height;
+	// console.log(image.width, image.height);
 
 	context.drawImage(image, 0, 0);
 
 	const imageData = context.getImageData(0, 0, image.width, image.height);
 
-	for (let y = 0; y < image.height; y += 5) {
-		for (let x = 0; x < image.width; x += 5) {
+	for (let y = 0; y < image.height; y += 20) {
+		for (let x = 0; x < image.width; x += 20) {
 			const index = (y * image.width + x) * 4; // RGBA index
 			const red = imageData.data[index];
 			const green = imageData.data[index + 1];
@@ -63,18 +96,34 @@ function getBoundaryData(image) {
 			// Check if the pixel is white (R=255, G=255, B=255)
 			if (red === 255 && green === 255 && blue === 255) {
 				allowedCoordinates.push({ x, y });
+			} else if (red === 255 && green === 119 && blue === 119) {
+				// console.log("ADDING");
+				rooms.basic.positions.push({ x, y });
+			} else if (red === 230 && green === 95 && blue === 95) {
+				// rgb(230, 95, 95)
+				rooms.enemy_1_01.positions.push({ x, y });
+			} else if (red === 177 && green === 82 && blue === 82) {
+				// rgb(177, 82, 82)
+				rooms.enemy_1_02.positions.push({ x, y });
 			}
-			if (red === 59 && green === 226 && blue === 219) {
-				rooms.topRight.positions.push({ x, y });
-			} else if (red === 47 && green === 173 && blue === 168) {
-				rooms.bottomRight.positions.push({ x, y });
-			}
+			// if (
+			// 	!(red === 255 && green === 255 && blue === 255) &&
+			// 	!(red === 0 && green === 0 && blue === 0)
+			// ) {
+			// 	console.log(
+			// 		`Non-white/non-black pixel at (${x}, ${y}): R=${red}, G=${green}, B=${blue}`
+			// 	);
+			// }
+
+			// else if (red === 47 && green === 173 && blue === 168) {
+			// 	rooms.bottomRight.positions.push({ x, y });
+			// }
 			// } else if (red === 47 && green === 173 && blue === 168) {
 			// 	rooms.bottomLeft.positions.push({ x, y });
 			// }
 		}
 	}
-	// console.log(rooms.topRight.positions);
+	// console.log(rooms.start.positions);
 
 	return imageData;
 }
@@ -87,7 +136,7 @@ boundaryImg.onload = () => {
 };
 
 roomImg.onload = () => {
-	roomData = getBoundaryData(roomImg);
+	getBoundaryData(roomImg);
 };
 
 export function getRandomAllowed() {

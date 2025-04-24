@@ -12,29 +12,29 @@ export default class Door {
 		this.frameDuration = 200; // ms per frame
 		this.state = "locked";
 		this.openStartTime = null;
-		this.currentFrame = 8;
+		this.currentFrame = 0;
 		this.lastFrameTime = 0;
 
 		this.img = orientation == "Vertical" ? assets.vDoor : assets.hDoor;
 
 		this.width = this.img.width;
 		this.height = this.img.height;
-		this.frameWidth = orientation == "Vertical" ? 96 : 96 * 6;
+		this.frameWidth = orientation == "Vertical" ? 58 : 32 * 8;
 
 		if (orientation == "Vertical") {
 			this.doorRect = {
-				x: this.x + 96 - 24,
+				x: this.x,
 				y: this.y,
-				width: 24,
+				width: 58,
 				height: this.height,
 				active: true,
 			};
 		} else {
 			this.doorRect = {
 				x: this.x,
-				y: this.y + 96 - 24,
+				y: this.y,
 				width: this.width,
-				height: 24,
+				height: 58,
 				active: true,
 			};
 		}
@@ -63,10 +63,10 @@ export default class Door {
 		let now = performance.now();
 		if (this.state === "opening") {
 			if (now - this.lastFrameTime > this.frameDuration) {
-				this.currentFrame--;
+				this.currentFrame++;
 				this.lastFrameTime = now;
 				if (this.currentFrame < 0) {
-					this.currentFrame = 0;
+					this.currentFrame = 9;
 					this.state = "open";
 				}
 			}
@@ -84,26 +84,26 @@ export default class Door {
 			if (this.state === "locked") {
 				ctx.drawImage(
 					this.img,
-					this.frameWidth * 7,
+					32 + this.frameWidth * 0,
 					0,
 					this.frameWidth,
 					this.height,
 					x,
 					y + 1,
-					this.frameWidth / 1.5,
-					this.height / 1.5
+					this.frameWidth * 1.2,
+					this.height * 1.2
 				);
 			} else if (this.state === "opening") {
 				ctx.drawImage(
 					this.img,
-					0 + this.currentFrame * 96,
+					32 + this.currentFrame * 8 * 32,
 					0,
 					this.frameWidth,
 					this.height,
 					x,
 					y + 1,
-					this.frameWidth / 1.5,
-					this.height / 1.5
+					this.frameWidth * 1.2,
+					this.height * 1.2
 				);
 			}
 		} else {
@@ -111,26 +111,26 @@ export default class Door {
 			if (this.state === "locked") {
 				ctx.drawImage(
 					this.img,
-					this.frameWidth * 7,
+					this.frameWidth * 0,
 					0,
 					this.frameWidth,
 					this.height,
 					x,
 					y + 1,
-					this.frameWidth / 1.5,
-					this.height / 1.5
+					this.frameWidth * 1.2,
+					this.height * 1.2
 				);
 			} else if (this.state === "opening") {
 				ctx.drawImage(
 					this.img,
-					0 + this.currentFrame * 6 * 96,
+					0 + this.currentFrame * 8 * 32,
 					0,
 					this.frameWidth,
 					this.height,
 					x,
 					y + 1,
-					this.frameWidth / 1.5,
-					this.height / 1.5
+					this.frameWidth * 1.2,
+					this.height * 1.2
 				);
 			}
 		}

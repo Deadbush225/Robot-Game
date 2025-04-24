@@ -89,18 +89,18 @@
 		});
 	});
 
-	function gameStart(
-		characterProps = {
-			name: "TV man",
-			descriptions: ["Faster speed", "Lower health"],
-			speed: 350,
-			health: 100,
-			// health: 20,
-			gun: "pistol",
-			imgName: "character",
-		}
-	) {
-		soundManager.setVolume("bgm", 0.3, "bgm");
+
+	function gameStart(characterProps) {
+		// characterProps = {
+		// 	name: "TV man",
+		// 	descriptions: ["Faster speed", "Lower health"],
+		// 	speed: 350,
+		// 	health: 100,
+		// 	// health: 20,
+		// 	gun: "shotgun",
+		// 	imgName: "character",
+		// };
+		// soundManager.setVolume("bgm", 1.0);
 		saved_characterProps = characterProps;
 
 		game = new Game(canvas, gl, characterProps);
@@ -158,14 +158,14 @@
 </script>
 
 <main>
-	<!-- {#if loading}
+	{#if loading}
 		<div class="loading-screen">
 			<h1>Loading...</h1>
 		</div>
 	{/if}
 	{#if !gameStarted && !loading}
 		<Menu onStart={gameStart}></Menu>
-	{/if} -->
+	{/if}
 
 	{#if $isGameOver}
 		<GameOver

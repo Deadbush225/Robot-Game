@@ -1,4 +1,5 @@
 import map from "./assets/map.png";
+// import map from "./assets/boundary-map.png";
 import barriers_map from "./assets/barriers.png";
 // import bulletsrc from "./assets/bullet.png";
 import healthsrc from "./assets/health.png";

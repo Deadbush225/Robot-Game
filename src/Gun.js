@@ -62,11 +62,18 @@ export class Gun {
 		this.bullet = gunProps.bullet;
 		this.spread = gunProps.spread;
 		this.rows = gunProps.rows;
+		this.size = 50 * 1.2;
 	}
 
 	// Draw the gun on the ground
-	draw(gl, x, y, size = 50) {
-		gl.drawImage(this.image, x - size / 2, y - size / 2, size, size);
+	draw(gl, x, y) {
+		gl.drawImage(
+			this.image,
+			x - this.size / 2,
+			y - this.size / 2,
+			this.size,
+			this.size
+		);
 	}
 }
 

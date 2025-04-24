@@ -1,5 +1,5 @@
 export default class Camera {
-	constructor(canvas, scale = 1.5) {
+	constructor(canvas, scale = 1.2) {
 		this.canvas = canvas;
 		this.scale = scale;
 		this.width = 0;
@@ -9,8 +9,8 @@ export default class Camera {
 	}
 
 	resize(mapWidth, mapHeight) {
-		this.width = this.canvas.width * this.scale;
-		this.height = this.canvas.height * this.scale;
+		this.width = this.canvas.width / this.scale;
+		this.height = this.canvas.height / this.scale;
 		this.width_scale = mapWidth / this.width;
 		this.height_scale = mapHeight / this.height;
 	}
