@@ -7,10 +7,15 @@
 	import { isGameOver } from "./store";
 	import { onMount } from "svelte";
 
-	// import { soundManager } from "./Sounds";
+	import { soundManager } from "./Sounds";
+	import { togglePause, toggleMusic, toggleSFX } from "./pauseMenu";
+
 
 	// let isGameOver = false;
 	let gameStarted = false;
+	let isPaused = false;
+	let musicEnabled = true;
+	let sfxEnabled = true;
 
 	let tileMap = [];
 	let gridRows;
@@ -57,10 +62,10 @@
 	}
 
 	function handleUserInteraction() {
-		// soundManager.play("bgm", true);
-		// Remove the event listener after first interaction
-		window.removeEventListener("click", handleUserInteraction);
-	}
+    soundManager.play("bgm", true, "bgm");
+    // Remove the event listener after first interaction
+    window.removeEventListener("click", handleUserInteraction);
+  }
 
 	onMount(() => {
 		assetLoader(() => {
@@ -75,7 +80,15 @@
 			window.addEventListener("click", handleUserInteraction);
 			gameStart();
 		});
+
+		// Set up keyboard event for ESC key
+		window.addEventListener("keydown", (e) => {
+			if (e.key === "Escape" && gameStarted) {
+				isPaused = togglePause(game);
+			}
+		});
 	});
+
 
 	function gameStart(characterProps) {
 		// characterProps = {
@@ -94,6 +107,7 @@
 		game.createLevel(1);
 
 		gameStarted = true;
+		isPaused = false;
 	}
 
 	// canvas.addEventListener("mousedown", (event) => {
@@ -163,6 +177,31 @@
 	<div>
 		<canvas id="glCanvas" bind:this={canvas}></canvas>
 	</div>
+
+
+	<!-- Pause Button -->
+    {#if gameStarted && !isPaused && !$isGameOver}
+        <div class="pause-button">
+            <button on:click={() => (isPaused = togglePause(game))}>Pause</button>
+        </div>
+    {/if}
+    
+    <!-- Pause Menu -->
+    {#if gameStarted && isPaused && !$isGameOver}
+        <div class="pause-menu">
+            <h2>Game Paused</h2>
+            <div class="menu-buttons">
+                <button on:click={() => (isPaused = togglePause(game))}>Resume</button>
+                <button on:click={restartGame}>Restart</button>
+                <button on:click={() => (musicEnabled = toggleMusic())}>
+                    {musicEnabled ? "Mute Music" : "Unmute Music"}
+                </button>
+                <button on:click={() => (sfxEnabled = toggleSFX())}>
+                    {sfxEnabled ? "Mute SFX" : "Unmute SFX"}
+                </button>
+            </div>
+        </div>
+    {/if}
 </main>
 
 <style>
@@ -186,4 +225,57 @@
 		align-items: center;
 		font-size: 2rem;
 	}
+
+	.pause-button {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+    }
+    
+    .pause-button button {
+        padding: 8px 16px;
+        background-color: #444;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    .pause-menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 50;
+    }
+    
+    .menu-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    
+    .menu-buttons button {
+        padding: 10px 20px;
+        background-color: #555;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        width: 200px;
+    }
+    
+    .menu-buttons button:hover {
+        background-color: #777;
+    }
 </style>
