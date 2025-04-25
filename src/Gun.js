@@ -25,7 +25,8 @@ function initializeGuns() {
 			rows: 0,
 		},
 		shotgun: {
-			damage: 15,
+			damage: 1000,
+			// damage: 15,
 			fireRate: 1,
 			range: 200,
 			imageSrc: assets.blaster,

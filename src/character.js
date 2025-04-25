@@ -55,7 +55,7 @@ export class Character {
 		this.damageTimer = 0; // Timer to control the duration of the damaged state
 		this.healthBar = healthBar;
 		this.currentGun = new Gun(characterProps.gun);
-		this.coins = 1000;
+		this.coins = 0;
 
 		this.moveTime = 0;
 

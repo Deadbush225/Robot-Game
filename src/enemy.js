@@ -1,47 +1,201 @@
-const enemyFrameData = {
-	idle: [
-		{ x: 0, y: 30, width: 64, height: 75 },
-		{ x: 64, y: 30, width: 64, height: 75 },
-		{ x: 128, y: 30, width: 64, height: 75 },
-		{ x: 192, y: 30, width: 64, height: 75 },
-		{ x: 256, y: 30, width: 64, height: 75 },
-		{ x: 320, y: 30, width: 64, height: 75 },
-		{ x: 384, y: 30, width: 64, height: 75 },
-		{ x: 448, y: 30, width: 64, height: 75 },
-	],
-	running: [
-		{ x: 0, y: 30, width: 64, height: 75 },
-		{ x: 64, y: 30, width: 64, height: 75 },
-		{ x: 128, y: 30, width: 64, height: 75 },
-		{ x: 192, y: 30, width: 64, height: 75 },
-		{ x: 256, y: 30, width: 64, height: 75 },
-		{ x: 320, y: 30, width: 64, height: 75 },
-		{ x: 384, y: 30, width: 64, height: 75 },
-		{ x: 448, y: 30, width: 64, height: 75 },
-	],
-	attacking: [
-		{ x: 0, y: 159, width: 64, height: 75 },
-		{ x: 64, y: 159, width: 64, height: 75 },
-		{ x: 128, y: 159, width: 64, height: 75 },
-		{ x: 192, y: 159, width: 64, height: 75 },
-		{ x: 256, y: 159, width: 64, height: 75 },
-		{ x: 320, y: 159, width: 64, height: 75 },
-		{ x: 384, y: 159, width: 64, height: 75 },
-		{ x: 448, y: 159, width: 64, height: 75 },
-	],
-	// damaged: [{ x: 0, y: 192, width: 64, height: 64 }],
-	killed: [
-		{ x: 0, y: 287, width: 64, height: 128 },
-		{ x: 64, y: 287, width: 64, height: 128 },
-		{ x: 128, y: 287, width: 64, height: 128 },
-		{ x: 192, y: 287, width: 64, height: 128 },
-		{ x: 256, y: 287, width: 64, height: 128 },
-		{ x: 320, y: 287, width: 64, height: 128 },
-	],
-	dead: [{ x: 320, y: 287, width: 64, height: 128 }],
-};
-
 import { assets } from "./Assets";
+// idle and running uses the same frames
+let robotGirlFrameData, iceCubeFrameData, heaterFrameData, fridgeFrameData;
+function load() {
+	robotGirlFrameData = {
+		width: 64,
+		height: 75,
+		frameData: {
+			idle: [
+				{ x: 0, y: 30, width: 64, height: 75 },
+				{ x: 64, y: 30, width: 64, height: 75 },
+				{ x: 128, y: 30, width: 64, height: 75 },
+				{ x: 192, y: 30, width: 64, height: 75 },
+				{ x: 256, y: 30, width: 64, height: 75 },
+				{ x: 320, y: 30, width: 64, height: 75 },
+				{ x: 384, y: 30, width: 64, height: 75 },
+				{ x: 448, y: 30, width: 64, height: 75 },
+			],
+			running: [
+				{ x: 0, y: 30, width: 64, height: 75 },
+				{ x: 64, y: 30, width: 64, height: 75 },
+				{ x: 128, y: 30, width: 64, height: 75 },
+				{ x: 192, y: 30, width: 64, height: 75 },
+				{ x: 256, y: 30, width: 64, height: 75 },
+				{ x: 320, y: 30, width: 64, height: 75 },
+				{ x: 384, y: 30, width: 64, height: 75 },
+				{ x: 448, y: 30, width: 64, height: 75 },
+			],
+			attacking: [
+				{ x: 0, y: 159, width: 64, height: 75 },
+				{ x: 64, y: 159, width: 64, height: 75 },
+				{ x: 128, y: 159, width: 64, height: 75 },
+				{ x: 192, y: 159, width: 64, height: 75 },
+				{ x: 256, y: 159, width: 64, height: 75 },
+				{ x: 320, y: 159, width: 64, height: 75 },
+				{ x: 384, y: 159, width: 64, height: 75 },
+				{ x: 448, y: 159, width: 64, height: 75 },
+			],
+			// damaged: [{ x: 0, y: 192, width: 64, height: 64 }],
+			killed: [
+				{ x: 0, y: 287, width: 64, height: 128 },
+				{ x: 64, y: 287, width: 64, height: 128 },
+				{ x: 128, y: 287, width: 64, height: 128 },
+				{ x: 192, y: 287, width: 64, height: 128 },
+				{ x: 256, y: 287, width: 64, height: 128 },
+				{ x: 320, y: 287, width: 64, height: 128 },
+			],
+			dead: [{ x: 320, y: 287, width: 64, height: 128 }],
+		},
+		src: assets.enemy,
+	};
+
+	iceCubeFrameData = {
+		width: 128,
+		height: 128,
+		frameData: {
+			idle: [
+				{ x: 0, y: 0, width: 128, height: 128 },
+				{ x: 128, y: 0, width: 128, height: 128 },
+				{ x: 256, y: 0, width: 128, height: 128 },
+				{ x: 384, y: 0, width: 128, height: 128 },
+				{ x: 512, y: 0, width: 128, height: 128 },
+				{ x: 640, y: 0, width: 128, height: 128 },
+				{ x: 768, y: 0, width: 128, height: 128 },
+				{ x: 896, y: 0, width: 128, height: 128 },
+				{ x: 1024, y: 0, width: 128, height: 128 },
+				{ x: 1152, y: 0, width: 128, height: 128 },
+			],
+			running: [
+				{ x: 0, y: 0, width: 128, height: 128 },
+				{ x: 128, y: 0, width: 128, height: 128 },
+				{ x: 256, y: 0, width: 128, height: 128 },
+				{ x: 384, y: 0, width: 128, height: 128 },
+				{ x: 512, y: 0, width: 128, height: 128 },
+				{ x: 640, y: 0, width: 128, height: 128 },
+				{ x: 768, y: 0, width: 128, height: 128 },
+				{ x: 896, y: 0, width: 128, height: 128 },
+				{ x: 1024, y: 0, width: 128, height: 128 },
+				{ x: 1152, y: 0, width: 128, height: 128 },
+			],
+			attacking: [
+				{ x: 0, y: 0, width: 128, height: 128 },
+				{ x: 128, y: 0, width: 128, height: 128 },
+				{ x: 256, y: 0, width: 128, height: 128 },
+				{ x: 384, y: 0, width: 128, height: 128 },
+				{ x: 512, y: 0, width: 128, height: 128 },
+				{ x: 640, y: 0, width: 128, height: 128 },
+				{ x: 768, y: 0, width: 128, height: 128 },
+				{ x: 896, y: 0, width: 128, height: 128 },
+				{ x: 1024, y: 0, width: 128, height: 128 },
+				{ x: 1152, y: 0, width: 128, height: 128 },
+				{ x: 1280, y: 0, width: 128, height: 128 },
+				{ x: 1408, y: 0, width: 128, height: 128 },
+				{ x: 1536, y: 0, width: 128, height: 128 },
+				{ x: 1664, y: 0, width: 128, height: 128 },
+			],
+			// damaged: [{ x: 0, y: 192, width: 64, height: 64 }],
+			killed: [
+				{ x: 0, y: 0, width: 128, height: 128 },
+				{ x: 128, y: 0, width: 128, height: 128 },
+				{ x: 256, y: 0, width: 128, height: 128 },
+				{ x: 384, y: 0, width: 128, height: 128 },
+				{ x: 512, y: 0, width: 128, height: 128 },
+				{ x: 640, y: 0, width: 128, height: 128 },
+				{ x: 768, y: 0, width: 128, height: 128 },
+				{ x: 896, y: 0, width: 128, height: 128 },
+				{ x: 1024, y: 0, width: 128, height: 128 },
+			],
+			dead: [{ x: 1024, y: 0, width: 128, height: 128 }],
+		},
+		src: assets.ice_cube,
+	};
+
+	heaterFrameData = {
+		width: 97,
+		height: 97,
+		frameData: {
+			idle: [
+				{ x: 22, y: 10, width: 97, height: 97 },
+				{ x: 150, y: 10, width: 97, height: 97 },
+				{ x: 278, y: 10, width: 97, height: 97 },
+				{ x: 406, y: 10, width: 97, height: 97 },
+			],
+			running: [
+				{ x: 22, y: 138, width: 97, height: 97 },
+				{ x: 150, y: 138, width: 97, height: 97 },
+				{ x: 278, y: 138, width: 97, height: 97 },
+				{ x: 406, y: 138, width: 97, height: 97 },
+			],
+			attacking: [
+				{ x: 22, y: 266, width: 97, height: 97 },
+				{ x: 150, y: 266, width: 97, height: 97 },
+				{ x: 278, y: 266, width: 97, height: 97 },
+				{ x: 406, y: 266, width: 97, height: 97 },
+				{ x: 534, y: 266, width: 97, height: 97 },
+				{ x: 662, y: 266, width: 97, height: 97 },
+				{ x: 790, y: 266, width: 97, height: 97 },
+				{ x: 918, y: 266, width: 97, height: 97 },
+			],
+			// damaged: [{ x: 0, y: 192, width: 64, height: 64 }],
+			killed: [
+				{ x: 22, y: 394, width: 97, height: 97 },
+				{ x: 150, y: 394, width: 97, height: 97 },
+				{ x: 278, y: 394, width: 97, height: 97 },
+			],
+			dead: [{ x: 278, y: 394, width: 97, height: 97 }],
+		},
+		src: assets.toaster,
+	};
+
+	fridgeFrameData = {
+		width: 64,
+		height: 64,
+		frameData: {
+			idle: [
+				{ x: 0, y: 0, width: 64, height: 64 },
+				{ x: 64, y: 0, width: 64, height: 64 },
+				{ x: 128, y: 0, width: 64, height: 64 },
+				{ x: 192, y: 0, width: 64, height: 64 },
+				{ x: 256, y: 0, width: 64, height: 64 },
+				{ x: 320, y: 0, width: 64, height: 64 },
+				{ x: 384, y: 0, width: 64, height: 64 },
+				{ x: 448, y: 0, width: 64, height: 64 },
+			],
+			running: [
+				{ x: 0, y: 128, width: 64, height: 64 },
+				{ x: 64, y: 128, width: 64, height: 64 },
+				{ x: 128, y: 128, width: 64, height: 64 },
+			],
+			attacking: [
+				{ x: 0, y: 64, width: 64, height: 64 },
+				{ x: 64, y: 64, width: 64, height: 64 },
+				{ x: 128, y: 64, width: 64, height: 64 },
+				{ x: 192, y: 64, width: 64, height: 64 },
+				{ x: 256, y: 64, width: 64, height: 64 },
+				{ x: 320, y: 64, width: 64, height: 64 },
+				{ x: 384, y: 64, width: 64, height: 64 },
+				{ x: 448, y: 64, width: 64, height: 64 },
+				{ x: 512, y: 64, width: 64, height: 64 },
+				{ x: 576, y: 64, width: 64, height: 64 },
+				{ x: 640, y: 64, width: 64, height: 64 },
+				{ x: 704, y: 64, width: 64, height: 64 },
+			],
+			// damaged: [{ x: 0, y: 192, width: 64, height: 64 }],
+			killed: [
+				{ x: 0, y: 192, width: 64, height: 64 },
+				{ x: 64, y: 192, width: 64, height: 64 },
+				{ x: 128, y: 192, width: 64, height: 64 },
+				{ x: 192, y: 192, width: 64, height: 64 },
+				{ x: 256, y: 192, width: 64, height: 64 },
+				{ x: 320, y: 192, width: 64, height: 64 },
+			],
+			dead: [{ x: 320, y: 192, width: 64, height: 64 }],
+		},
+		src: assets.ref,
+	};
+}
+
 import {
 	isBlocked,
 	getAllowedCoordinates,
@@ -51,6 +205,7 @@ import {
 
 class BaseEnemy {
 	constructor(x, y, speed, health, damage, frameData) {
+		load();
 		this.x = x; // Enemy's world X position
 		this.y = y; // Enemy's world Y position
 		this.speed = speed; // Movement speed
@@ -67,11 +222,13 @@ class BaseEnemy {
 		this.face = 0;
 		this.damageTimer = 0;
 
-		this.spriteSheet = assets.enemy; // The sprite sheet image
-		this.frameData = enemyFrameData; // Frame data for each state
-		this.sWidth = 64 * 1.4;
-		this.sHeight = 75 * 1.4;
+		this.spriteSheet = frameData.src; // The sprite sheet image
+		this.frameData = frameData; // Frame data for each state
+		this.sWidth = this.frameData.width * 1.4;
+		this.sHeight = this.frameData.height * 1.4;
 		this.isBoss = false;
+
+		this.type = "";
 	}
 
 	updateState() {
@@ -103,7 +260,7 @@ class BaseEnemy {
 			(canvas.height / camera.height);
 
 		// Get the current frame data
-		const frame = this.frameData[this.state][this.currentFrame];
+		const frame = this.frameData.frameData[this.state][this.currentFrame];
 		if (!frame) {
 			// console.log("FRAME IS UNDEFINED");
 			// console.log(`[${this.state}][${this.currentFrame}]`);
@@ -119,9 +276,9 @@ class BaseEnemy {
 		// Draw the current frame from the sprite sheet
 		let offset = 0;
 		if (this.froze) {
-			offset += 512 * 2;
+			offset += this.spriteSheet.width * 2;
 		} else if (this.isTakingdamage) {
-			offset += 512;
+			offset += this.spriteSheet.width;
 		}
 
 		gl.drawImage(
@@ -161,23 +318,51 @@ class BaseEnemy {
 		gl.fillRect(barX, barY, filledWidth, barHeight);
 
 		// Draw a circle at the enemy's position for debugging purposes
-		// gl.beginPath();
-		// gl.arc(screenX, screenY, 10, 0, Math.PI * 2);
-		// gl.fillStyle = "red";
-		// gl.fill();
-		// gl.closePath();
+		gl.beginPath();
+		gl.arc(screenX, screenY, 10, 0, Math.PI * 2);
+		gl.fillStyle = "red";
+		gl.fill();
+		gl.closePath();
+
+		// Draw a rectangle offset from the enemy's position
+
+		// const rectX = screenX + this.sWidth / 2 - rectWidth / 2;
+		// const rectY = screenY + this.sHeight / 2;
+		// Draw a hollow circle 50px from the center of the enemy
+		gl.beginPath();
+		gl.arc(
+			screenX + this.sWidth / 2,
+			screenY + this.sHeight / 2,
+			50,
+			0,
+			Math.PI * 2
+		);
+		gl.strokeStyle = "rgba(0,0,0,0.5)";
+		gl.lineWidth = 2;
+		gl.stroke();
+		gl.closePath();
 	}
 }
 
 export default class MeleeEnemy extends BaseEnemy {
 	constructor(x, y, speed, health, damage, options = {}) {
+		let frameData;
+		console.log(options);
+		switch (options.skinVersion) {
+			case 1:
+				frameData = fridgeFrameData;
+				break;
+			case 2:
+				frameData = heaterFrameData;
+				break;
+		}
 		super(
 			x,
 			y,
 			speed,
 			health,
-			damage
-			// frameData: options.frameData || enemyFrameData,
+			damage,
+			frameData
 			// spriteSheet: options.spriteSheet || assets.enemy,
 			// sWidth: options.sWidth || 64 * 1.4,
 			// sHeight: options.sHeight || 75 * 1.4,
@@ -191,8 +376,8 @@ export default class MeleeEnemy extends BaseEnemy {
 		}
 		this.updateState();
 		// Calculate distance to the character
-		const dx = character.realX - this.x;
-		const dy = character.realY - this.y;
+		const dx = character.realX + character.width - this.x;
+		const dy = character.realY + character.width - this.y;
 		if (dx > 0) this.face = 0;
 		else this.face = 1;
 
@@ -201,13 +386,13 @@ export default class MeleeEnemy extends BaseEnemy {
 		if (this.health <= 0) {
 			if (
 				this.state === "killed" &&
-				this.currentFrame === this.frameData["killed"].length - 1
+				this.currentFrame === this.frameData.frameData["killed"].length - 1
 			) {
 				this.state = "dead"; // Transition to "dead" state
 			} else if (this.state !== "dead") {
 				this.state = "killed"; // Set state to "killed"
 			}
-		} else if (distance < 50) {
+		} else if (distance < 10) {
 			// Attack the character if close enough
 			this.state = "attacking";
 			character.takeDamage(this.damage);
@@ -219,20 +404,16 @@ export default class MeleeEnemy extends BaseEnemy {
 			const nextY = this.y + Math.sin(angle) * this.speed * deltaTime;
 
 			// Check if the next position is blocked
-			if (!isBlocked(nextX - 100, nextY)) {
+			if (!isBlocked(nextX, nextY)) {
 				this.x = nextX;
 				this.y = nextY;
+			} else if (!isBlocked(nextX, this.y)) {
+				this.x = nextX;
+			} else if (!isBlocked(this.x, nextY)) {
+				this.y = nextY;
 			} else {
-				// If blocked, try to find an alternative direction
-				// const allowedCoords = getAllowedCoordinates(this.x, this.y);
-				// if (allowedCoords.length > 0) {
-				//     const { x: altX, y: altY } = getRandomAllowed(allowedCoords);
-				//     this.x = altX;
-				//     this.y = altY;
-				// } else {
-				// If no alternative path, stay idle
+				// If both axes are blocked, stay idle
 				this.state = "idle";
-				// }
 			}
 		} else {
 			// Idle if too far from the character
@@ -241,14 +422,14 @@ export default class MeleeEnemy extends BaseEnemy {
 		}
 
 		// Update animation frame
-		if (this.frameData[this.state]) {
+		if (this.frameData.frameData[this.state]) {
 			this.frameTimer += 16;
 			if (this.frameTimer > this.frameInterval) {
 				this.frameTimer = 0;
 				this.currentFrame++;
 
 				// Handle animation transitions
-				if (this.currentFrame >= this.frameData[this.state].length) {
+				if (this.currentFrame >= this.frameData.frameData[this.state].length) {
 					if (this.state === "killed") {
 						this.state = "dead"; // Transition to "dead" state
 					} else {
@@ -266,13 +447,23 @@ export default class MeleeEnemy extends BaseEnemy {
 // ──────────────── Ranged Enemy ────────────────
 export class RangedEnemy extends BaseEnemy {
 	constructor(x, y, speed, health, damage, options = {}) {
+		let frameData;
+		switch (options.skinVersion) {
+			case 1:
+				frameData = robotGirlFrameData;
+				break;
+			case 2:
+				frameData = iceCubeFrameData;
+				break;
+		}
+
 		super(
 			x,
 			y,
 			speed,
 			health,
-			damage
-			// frameData: options.frameData || enemyFrameData,
+			damage,
+			frameData
 			// spriteSheet: options.spriteSheet || assets.enemy,
 			// sWidth: options.sWidth || 64 * 1.4,
 			// sHeight: options.sHeight || 75 * 1.4,
@@ -328,7 +519,7 @@ export class RangedEnemy extends BaseEnemy {
 		if (this.health <= 0) {
 			if (
 				this.state === "killed" &&
-				this.currentFrame === this.frameData["killed"].length - 1
+				this.currentFrame === this.frameData.frameData["killed"].length - 1
 			) {
 				this.state = "dead"; // Transition to "dead" state
 			} else if (this.state !== "dead") {
@@ -346,10 +537,16 @@ export class RangedEnemy extends BaseEnemy {
 			const angle = Math.atan2(dy, dx);
 			const nextX = this.x + Math.cos(angle) * this.speed * deltaTime;
 			const nextY = this.y + Math.sin(angle) * this.speed * deltaTime;
-			if (!isBlocked(nextX - 100, nextY)) {
+			// Check if the next position is blocked
+			if (!isBlocked(nextX, nextY)) {
 				this.x = nextX;
 				this.y = nextY;
+			} else if (!isBlocked(nextX, this.y)) {
+				this.x = nextX;
+			} else if (!isBlocked(this.x, nextY)) {
+				this.y = nextY;
 			} else {
+				// If both axes are blocked, stay idle
 				this.state = "idle";
 			}
 		} else {
@@ -357,12 +554,12 @@ export class RangedEnemy extends BaseEnemy {
 		}
 
 		// Animation frame update (same as MeleeEnemy)
-		if (this.frameData[this.state]) {
+		if (this.frameData.frameData[this.state]) {
 			this.frameTimer += 16;
 			if (this.frameTimer > this.frameInterval) {
 				this.frameTimer = 0;
 				this.currentFrame++;
-				if (this.currentFrame >= this.frameData[this.state].length) {
+				if (this.currentFrame >= this.frameData.frameData[this.state].length) {
 					if (this.state === "killed") {
 						this.state = "dead";
 					} else {
@@ -404,7 +601,7 @@ export class RangedEnemy extends BaseEnemy {
 			gl.translate(screenX, screenY);
 			gl.rotate(proj.angle);
 			gl.drawImage(
-				assets.bullet_rifle2,
+				assets.bullet_red,
 				-16, // Center the image horizontally (assuming 32x32 image)
 				-16, // Center the image vertically
 				32,
@@ -416,19 +613,20 @@ export class RangedEnemy extends BaseEnemy {
 }
 
 export class BossRangedEnemy extends RangedEnemy {
-	constructor(x, y, speed = 100, health = 700, damage = 20) {
+	constructor(x, y, speed = 100, health = 700, damage = 20, options = {}) {
 		super(
 			x,
 			y,
 			speed,
 			health,
-			damage
+			damage,
 			// options.speed || 100,
 			// options.health || 500,
 			// options.damage || 20,
 			// {
 			// 	...options,
 			// }
+			options
 		);
 
 		this.multiShot = 8;
@@ -441,10 +639,10 @@ export class BossRangedEnemy extends RangedEnemy {
 		const dx = character.realX - this.x;
 		const dy = character.realY - this.y;
 		const baseAngle = Math.atan2(dy, dx);
-		const speed = 400;
+		const speed = 250;
 		this.projectiles.push({
 			x: this.x,
-			y: this.y,
+			y: this.y - this.sHeight / 2,
 			dx: Math.cos(baseAngle) * speed,
 			dy: Math.sin(baseAngle) * speed,
 			angle: baseAngle,
@@ -455,7 +653,7 @@ export class BossRangedEnemy extends RangedEnemy {
 			const angle = baseAngle + (i * 2 * Math.PI) / this.multiShot;
 			this.projectiles.push({
 				x: this.x,
-				y: this.y,
+				y: this.y - this.sHeight / 2,
 				dx: Math.cos(angle) * speed,
 				dy: Math.sin(angle) * speed,
 				angle,
@@ -465,7 +663,7 @@ export class BossRangedEnemy extends RangedEnemy {
 	}
 }
 
-export function spawnEnemy(spawn_origin_x, spawn_origin_y, type, room) {
+export function spawnEnemy(spawn_origin_x, spawn_origin_y, type, skinVersion) {
 	// implement summon only to the room coordinates
 
 	let spawnX, spawnY, coords;
@@ -487,19 +685,24 @@ export function spawnEnemy(spawn_origin_x, spawn_origin_y, type, room) {
 
 	let enemy;
 
-	if (type == 0)
+	if (type == "bossRange") {
 		enemy = new BossRangedEnemy(
 			// spawnX,
 			coords.x,
-			coords.y
-			// 300,
+			coords.y,
+			100,
+			700,
+			20,
 			// spawnY,
 			// 300,
 			// 200, // Speed
 			// 100, // Health
 			// 10 // Damage
+			{ skinVersion }
 		);
-	if (type == 1)
+		enemy.type = type;
+	}
+	if (type == "range") {
 		enemy = new RangedEnemy(
 			// spawnX,
 			coords.x,
@@ -507,11 +710,14 @@ export function spawnEnemy(spawn_origin_x, spawn_origin_y, type, room) {
 			// 300,
 			// spawnY,
 			// 300,
-			200, // Speed
+			100, // Speed
 			100, // Health
-			20 // Damage
+			20, // Damage
+			{ skinVersion }
 		);
-	if (type == 2)
+		enemy.type = type;
+	}
+	if (type == "melee") {
 		enemy = new MeleeEnemy(
 			// spawnX,
 			coords.x,
@@ -519,10 +725,13 @@ export function spawnEnemy(spawn_origin_x, spawn_origin_y, type, room) {
 			// 300,
 			// spawnY,
 			// 300,
-			200, // Speed
+			100, // Speed
 			100, // Health
-			20 // Damage
+			20, // Damage
+			{ skinVersion: skinVersion }
 		);
+		enemy.type = type;
+	}
 
 	// console.log(enemy);
 

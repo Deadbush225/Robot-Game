@@ -20,7 +20,7 @@ export class VendingMachine {
 
 	// Randomly summon a gun at a specific position
 	summonRandomGun() {
-		this.gunKeeper.summonGun(this.x + this.frameWidth * 2, this.y + 200);
+		this.gunKeeper.summonGun(this.x + this.frameWidth / 2, this.y + 100);
 	}
 
 	draw(gl, camera, character) {

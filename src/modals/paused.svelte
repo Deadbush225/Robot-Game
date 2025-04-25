@@ -30,6 +30,11 @@
 </div>
 
 <style>
+	h2 {
+		font-size: 4.2em;
+		line-height: 1.1;
+	}
+
 	.pause-menu {
 		position: fixed;
 		top: 0;

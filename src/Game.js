@@ -15,10 +15,11 @@ import { VendingMachine } from "./vendingMachine";
 // import Door from "./Door";
 import { RoomManager } from "./rooms";
 
-import { soundManager } from "./Sounds";	
+import { soundManager } from "./Sounds";
 
 export default class Game {
 	constructor(canvas, gl, characterProps) {
+		console.log("INITIALIZING GAME: ");
 		this.canvas = canvas;
 		this.gl = gl;
 		this.characterProps = characterProps;
@@ -80,6 +81,7 @@ export default class Game {
 
 		isGameOver.set(false);
 		// Health bar
+		console.log(this.characterProps);
 		this.healthBar = new HealthBar(this.characterProps.health);
 		this.gunMachine = new GunMachine();
 		this.coinManager = new CoinManager();
@@ -136,10 +138,10 @@ export default class Game {
 	pause() {
 		this.isPaused = true;
 		console.log("Game is now paused");
-		// Pause all sounds
-		soundManager.pauseAll();
+		// only pause the bgm
+		soundManager.stop("bgm", "bgm");
 	}
-	
+
 	resume() {
 		this.isPaused = false;
 		console.log("Game is now resumed");
@@ -174,22 +176,8 @@ export default class Game {
 		this.canvas.width = window.innerWidth;
 		this.canvas.height = window.innerHeight;
 
-		// const canvasAspectRatio = this.canvas.width / this.canvas.height;
-
-		// this.camera.width = this.canvas.width * this.camera.scale;
-		// this.camera.height = this.canvas.height * this.camera.scale;
-
-		// this.camera.width_scale = this.mapImg.width / this.camera.width;
-		// this.camera.height_scale = this.mapImg.height / this.camera.height;
 		this.camera.resize(this.mapImg.width, this.mapImg.height);
 	}
-
-	// worldPosToScreenPos(worldPos) {
-	// 	return (
-	// 		(worldPos - this.camera.width / 2) *
-	// 		(this.canvas.width / this.camera.width)
-	// 	);
-	// }
 
 	setupEventListeners() {
 		// Remove existing listeners to prevent duplicates
@@ -344,8 +332,9 @@ export default class Game {
 
 			if (!get(isGameOver)) {
 				first = false;
-				// this.update(0.06);
-				this.update(deltaTime);
+				this.update(0.016);
+				// this.update(deltaTime);
+				// this.update(deltaTime);
 				// this.update();
 				this.draw();
 				requestAnimationFrame(gameLoop);
@@ -363,7 +352,13 @@ export default class Game {
 		this.moveCharacter(deltaTime);
 
 		// const deltaTime = 16; // Approximate time between frames (in ms)
-		this.updateBulletsAndEnemies(this.bullets, this.enemies, deltaTime);
+		//
+		//this.roomManager.updateBulletsAndEnemies(
+		// 	this.bullets,
+		// 	this.enemies,
+		// 	this.character
+		// );
+		// this..updateBulletsAndEnemies(this.bullets, this.enemies);
 
 		this.bullets.forEach((bullet, index) => {
 			bullet.x += bullet.dx * deltaTime;
@@ -374,6 +369,14 @@ export default class Game {
 				this.bullets.splice(index, 1);
 			}
 		});
+
+		this.roomManager.update(
+			this,
+			this.bullets,
+			this.enemies,
+			this.character,
+			deltaTime
+		);
 
 		this.enemies.forEach((enemy) => enemy.update(this.character, deltaTime));
 
@@ -390,7 +393,6 @@ export default class Game {
 		this.potionManager.update(deltaTime);
 
 		// this.door.update();
-		this.roomManager.update(this);
 	}
 
 	draw() {
@@ -686,67 +688,5 @@ export default class Game {
 		// 	this.enemies.push(enemy);
 		// }
 		console.log(this.enemies);
-	}
-
-	checkCollision(bullet, enemy) {
-		const offset = enemy.sHeight / 2;
-		const dx = bullet.x - enemy.x + offset;
-		const dy = bullet.y - enemy.y + offset;
-		const distance = Math.sqrt(dx * dx + dy * dy);
-
-		// Check if the distance is less than the sum of their radii
-		// console.log(`${distance} < ${enemy.enemySize / 2}`);
-		return distance < enemy.sHeight;
-	}
-
-	updateBulletsAndEnemies(bullets, enemies, deltaTime) {
-		for (let bulletIndex = 0; bulletIndex < bullets.length; bulletIndex++) {
-			const bullet = bullets[bulletIndex];
-
-			for (let enemyIndex = 0; enemyIndex < enemies.length; enemyIndex++) {
-				const enemy = enemies[enemyIndex];
-
-				if (enemy.state === "killed" || enemy.state === "dead") {
-					continue;
-				}
-
-				// console.log("CHECKING COLLISION");
-
-				if (this.checkCollision(bullet, enemy)) {
-					// Handle collision
-					enemy.takeDamage(bullet.damage); // Enemy takes damage
-					bullets.splice(bulletIndex, 1); // Remove the bullet
-					bulletIndex--; // Adjust index due to bullet removal
-					if (enemy.health <= 0) {
-						enemy.state = "killed"; // Mark enemy as killed
-						const enemyToRemove = enemy;
-						setTimeout(() => {
-							const idx = enemies.indexOf(enemyToRemove);
-							if (idx !== -1) {
-								enemies.splice(idx, 1);
-							}
-						}, 7000);
-					}
-
-					if (bullet.effect == "life-steal") {
-						this.character.heal(bullet.damage * 0.25);
-					} else if (bullet.effect == "freeze") {
-						if (enemy.froze) {
-							return;
-						}
-						console.log("FREEZING:");
-						let origSpeed = enemy.speed;
-						enemy.speed = 0;
-						enemy.froze = true;
-
-						setTimeout(() => {
-							enemy.speed = origSpeed;
-							enemy.froze = false;
-						}, 1000);
-					}
-					break; // Exit inner loop after collision
-				}
-			}
-		}
 	}
 }

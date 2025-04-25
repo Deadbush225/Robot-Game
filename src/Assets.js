@@ -6,7 +6,6 @@ import healthsrc from "./assets/health.png";
 import healthbarsrc from "./assets/health bar.png";
 import character from "./assets/tv man (1).png";
 // import character from "./assets/robotFighter.png";
-import enemySpriteSheet_url from "./assets/droidhead.png";
 import portalSrc from "./assets/portal.png";
 import gun_src from "./assets/guns/gun.png";
 import rifle_src from "./assets/guns/rifle.png";
@@ -20,6 +19,11 @@ import bullet_rifle1_src from "./assets/bullets/rifle.png";
 import bullet_rifle2_src from "./assets/bullets/rifle2.png";
 import bullet_green_src from "./assets/bullets/green.png";
 import potion_src from "./assets/potion.png";
+
+import enemySpriteSheet_url from "./assets/enemies/droidhead.png";
+import enemyToaster_url from "./assets/enemies/toaster.png";
+import enemyIceCube_url from "./assets/enemies/ice-cube.png";
+import enemyRef_url from "./assets/enemies/refrigerator-tilesheet.png";
 
 import horizontal_door_src from "./assets/Door Horizontal.png";
 import vertical_door_src from "./assets/Door Vertical.png";
@@ -39,7 +43,12 @@ export let assets = {
 	heath_base: healthbarsrc,
 	healthsrc: healthsrc,
 	character: character,
+
 	enemy: enemySpriteSheet_url,
+	toaster: enemyToaster_url,
+	ice_cube: enemyIceCube_url,
+	ref: enemyRef_url,
+
 	portal: portalSrc,
 	coin: coin_src,
 	vending: vending_src,
@@ -60,11 +69,13 @@ export let bgm = {
 export let sfx = {
 	plasmaShoot: { src: plasmaShoot_src, audio: null, volume: 0.7 },
 	ui_select: { src: ui_select_src, audio: null, volume: 0.7 },
-}
-
+};
 
 let loadedCount = 0;
-let totalAssets = Object.keys(assets).length + Object.keys(bgm).length + Object.keys(sfx).length;
+let totalAssets =
+	Object.keys(assets).length +
+	Object.keys(bgm).length +
+	Object.keys(sfx).length;
 
 function updateCount(onAssetsLoaded) {
 	// console.log("Loaded: " + key);
@@ -78,33 +89,33 @@ function updateCount(onAssetsLoaded) {
 }
 
 export function assetLoader(onAssetsLoaded) {
-    // Load images
-    Object.keys(assets).forEach((key) => {
-        const img = new Image();
-        img.src = assets[key];
-        img.onload = () => {
-            updateCount(onAssetsLoaded);
-        };
-        assets[key] = img;
-    });
+	// Load images
+	Object.keys(assets).forEach((key) => {
+		const img = new Image();
+		img.src = assets[key];
+		img.onload = () => {
+			updateCount(onAssetsLoaded);
+		};
+		assets[key] = img;
+	});
 
-    // Load BGM
-    Object.keys(bgm).forEach((key) => {
-        const audio = new Audio(bgm[key].src);
-        audio.volume = bgm[key].volume;
-        audio.oncanplaythrough = () => {
-            updateCount(onAssetsLoaded);
-        };
-        bgm[key].audio = audio;
-    });
+	// Load BGM
+	Object.keys(bgm).forEach((key) => {
+		const audio = new Audio(bgm[key].src);
+		audio.volume = bgm[key].volume;
+		audio.oncanplaythrough = () => {
+			updateCount(onAssetsLoaded);
+		};
+		bgm[key].audio = audio;
+	});
 
-    // Load SFX
-    Object.keys(sfx).forEach((key) => {
-        const audio = new Audio(sfx[key].src);
-        audio.volume = sfx[key].volume;
-        audio.oncanplaythrough = () => {
-            updateCount(onAssetsLoaded);
-        };
-        sfx[key].audio = audio;
-    });
+	// Load SFX
+	Object.keys(sfx).forEach((key) => {
+		const audio = new Audio(sfx[key].src);
+		audio.volume = sfx[key].volume;
+		audio.oncanplaythrough = () => {
+			updateCount(onAssetsLoaded);
+		};
+		sfx[key].audio = audio;
+	});
 }

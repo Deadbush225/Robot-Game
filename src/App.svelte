@@ -35,7 +35,7 @@
 	}
 
 	function handleUserInteraction() {
-		soundManager.play("bgm", true, "bgm");
+		// soundManager.play("bgm", true, "bgm");
 		// Remove the event listener after first interaction
 		window.removeEventListener("click", handleUserInteraction);
 	}
@@ -51,7 +51,6 @@
 			}
 
 			window.addEventListener("click", handleUserInteraction);
-			gameStart();
 		});
 
 		// Set up keyboard event for ESC key
@@ -63,15 +62,15 @@
 	});
 
 	function gameStart(characterProps) {
-		// characterProps = {
-		// 	name: "TV man",
-		// 	descriptions: ["Faster speed", "Lower health"],
-		// 	speed: 350,
-		// 	health: 100,
-		// 	// health: 20,
-		// 	gun: "shotgun",
-		// 	imgName: "character",
-		// };
+		characterProps = {
+			name: "TV man",
+			descriptions: ["Faster speed", "Lower health"],
+			speed: 350,
+			health: 100,
+			// health: 20,
+			gun: "shotgun",
+			imgName: "character",
+		};
 		// soundManager.setVolume("bgm", 1.0);
 		saved_characterProps = characterProps;
 

@@ -18,34 +18,37 @@ let boundaryHeight;
 let allowedCoordinates = [];
 
 export let rooms = {
-	// basic: {
-	// 	positions: [],
-	// 	doorPosition: { x: 320, y: 4096, orientation: "Horizontal" },
-	// 	cleared: false,
-	// 	enemies: [],
-	// 	x: 95, // 1px outside the colored room coords
-	// 	y: 4189, //
-	// 	width: 706,
-	// 	height: 605,
-	// 	enemiesSpawned: false,
-	// 	summons: {
-	// 		range: { number: 5 },
-	// 	},
-	// },
-	// enemy_1_01: {
-	// 	positions: [],
-	// 	doorPosition: { x: 320, y: 2880, orientation: "Horizontal" },
-	// 	cleared: false,
-	// 	enemies: [],
-	// 	x: 95,
-	// 	y: 2935,
-	// 	width: 706,
-	// 	height: 605,
-	// 	enemiesSpawned: false,
-	// 	summons: {
-	// 		range: { number: 5 },
-	// 	},
-	// },
+	basic: {
+		positions: [],
+		doorPosition: { x: 320, y: 4096, orientation: "Horizontal" },
+		cleared: false,
+		enemies: [],
+		x: 95, // 1px outside the colored room coords
+		y: 4189, //
+		width: 706,
+		height: 605,
+		enemiesSpawned: false,
+		summons: {
+			melee: { total: 4, max: 2 },
+		},
+		skinVersion: 1,
+	},
+	enemy_1_01: {
+		positions: [],
+		doorPosition: { x: 320, y: 2880, orientation: "Horizontal" },
+		cleared: false,
+		enemies: [],
+		x: 95,
+		y: 2935,
+		width: 706,
+		height: 605,
+		enemiesSpawned: false,
+		summons: {
+			melee: { total: 5, max: 2 },
+			range: { total: 2, max: 2 },
+		},
+		skinVersion: 1,
+	},
 	enemy_1_02: {
 		positions: [],
 		doorPosition: { x: 800, y: 1888 - 32 - 1, orientation: "Vertical" },
@@ -57,21 +60,109 @@ export let rooms = {
 		height: 605,
 		enemiesSpawned: false,
 		summons: {
-			range: { number: 5 },
+			melee: { total: 5, max: 5 },
+			range: { total: 5, max: 2 },
 		},
+		skinVersion: 1,
 	},
-
-	// bottomRight: {
-	// 	positions: [],
-	// 	doorPosition: { x: 2400, y: 2016, orientation: "Vertical" },
-	// 	cleared: false,
-	// 	enemies: [],
-	// 	x: 2496,
-	// 	y: 1824,
-	// 	width: 1152,
-	// 	height: 1056,
-	// 	enemiesSpawned: false,
-	// },
+	boss_1: {
+		positions: [],
+		doorPosition: { x: 2208, y: 480 - 32 - 1, orientation: "Vertical" },
+		cleared: false,
+		enemies: [],
+		x: 1184,
+		y: 122,
+		width: 1022,
+		height: 990,
+		enemiesSpawned: false,
+		summons: {
+			melee: { total: 10, max: 4 },
+			range: { total: 10, max: 2 },
+			bossRange: { total: 3, max: 1 },
+		},
+		skinVersion: 1,
+	},
+	enemy_1_03: {
+		positions: [],
+		doorPosition: { x: 3424, y: 1888 - 32 - 1, orientation: "Vertical" },
+		cleared: false,
+		enemies: [],
+		x: 2721,
+		y: 1723,
+		width: 706,
+		height: 605,
+		enemiesSpawned: false,
+		summons: {
+			melee: { total: 5, max: 5 },
+			range: { total: 5, max: 2 },
+		},
+		skinVersion: 1,
+	},
+	enemy_2_01: {
+		positions: [],
+		doorPosition: { x: 4160, y: 3552, orientation: "Horizontal" },
+		cleared: false,
+		enemies: [],
+		x: 3937,
+		y: 2941,
+		width: 706,
+		height: 605,
+		enemiesSpawned: false,
+		summons: {
+			melee: { total: 5, max: 5 },
+			range: { total: 5, max: 2 },
+		},
+		skinVersion: 2,
+	},
+	enemy_2_02: {
+		positions: [],
+		doorPosition: { x: 5856, y: 4320 - 32 - 1, orientation: "Vertical" },
+		cleared: false,
+		enemies: [],
+		x: 5153,
+		y: 4157,
+		width: 706,
+		height: 605,
+		enemiesSpawned: false,
+		summons: {
+			melee: { total: 5, max: 5 },
+			range: { total: 5, max: 2 },
+		},
+		skinVersion: 2,
+	},
+	enemy_2_03: {
+		positions: [],
+		doorPosition: { x: 6336, y: 5536 - 32 - 1, orientation: "Vertical" },
+		cleared: false,
+		enemies: [],
+		x: 6369,
+		y: 5373,
+		width: 706,
+		height: 605,
+		enemiesSpawned: false,
+		summons: {
+			melee: { total: 5, max: 5 },
+			range: { total: 5, max: 2 },
+		},
+		skinVersion: 2,
+	},
+	boss_2: {
+		positions: [],
+		doorPosition: { x: 4992, y: 6942 - 32 - 1, orientation: "Vertical" },
+		cleared: false,
+		enemies: [],
+		x: 5024,
+		y: 6629,
+		width: 1024,
+		height: 959,
+		enemiesSpawned: false,
+		summons: {
+			melee: { total: 10, max: 4 },
+			range: { total: 10, max: 2 },
+			bossRange: { total: 3, max: 1 },
+		},
+		skinVersion: 2,
+	},
 };
 
 function getBoundaryData(image) {
@@ -96,16 +187,36 @@ function getBoundaryData(image) {
 			// Check if the pixel is white (R=255, G=255, B=255)
 			if (red === 255 && green === 255 && blue === 255) {
 				allowedCoordinates.push({ x, y });
-			} else if (red === 255 && green === 119 && blue === 119) {
-				// console.log("ADDING");
+			} else if (red === 255 && green === 157 && blue === 157) {
 				rooms.basic.positions.push({ x, y });
-			} else if (red === 230 && green === 95 && blue === 95) {
-				// rgb(230, 95, 95)
+			} else if (red === 237 && green === 140 && blue === 140) {
+				// rgb(237, 140, 140)
 				rooms.enemy_1_01.positions.push({ x, y });
-			} else if (red === 177 && green === 82 && blue === 82) {
-				// rgb(177, 82, 82)
+			} else if (red === 199 && green === 131 && blue === 131) {
+				// rgb(199, 131, 131)
 				rooms.enemy_1_02.positions.push({ x, y });
+			} else if (red === 211 && green === 111 && blue === 111) {
+				// rgb(211, 111, 111)
+				rooms.boss_1.positions.push({ x, y });
+			} else if (red === 202 && green === 132 && blue === 132) {
+				// rgb(202, 132, 132)
+				rooms.enemy_1_03.positions.push({ x, y });
 			}
+
+			if (red === 130 && green === 224 && blue === 232) {
+				// 	rgb(130, 224, 232)
+				rooms.enemy_2_01.positions.push({ x, y });
+			} else if (red === 71 && green === 240 && blue === 255) {
+				// rgb(71, 240, 255)
+				rooms.enemy_2_02.positions.push({ x, y });
+			} else if (red === 106 && green === 197 && blue === 205) {
+				// rgb(106, 197, 205)
+				rooms.enemy_2_03.positions.push({ x, y });
+			} else if (red === 16 && green === 183 && blue === 197) {
+				// rgb(16, 183, 197)
+				rooms.boss_2.positions.push({ x, y });
+			}
+
 			// if (
 			// 	!(red === 255 && green === 255 && blue === 255) &&
 			// 	!(red === 0 && green === 0 && blue === 0)
@@ -113,13 +224,6 @@ function getBoundaryData(image) {
 			// 	console.log(
 			// 		`Non-white/non-black pixel at (${x}, ${y}): R=${red}, G=${green}, B=${blue}`
 			// 	);
-			// }
-
-			// else if (red === 47 && green === 173 && blue === 168) {
-			// 	rooms.bottomRight.positions.push({ x, y });
-			// }
-			// } else if (red === 47 && green === 173 && blue === 168) {
-			// 	rooms.bottomLeft.positions.push({ x, y });
 			// }
 		}
 	}
