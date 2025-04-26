@@ -21,6 +21,10 @@ export class PotionManager {
 		});
 	}
 
+	summonPotion(x, y) {
+		this.potions.push({ x, y, frameIndex: 0, frameTimer: 0 });
+	}
+
 	// Update potion animation
 	update(deltaTime) {
 		this.potions.forEach((potion) => {
@@ -44,7 +48,13 @@ export class PotionManager {
 			if (distance < 80) {
 				// Player collects the potion
 				this.potions.splice(i, 1); // Remove the potion from the array
-				player.heal(20); // Heal the player
+
+				if (player.healthBar.health + 20 > player.healthBar.originalHealth) {
+					// Add to inventory if healing would exceed max health
+					player.potions++;
+				} else {
+					player.heal(20); // Heal the player
+				}
 			}
 		}
 	}
@@ -71,5 +81,25 @@ export class PotionManager {
 				this.potionHeight * 1.2
 			);
 		});
+
+		// Draw potion at fixed location (20, 150), always using frame 0
+		// gl.drawImage(
+		// 	assets.potion,
+		// 	0, // frameIndex * potionWidth (frame 0)
+		// 	0,
+		// 	this.potionWidth,
+		// 	this.potionHeight,
+		// 	20,
+		// 	100,
+		// 	this.potionWidth / 2,
+		// 	this.potionHeight / 2
+		// );
+
+		gl.font = "30px Monogram";
+		gl.fillStyle = "#fff";
+		gl.strokeStyle = "#000";
+		gl.lineWidth = 4;
+		gl.strokeText(`Stored Potions: ${character.potions}`, 20, 100);
+		gl.fillText(`Stored Potions: ${character.potions}`, 20, 100);
 	}
 }

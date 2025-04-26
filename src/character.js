@@ -2,6 +2,8 @@ const frameWidth = 64; // Width of each frame in the sprite sheet
 const frameHeight = 64; // Height of each frame in the sprite sheet
 import { assets } from "./Assets";
 import { Gun } from "./Gun";
+import { spawnPointX, spawnPointY } from "./store";
+import { get } from "svelte/store";
 
 class FloatingText {
 	constructor(text, color) {
@@ -33,8 +35,12 @@ class FloatingText {
 export class Character {
 	constructor(scale, healthBar, characterProps) {
 		this.img = assets[characterProps.imgName];
-		this.realX = 295; // Actual X position in pixels
-		this.realY = 5689; // Actual Y position in pixels
+		// this.spawnPoints = [
+		// 	{ x: 295, y: 5689 },
+		// 	{ x: 5491, y: 3227 },
+		// ];
+		this.realX = get(spawnPointX); // Actual X position in pixels
+		this.realY = get(spawnPointY); // Actual Y position in pixels
 		this.gridX = 2; // Grid position (column)
 		this.gridY = 2; // Grid position (row)
 		this.width = 50;
@@ -50,12 +56,13 @@ export class Character {
 
 		this.bullets = [];
 		this.floatingTexts = [];
+		this.potions = 0;
 		// this.health = 100; // Character's health
 		this.isTakingDamage = false; // Flag to track if the character is taking damage
 		this.damageTimer = 0; // Timer to control the duration of the damaged state
 		this.healthBar = healthBar;
 		this.currentGun = new Gun(characterProps.gun);
-		this.coins = 0;
+		this.coins = 1000;
 
 		this.moveTime = 0;
 
@@ -102,6 +109,13 @@ export class Character {
 		// console.log(this.healthBar);
 		// console.log(this.healthBar.healthWidth);
 		console.log("HEALED: " + this.healthBar.health);
+	}
+
+	healFromInventory() {
+		if (this.healthBar.health > 80 || this.potions <= 0) return;
+
+		this.heal(20);
+		this.potions--;
 	}
 
 	updateState() {

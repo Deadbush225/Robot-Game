@@ -1,7 +1,7 @@
 import { assets } from "./Assets";
 // idle and running uses the same frames
 let robotGirlFrameData, iceCubeFrameData, heaterFrameData, fridgeFrameData;
-function load() {
+export function load() {
 	robotGirlFrameData = {
 		width: 64,
 		height: 75,
@@ -205,7 +205,6 @@ import {
 
 class BaseEnemy {
 	constructor(x, y, speed, health, damage, frameData) {
-		load();
 		this.x = x; // Enemy's world X position
 		this.y = y; // Enemy's world Y position
 		this.speed = speed; // Movement speed
