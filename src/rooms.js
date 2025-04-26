@@ -73,7 +73,7 @@ export class RoomManager {
 				this.replenishEnemies(room, game);
 			}
 		}
-		this.updateBulletsAndEnemies(bullets, enemies, character);
+		this.updateBulletsAndEnemies(bullets, enemies, character, game);
 	}
 
 	isCharacterInRoom(room, game) {
@@ -180,7 +180,7 @@ export class RoomManager {
 		return distance < enemy.sHeight;
 	}
 
-	updateBulletsAndEnemies(bullets, enemies, character) {
+	updateBulletsAndEnemies(bullets, enemies, character, game) {
 		for (let bulletIndex = 0; bulletIndex < bullets.length; bulletIndex++) {
 			const bullet = bullets[bulletIndex];
 
@@ -200,6 +200,10 @@ export class RoomManager {
 					bulletIndex--; // Adjust index due to bullet removal
 					if (enemy.health <= 0) {
 						enemy.state = "killed"; // Mark enemy as killed
+
+						game.enemyDefeated(enemy); // to update the score
+						// character.gameStats.enemiesDefeated++;
+
 						const enemyToRemove = enemy;
 						setTimeout(() => {
 							const idx = enemies.indexOf(enemyToRemove);

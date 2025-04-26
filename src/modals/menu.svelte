@@ -5,6 +5,8 @@
 
 	export let message = "Robot Game!";
 	export let onStart = (characterProps) => {};
+
+	export let onShowLeaderboard;
 	// export let onQuit = () => {};
 
 	let characters = [
@@ -74,6 +76,10 @@
 		<div class="buttons">
 			<Button onClick={() => onStart(characters[selected])}>Play</Button>
 			<!-- <Button onClick={onQuit}>Quit</Button> -->
+		</div>
+
+		<div class="leaderboard-button">
+			<button onclick={onShowLeaderboard}>Leaderboard</button>
 		</div>
 	</div>
 </div>
@@ -182,4 +188,25 @@
 		display: flex;
 		justify-content: space-around;
 	}
+
+	.leaderboard-button {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+    }
+    
+    .leaderboard-button button {
+        padding: 10px 20px;
+        background-color: #e24444;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    
+    .leaderboard-button button:hover {
+        background-color: #ff4444;
+    }
 </style>

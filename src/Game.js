@@ -18,6 +18,9 @@ import { RoomManager } from "./rooms";
 import { soundManager } from "./Sounds";
 import { PotionVendingMachine } from "./poitionVending";
 
+import LeaderboardService from "./LeaderboardService";
+import HUD from "./HUD";
+
 export default class Game {
 	constructor(canvas, gl, characterProps) {
 		console.log("INITIALIZING GAME: ");
@@ -73,6 +76,8 @@ export default class Game {
 		};
 		this.setupEventListeners();
 		this.initialize();
+
+		this.leaderboardService = new LeaderboardService();
 	}
 
 	initialize() {
@@ -106,6 +111,14 @@ export default class Game {
 		this.bullets = [];
 
 		this.roomManager = new RoomManager();
+
+		// track score in real time
+		this.gameStats = {
+			score: 0,
+			enemiesDefeated: 0,
+			coinsCollected: 0
+		};
+		this.hud = new HUD(this);
 
 		// this.door = new Door(1152, 287, "Vertical", this.camera, this.character);
 		// this.door = new Door(2784, 1056, "Horizontal", this.camera, this.character);
@@ -350,6 +363,25 @@ export default class Game {
 			}
 		};
 
+		if (this.character.healthBar.health <= 0 && !get(isGameOver)) {
+			// Ensure stats are synchronized before game over
+			console.log("GAME OVER STATS BEFORE SYNC:", {
+				coins: this.character.coins,
+				coinsCollected: this.gameStats.coinsCollected
+			});
+			
+			// Force synchronization to ensure consistency
+			this.gameStats.coinsCollected = this.character.coins;
+			
+			console.log("GAME OVER STATS AFTER SYNC:", {
+				coins: this.character.coins,
+				coinsCollected: this.gameStats.coinsCollected
+			});
+			
+			isGameOver.set(true);
+			return;
+		}
+
 		requestAnimationFrame(gameLoop);
 	}
 
@@ -397,7 +429,7 @@ export default class Game {
 		// this.portal.update(deltaTime);
 		// Check if the player collides with a gun
 		this.gunMachine.checkPlayerCollision(this.character);
-		this.coinManager.update(performance.now(), this.character);
+		this.coinManager.update(performance.now(), this.character, this);
 
 		this.vendingMachines.forEach((vendingMachine) =>
 			vendingMachine.isOverlapping(this.character)
@@ -587,6 +619,9 @@ export default class Game {
 				this.gl.fill();
 			}
 		}
+
+		// HUD on top of everythhing
+		this.hud.draw(this.gl, this.canvas);
 	}
 
 	moveCharacter(deltaTime) {
@@ -713,5 +748,46 @@ export default class Game {
 		// 	this.enemies.push(enemy);
 		// }
 		console.log(this.enemies);
+	}
+
+
+
+	// pang leaderboard
+	calculateFinalScore() {
+		const baseScore = this.gameStats.score;
+		const healthBonus = Math.max(0, this.character.healthBar.health) * 5;
+		const levelMultiplier = this.level * 0.5;
+		
+		return Math.floor((baseScore + healthBonus) * (1 + levelMultiplier));
+	}
+
+	enemyDefeated(enemy) {
+		this.gameStats.enemiesDefeated++;
+		this.gameStats.score += 250; // Add 100 points per enemy
+		console.log("Enemy defeated! Score: " + this.gameStats.score);
+	}
+
+	collectCoin(value = 1) {
+		// Initialize coins if not set
+		if (!this.character.coins) {
+			this.character.coins = 0;
+		}
+		
+		// Add coin value to character
+		this.character.coins += value;
+		
+		// Also update the gameStats tracker
+		this.gameStats.coinsCollected = this.character.coins;
+		
+		// Add to score (10 points per coin)
+		this.gameStats.score += (value * 10);
+		
+		console.log(`Coin collected! Total: ${this.character.coins}, GameStats: ${this.gameStats.coinsCollected}`);
+	}
+
+	syncCoins() {
+		// Make sure gameStats always reflects the character's coins
+		this.gameStats.coinsCollected = this.character.coins || 0;
+		return this.gameStats.coinsCollected;
 	}
 }
