@@ -4,48 +4,48 @@ let robotGirlFrameData, iceCubeFrameData, heaterFrameData, fridgeFrameData;
 export function load() {
 	robotGirlFrameData = {
 		width: 64,
-		height: 75,
+		height: 96,
 		frameData: {
 			idle: [
-				{ x: 0, y: 30, width: 64, height: 75 },
-				{ x: 64, y: 30, width: 64, height: 75 },
-				{ x: 128, y: 30, width: 64, height: 75 },
-				{ x: 192, y: 30, width: 64, height: 75 },
-				{ x: 256, y: 30, width: 64, height: 75 },
-				{ x: 320, y: 30, width: 64, height: 75 },
-				{ x: 384, y: 30, width: 64, height: 75 },
-				{ x: 448, y: 30, width: 64, height: 75 },
+				{ x: 0, y: 30, width: 64, height: 96 },
+				{ x: 64, y: 30, width: 64, height: 96 },
+				{ x: 128, y: 30, width: 64, height: 96 },
+				{ x: 192, y: 30, width: 64, height: 96 },
+				{ x: 256, y: 30, width: 64, height: 96 },
+				{ x: 320, y: 30, width: 64, height: 96 },
+				{ x: 384, y: 30, width: 64, height: 96 },
+				{ x: 448, y: 30, width: 64, height: 96 },
 			],
 			running: [
-				{ x: 0, y: 30, width: 64, height: 75 },
-				{ x: 64, y: 30, width: 64, height: 75 },
-				{ x: 128, y: 30, width: 64, height: 75 },
-				{ x: 192, y: 30, width: 64, height: 75 },
-				{ x: 256, y: 30, width: 64, height: 75 },
-				{ x: 320, y: 30, width: 64, height: 75 },
-				{ x: 384, y: 30, width: 64, height: 75 },
-				{ x: 448, y: 30, width: 64, height: 75 },
+				{ x: 0, y: 30, width: 64, height: 96 },
+				{ x: 64, y: 30, width: 64, height: 96 },
+				{ x: 128, y: 30, width: 64, height: 96 },
+				{ x: 192, y: 30, width: 64, height: 96 },
+				{ x: 256, y: 30, width: 64, height: 96 },
+				{ x: 320, y: 30, width: 64, height: 96 },
+				{ x: 384, y: 30, width: 64, height: 96 },
+				{ x: 448, y: 30, width: 64, height: 96 },
 			],
 			attacking: [
-				{ x: 0, y: 159, width: 64, height: 75 },
-				{ x: 64, y: 159, width: 64, height: 75 },
-				{ x: 128, y: 159, width: 64, height: 75 },
-				{ x: 192, y: 159, width: 64, height: 75 },
-				{ x: 256, y: 159, width: 64, height: 75 },
-				{ x: 320, y: 159, width: 64, height: 75 },
-				{ x: 384, y: 159, width: 64, height: 75 },
-				{ x: 448, y: 159, width: 64, height: 75 },
+				{ x: 0, y: 159, width: 64, height: 96 },
+				{ x: 64, y: 159, width: 64, height: 96 },
+				{ x: 128, y: 159, width: 64, height: 96 },
+				{ x: 192, y: 159, width: 64, height: 96 },
+				{ x: 256, y: 159, width: 64, height: 96 },
+				{ x: 320, y: 159, width: 64, height: 96 },
+				{ x: 384, y: 159, width: 64, height: 96 },
+				{ x: 448, y: 159, width: 64, height: 96 },
 			],
 			// damaged: [{ x: 0, y: 192, width: 64, height: 64 }],
 			killed: [
-				{ x: 0, y: 287, width: 64, height: 128 },
-				{ x: 64, y: 287, width: 64, height: 128 },
-				{ x: 128, y: 287, width: 64, height: 128 },
-				{ x: 192, y: 287, width: 64, height: 128 },
-				{ x: 256, y: 287, width: 64, height: 128 },
-				{ x: 320, y: 287, width: 64, height: 128 },
+				{ x: 0, y: 287, width: 64, height: 96 },
+				{ x: 64, y: 287, width: 64, height: 96 },
+				{ x: 128, y: 287, width: 64, height: 96 },
+				{ x: 192, y: 287, width: 64, height: 96 },
+				{ x: 256, y: 287, width: 64, height: 96 },
+				{ x: 320, y: 287, width: 64, height: 96 },
 			],
-			dead: [{ x: 320, y: 287, width: 64, height: 128 }],
+			dead: [{ x: 320, y: 287, width: 64, height: 96 }],
 		},
 		src: assets.enemy,
 	};
@@ -79,34 +79,34 @@ export function load() {
 				{ x: 1152, y: 0, width: 128, height: 128 },
 			],
 			attacking: [
-				{ x: 0, y: 0, width: 128, height: 128 },
-				{ x: 128, y: 0, width: 128, height: 128 },
-				{ x: 256, y: 0, width: 128, height: 128 },
-				{ x: 384, y: 0, width: 128, height: 128 },
-				{ x: 512, y: 0, width: 128, height: 128 },
-				{ x: 640, y: 0, width: 128, height: 128 },
-				{ x: 768, y: 0, width: 128, height: 128 },
-				{ x: 896, y: 0, width: 128, height: 128 },
-				{ x: 1024, y: 0, width: 128, height: 128 },
-				{ x: 1152, y: 0, width: 128, height: 128 },
-				{ x: 1280, y: 0, width: 128, height: 128 },
-				{ x: 1408, y: 0, width: 128, height: 128 },
-				{ x: 1536, y: 0, width: 128, height: 128 },
-				{ x: 1664, y: 0, width: 128, height: 128 },
+				{ x: 0, y: 128, width: 128, height: 128 },
+				{ x: 128, y: 128, width: 128, height: 128 },
+				{ x: 256, y: 128, width: 128, height: 128 },
+				{ x: 384, y: 128, width: 128, height: 128 },
+				{ x: 512, y: 128, width: 128, height: 128 },
+				{ x: 640, y: 128, width: 128, height: 128 },
+				{ x: 768, y: 128, width: 128, height: 128 },
+				{ x: 896, y: 128, width: 128, height: 128 },
+				{ x: 1024, y: 128, width: 128, height: 128 },
+				{ x: 1152, y: 128, width: 128, height: 128 },
+				{ x: 1280, y: 128, width: 128, height: 128 },
+				{ x: 1408, y: 128, width: 128, height: 128 },
+				{ x: 1536, y: 128, width: 128, height: 128 },
+				{ x: 1664, y: 128, width: 128, height: 128 },
 			],
 			// damaged: [{ x: 0, y: 192, width: 64, height: 64 }],
 			killed: [
-				{ x: 0, y: 0, width: 128, height: 128 },
-				{ x: 128, y: 0, width: 128, height: 128 },
-				{ x: 256, y: 0, width: 128, height: 128 },
-				{ x: 384, y: 0, width: 128, height: 128 },
-				{ x: 512, y: 0, width: 128, height: 128 },
-				{ x: 640, y: 0, width: 128, height: 128 },
-				{ x: 768, y: 0, width: 128, height: 128 },
-				{ x: 896, y: 0, width: 128, height: 128 },
-				{ x: 1024, y: 0, width: 128, height: 128 },
+				{ x: 0, y: 256, width: 128, height: 128 },
+				{ x: 128, y: 256, width: 128, height: 128 },
+				{ x: 256, y: 256, width: 128, height: 128 },
+				{ x: 384, y: 256, width: 128, height: 128 },
+				{ x: 512, y: 256, width: 128, height: 128 },
+				{ x: 640, y: 256, width: 128, height: 128 },
+				{ x: 768, y: 256, width: 128, height: 128 },
+				{ x: 896, y: 256, width: 128, height: 128 },
+				{ x: 1024, y: 256, width: 128, height: 128 },
 			],
-			dead: [{ x: 1024, y: 0, width: 128, height: 128 }],
+			dead: [{ x: 1024, y: 256, width: 128, height: 128 }],
 		},
 		src: assets.ice_cube,
 	};
@@ -222,9 +222,10 @@ class BaseEnemy {
 		this.damageTimer = 0;
 
 		this.spriteSheet = frameData.src; // The sprite sheet image
+		this.spriteSheetWidth = this.spriteSheet.width / 3; // per state, normal, damaged, freeze
 		this.frameData = frameData; // Frame data for each state
-		this.sWidth = this.frameData.width * 1.4;
-		this.sHeight = this.frameData.height * 1.4;
+		this.sWidth = Math.min(this.frameData.width * 1.4, 100);
+		this.sHeight = Math.min(this.frameData.height * 1.4, 100);
 		this.isBoss = false;
 
 		this.type = "";
@@ -275,9 +276,9 @@ class BaseEnemy {
 		// Draw the current frame from the sprite sheet
 		let offset = 0;
 		if (this.froze) {
-			offset += this.spriteSheet.width * 2;
+			offset += this.spriteSheetWidth * 2;
 		} else if (this.isTakingdamage) {
-			offset += this.spriteSheet.width;
+			offset += this.spriteSheetWidth;
 		}
 
 		gl.drawImage(
@@ -288,8 +289,8 @@ class BaseEnemy {
 			frame.height, // Frame height
 			doFlip ? -screenX - this.sWidth : screenX, // Destination X (centered on the enemy)
 			screenY, // Destination Y (centered on the enemy)
-			frame.width * 1.4, // Destination width
-			frame.height * 1.4 // Destination height
+			this.sWidth, // Destination width
+			this.sHeight // Destination height
 		);
 
 		if (doFlip) {
@@ -317,29 +318,29 @@ class BaseEnemy {
 		gl.fillRect(barX, barY, filledWidth, barHeight);
 
 		// Draw a circle at the enemy's position for debugging purposes
-		gl.beginPath();
-		gl.arc(screenX, screenY, 10, 0, Math.PI * 2);
-		gl.fillStyle = "red";
-		gl.fill();
-		gl.closePath();
+		// gl.beginPath();
+		// gl.arc(screenX, screenY, 10, 0, Math.PI * 2);
+		// gl.fillStyle = "red";
+		// gl.fill();
+		// gl.closePath();
 
 		// Draw a rectangle offset from the enemy's position
 
 		// const rectX = screenX + this.sWidth / 2 - rectWidth / 2;
 		// const rectY = screenY + this.sHeight / 2;
 		// Draw a hollow circle 50px from the center of the enemy
-		gl.beginPath();
-		gl.arc(
-			screenX + this.sWidth / 2,
-			screenY + this.sHeight / 2,
-			50,
-			0,
-			Math.PI * 2
-		);
-		gl.strokeStyle = "rgba(0,0,0,0.5)";
-		gl.lineWidth = 2;
-		gl.stroke();
-		gl.closePath();
+		// gl.beginPath();
+		// gl.arc(
+		// 	screenX + this.sWidth / 2,
+		// 	screenY + this.sHeight / 2,
+		// 	50,
+		// 	0,
+		// 	Math.PI * 2
+		// );
+		// gl.strokeStyle = "rgba(0,0,0,0.5)";
+		// gl.lineWidth = 2;
+		// gl.stroke();
+		// gl.closePath();
 	}
 }
 

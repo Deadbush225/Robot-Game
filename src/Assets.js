@@ -4,7 +4,6 @@ import barriers_map from "./assets/barriers.png";
 // import bulletsrc from "./assets/bullet.png";
 import healthsrc from "./assets/health.png";
 import healthbarsrc from "./assets/health bar.png";
-import character from "./assets/tv man (1).png";
 // import character from "./assets/robotFighter.png";
 import portalSrc from "./assets/portal.png";
 import gun_src from "./assets/guns/gun.png";
@@ -19,6 +18,10 @@ import bullet_rifle1_src from "./assets/bullets/rifle.png";
 import bullet_rifle2_src from "./assets/bullets/rifle2.png";
 import bullet_green_src from "./assets/bullets/green.png";
 import potion_src from "./assets/potion.png";
+
+import tv_man from "./assets/characters/tv man (1).png";
+import eve from "./assets/characters/eve-ghost-robot.png";
+import gundam from "./assets/characters/gundam-avatar.png";
 
 import enemySpriteSheet_url from "./assets/enemies/droidhead.png";
 import enemyToaster_url from "./assets/enemies/toaster.png";
@@ -42,7 +45,10 @@ export let assets = {
 	// bullet: bulletsrc,
 	heath_base: healthbarsrc,
 	healthsrc: healthsrc,
-	character: character,
+
+	character: tv_man,
+	eve: eve,
+	gundam: gundam,
 
 	enemy: enemySpriteSheet_url,
 	toaster: enemyToaster_url,

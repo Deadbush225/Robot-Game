@@ -33,12 +33,8 @@ class FloatingText {
 }
 
 export class Character {
-	constructor(scale, healthBar, characterProps) {
+	constructor(scale, healthBar, characterProps, animationMap) {
 		this.img = assets[characterProps.imgName];
-		// this.spawnPoints = [
-		// 	{ x: 295, y: 5689 },
-		// 	{ x: 5491, y: 3227 },
-		// ];
 		this.realX = get(spawnPointX); // Actual X position in pixels
 		this.realY = get(spawnPointY); // Actual Y position in pixels
 		this.gridX = 2; // Grid position (column)
@@ -71,19 +67,7 @@ export class Character {
 		this.dashCooldown = 2.0; // seconds (1000ms)
 		this.dashTimer = 0; // time left for dash or cooldown
 
-		this.animationMap = {
-			0: { frames: 6, speed: 200, sx: 0, sy: 0, sw: 64, sh: 64 }, // Standing
-			1: { frames: 3, speed: 100, sx: 0, sy: 128, sw: 64, sh: 64 }, // Walking
-			2: { frames: 6, speed: 200, sx: 0, sy: 0, sw: 64, sh: 64 }, // Standing (again)
-			3: {
-				frames: 4,
-				speed: 100,
-				sx: 15,
-				sy: 64 * 2 + 60 + 11,
-				sw: 31,
-				sh: 39,
-			}, // Killed
-		};
+		this.animationMap = characterProps.animationMap;
 	}
 
 	takeDamage(amount) {

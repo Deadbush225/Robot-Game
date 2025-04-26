@@ -15,12 +15,12 @@
 	import { soundManager } from "./Sounds";
 	import { togglePause } from "./pauseMenu";
 
-  import LeaderboardService from "./LeaderboardService";
+	import LeaderboardService from "./LeaderboardService";
 
 	let showingLeaderboard = false;
 
 	import { load } from "./enemy";
-  
+
 	// let isGameOver = false;
 	let gameStarted = false;
 	let isPaused = false;
@@ -42,25 +42,24 @@
 		console.log("Quit game");
 	}
 
-
 	function showLeaderboard() {
-        showingLeaderboard = true;
-    }
+		showingLeaderboard = true;
+	}
 
-    async function submitScoreAndShowLeaderboard(playerName) {
+	async function submitScoreAndShowLeaderboard(playerName) {
 		if (game.character.healthBar.health <= 0) {
 			// Force synchronization before submission
 			game.syncCoins();
-			
+
 			const scoreData = {
 				playerName: playerName,
 				score: game.calculateFinalScore(),
 				enemiesDefeated: game.gameStats.enemiesDefeated,
-				coinsCollected: game.gameStats.coinsCollected
+				coinsCollected: game.gameStats.coinsCollected,
 			};
-			
+
 			console.log("Submitting score with coins:", scoreData);
-			
+
 			// Actually submit score
 			try {
 				await game.leaderboardService.submitScore(scoreData);
@@ -73,8 +72,8 @@
 
 	// pang toggle ng leaderboard visibility
 	function toggleLeaderboard() {
-        showingLeaderboard = !showingLeaderboard;
-    }
+		showingLeaderboard = !showingLeaderboard;
+	}
 
 	function handleUserInteraction() {
 		// soundManager.play("bgm", true, "bgm");
@@ -105,15 +104,15 @@
 	});
 
 	function gameStart(characterProps) {
-		characterProps = {
-			name: "TV man",
-			descriptions: ["Faster speed", "Lower health"],
-			speed: 350,
-			health: 100,
-			// health: 20,
-			gun: "shotgun",
-			imgName: "character",
-		};
+		// characterProps = {
+		// 	name: "TV man",
+		// 	descriptions: ["Faster speed", "Lower health"],
+		// 	speed: 350,
+		// 	health: 100,
+		// 	// health: 20,
+		// 	gun: "shotgun",
+		// 	imgName: "character",
+		// };
 		// soundManager.setVolume("bgm", 1.0);
 		saved_characterProps = characterProps;
 
@@ -148,10 +147,7 @@
 	{/if}
 
 	{#if !gameStarted && !loading}
-		<Menu 
-			onStart={gameStart}
-			onShowLeaderboard={showLeaderboard}
-		></Menu>
+		<Menu onStart={gameStart} onShowLeaderboard={showLeaderboard}></Menu>
 	{/if}
 
 	{#if $isGameOver}
@@ -164,13 +160,13 @@
 				score: game.calculateFinalScore(),
 				// level: game.level || 1,
 				enemiesDefeated: game.gameStats.enemiesDefeated,
-				coinsCollected: game.gameStats.coinsCollected
+				coinsCollected: game.gameStats.coinsCollected,
 			}}
 		/>
 	{/if}
 
 	{#if showingLeaderboard}
-		<Leaderboard onClose={() => showingLeaderboard = false} />
+		<Leaderboard onClose={() => (showingLeaderboard = false)} />
 	{/if}
 	<div>
 		<canvas id="glCanvas" bind:this={canvas}></canvas>

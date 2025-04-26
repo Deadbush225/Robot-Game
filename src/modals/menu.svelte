@@ -1,6 +1,8 @@
 <script>
 	import Button from "./button.svelte";
 	import tv_man from "../assets/ui/tv man (1).gif";
+	import eve from "../assets/ui/eve-ghost-robot.gif";
+	import gundam from "../assets/ui/gundam-avatar.gif";
 	import { soundManager } from "../Sounds";
 
 	export let message = "Robot Game!";
@@ -19,26 +21,65 @@
 			// health: 20,
 			gun: "pistol",
 			imgName: "character",
+			animationMap: {
+				0: { frames: 6, speed: 200, sx: 0, sy: 0, sw: 64, sh: 64 }, // Standing
+				1: { frames: 3, speed: 100, sx: 0, sy: 128, sw: 64, sh: 64 }, // Walking
+				2: { frames: 6, speed: 200, sx: 0, sy: 0, sw: 64, sh: 64 }, // Standing (again)
+				3: {
+					frames: 4,
+					speed: 100,
+					sx: 15,
+					sy: 64 * 2 + 60 + 11,
+					sw: 31,
+					sh: 39,
+				}, // Killed
+			},
 		},
 		{
-			scr: tv_man,
+			scr: eve,
 			name: "Skibidi man",
 			descriptions: ["Lower speed", "Freezing Bullets"],
 			speed: 210,
 			// health: 20,
 			health: 400,
 			gun: "rifle",
-			imgName: "character",
+			imgName: "eve",
+			animationMap: {
+				0: { frames: 4, speed: 200, sx: 0, sy: 0, sw: 64, sh: 64 }, // Standing
+				1: { frames: 4, speed: 100, sx: 0, sy: 0, sw: 64, sh: 64 }, // Walking
+				2: { frames: 4, speed: 200, sx: 0, sy: 0, sw: 64, sh: 64 }, // Standing (again)
+				3: {
+					frames: 1,
+					speed: 100,
+					sx: 192,
+					sy: 0,
+					sw: 64,
+					sh: 64,
+				}, // Killed
+			},
 		},
 		{
-			scr: tv_man,
+			scr: gundam,
 			name: "Toilet man",
 			descriptions: ["Life steal", "Lower speed"],
 			speed: 210,
 			// health: 20,
 			health: 150,
 			gun: "shotgun",
-			imgName: "character",
+			imgName: "gundam",
+			animationMap: {
+				0: { frames: 4, speed: 200, sx: 0, sy: 0, sw: 64, sh: 64 }, // Standing
+				1: { frames: 4, speed: 200, sx: 0, sy: 0, sw: 64, sh: 64 }, // Walking
+				2: { frames: 4, speed: 200, sx: 0, sy: 0, sw: 64, sh: 64 }, // Standing (again)
+				3: {
+					frames: 1,
+					speed: 100,
+					sx: 192,
+					sy: 0,
+					sw: 64,
+					sh: 64,
+				}, // Killed
+			},
 		},
 	];
 
@@ -190,23 +231,23 @@
 	}
 
 	.leaderboard-button {
-        position: absolute;
-        bottom: 20px;
-        right: 20px;
-    }
-    
-    .leaderboard-button button {
-        padding: 10px 20px;
-        background-color: #e24444;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-    
-    .leaderboard-button button:hover {
-        background-color: #ff4444;
-    }
+		position: absolute;
+		bottom: 20px;
+		right: 20px;
+	}
+
+	.leaderboard-button button {
+		padding: 10px 20px;
+		background-color: #e24444;
+		color: white;
+		border: none;
+		border-radius: 5px;
+		font-size: 16px;
+		cursor: pointer;
+		transition: background-color 0.2s;
+	}
+
+	.leaderboard-button button:hover {
+		background-color: #ff4444;
+	}
 </style>
