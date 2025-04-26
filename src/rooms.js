@@ -1,7 +1,7 @@
 import { clearAllTempBlockedRects, rooms as roomsData } from "./boundary";
 import Door from "./Door";
 import { spawnEnemy } from "./enemy";
-import { currentRoom } from "./store";
+import { currentRoom, showEndMessage, spawnPointX, spawnPointY } from "./store";
 
 export class RoomManager {
 	constructor() {
@@ -13,11 +13,12 @@ export class RoomManager {
 			if (roomsData.hasOwnProperty(key)) {
 				const room = { ...roomsData[key] };
 				room.id = idx++;
-				room.door = new Door(
-					room.doorPosition.x,
-					room.doorPosition.y,
-					room.doorPosition.orientation
-				);
+				if (room.doorPosition)
+					room.door = new Door(
+						room.doorPosition.x,
+						room.doorPosition.y,
+						room.doorPosition.orientation
+					);
 				room.pendingSpawn = { melee: 0, range: 0, bossRange: 0 };
 				room.spawnedCount = { melee: 0, range: 0, bossRange: 0 };
 
@@ -28,29 +29,43 @@ export class RoomManager {
 
 	update(game, bullets, enemies, character, deltaTime) {
 		for (const key in this.rooms) {
-			this.rooms[key].door.update();
+			if (this.rooms[key].door) this.rooms[key].door.update();
 		}
 
 		for (const key in this.rooms) {
 			const room = this.rooms[key];
 			if (room.cleared) continue;
 
-			if (
-				// we can try to keep the number of the number of enemies and decrement it when an enemy dies to be efficient
-				room.enemies.filter((val) => val.state !== "dead").length === 0 &&
-				room.enemiesSpawned
-			) {
-				console.log("ROOM CLEARED: ");
-				room.door.openDoor();
-				room.cleared = true;
-				return;
+			if (room.enemies && room.door) {
+				if (
+					// we can try to keep the number of the number of enemies and decrement it when an enemy dies to be efficient
+					room.enemies.filter((val) => val.state !== "dead").length === 0 &&
+					room.enemiesSpawned
+				) {
+					console.log("ROOM CLEARED: ");
+					room.door.openDoor();
+					room.cleared = true;
+					return;
+				}
 			}
 
 			if (this.isCharacterInRoom(room, game)) {
+				if (room.spawnPoint) {
+					spawnPointX.set(room.spawnPoint.x);
+					spawnPointY.set(room.spawnPoint.y);
+					return;
+				}
+
+				if (room.displayEnd) {
+					showEndMessage.set(true);
+					return;
+				}
+
 				currentRoom.set(key);
 				if (room.enemies.length === 0) {
+					// console.log("SPAWINGIN ONE TIME");
 					room.enemies = this.spawnEnemies(room, game);
-					console.log(room.enemies);
+					// console.log(room.enemies);
 					game.enemies.push(...room.enemies);
 					room.enemiesSpawned = true;
 				}
@@ -149,7 +164,8 @@ export class RoomManager {
 
 	draw(gl, camera, character) {
 		for (const key in this.rooms) {
-			this.rooms[key].door.draw(gl, camera, character);
+			if (this.rooms[key].door)
+				this.rooms[key].door.draw(gl, camera, character);
 		}
 	}
 

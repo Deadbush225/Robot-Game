@@ -93,7 +93,7 @@ export let rooms = {
 		height: 605,
 		enemiesSpawned: false,
 		summons: {
-			melee: { total: 5, max: 5 },
+			melee: { total: 10, max: 5 },
 			range: { total: 5, max: 2 },
 		},
 		skinVersion: 1,
@@ -109,7 +109,7 @@ export let rooms = {
 		height: 605,
 		enemiesSpawned: false,
 		summons: {
-			melee: { total: 5, max: 5 },
+			melee: { total: 7, max: 3 },
 			range: { total: 5, max: 2 },
 		},
 		skinVersion: 2,
@@ -125,8 +125,8 @@ export let rooms = {
 		height: 605,
 		enemiesSpawned: false,
 		summons: {
-			melee: { total: 5, max: 5 },
-			range: { total: 5, max: 2 },
+			melee: { total: 10, max: 4 },
+			range: { total: 5, max: 3 },
 		},
 		skinVersion: 2,
 	},
@@ -141,8 +141,8 @@ export let rooms = {
 		height: 605,
 		enemiesSpawned: false,
 		summons: {
-			melee: { total: 5, max: 5 },
-			range: { total: 5, max: 2 },
+			melee: { total: 12, max: 5 },
+			range: { total: 6, max: 2 },
 		},
 		skinVersion: 2,
 	},
@@ -159,9 +159,25 @@ export let rooms = {
 		summons: {
 			melee: { total: 10, max: 4 },
 			range: { total: 10, max: 2 },
-			bossRange: { total: 3, max: 1 },
+			bossRange: { total: 6, max: 2 },
 		},
 		skinVersion: 2,
+	},
+	spawnPoint2: {
+		cleared: false,
+		x: 5152,
+		y: 2981,
+		width: 704,
+		height: 572,
+		spawnPoint: { x: 5491, y: 3227 },
+	},
+	end: {
+		cleared: false,
+		x: 3808,
+		y: 6787,
+		width: 704,
+		height: 572,
+		displayEnd: true,
 	},
 };
 

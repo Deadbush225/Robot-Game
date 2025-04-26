@@ -16,6 +16,7 @@ import { VendingMachine } from "./vendingMachine";
 import { RoomManager } from "./rooms";
 
 import { soundManager } from "./Sounds";
+import { PotionVendingMachine } from "./poitionVending";
 
 import LeaderboardService from "./LeaderboardService";
 import HUD from "./HUD";
@@ -71,6 +72,7 @@ export default class Game {
 			S: false,
 			D: false,
 			" ": false,
+			e: false,
 		};
 		this.setupEventListeners();
 		this.initialize();
@@ -91,7 +93,14 @@ export default class Game {
 		this.gunMachine = new GunMachine();
 		this.coinManager = new CoinManager();
 		this.potionManager = new PotionManager();
-		this.vendingMachine = new VendingMachine(170, 5424, this.gunMachine);
+		this.potionVendingMachines = [
+			new PotionVendingMachine(1573, 3212, this.potionManager),
+		];
+
+		this.vendingMachines = [
+			new VendingMachine(170, 5424, this.gunMachine),
+			new VendingMachine(5232, 3024, this.gunMachine),
+		];
 		this.camera = new Camera(this.canvas);
 		this.character = new Character(
 			this.camera.scale,
@@ -383,6 +392,10 @@ export default class Game {
 
 		this.moveCharacter(deltaTime);
 
+		if (this.keys.e) {
+			this.character.healFromInventory();
+		}
+
 		// const deltaTime = 16; // Approximate time between frames (in ms)
 		//
 		//this.roomManager.updateBulletsAndEnemies(
@@ -418,7 +431,13 @@ export default class Game {
 		this.gunMachine.checkPlayerCollision(this.character);
 		this.coinManager.update(performance.now(), this.character, this);
 
-		this.vendingMachine.isOverlapping(this.character);
+		this.vendingMachines.forEach((vendingMachine) =>
+			vendingMachine.isOverlapping(this.character)
+		);
+
+		this.potionVendingMachines.forEach((potionVending) => {
+			potionVending.isOverlapping(this.character);
+		});
 
 		this.potionManager.checkCollision(this.character);
 
@@ -523,7 +542,13 @@ export default class Game {
 
 		this.coinManager.draw(this.gl, this.camera, this.character);
 
-		this.vendingMachine.draw(this.gl, this.camera, this.character);
+		this.vendingMachines.forEach((vendingMachine) => {
+			vendingMachine.draw(this.gl, this.camera, this.character);
+		});
+
+		this.potionVendingMachines.forEach((potionVending) => {
+			potionVending.draw(this.gl, this.camera, this.character);
+		});
 
 		/* ━━━━━ Draw barriers or other elements if needed ━━━━ */
 		// this.gl.drawImage(

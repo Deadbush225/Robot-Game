@@ -72,8 +72,11 @@ export class CoinManager {
 
 		// Draw coin counter
 		gl.save();
-		gl.fillStyle = "black";
+		gl.fillStyle = "#fff";
+		gl.strokeStyle = "#000";
+		gl.lineWidth = 4;
 		gl.font = "30px Monogram";
+		gl.strokeText(`Coins: ${character.coins}`, 20, 80);
 		gl.fillText(`Coins: ${character.coins}`, 20, 80);
 		gl.restore();
 	}

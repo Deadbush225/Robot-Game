@@ -7,16 +7,20 @@
 	import Menu from "./modals/menu.svelte";
 	import Button from "./modals/button.svelte";
 	import Leaderboard from "./modals/Leaderboard.svelte";
+	import GameMessage from "./modals/gameMessage.svelte";
 
-	import { isGameOver } from "./store";
+	import { isGameOver, showEndMessage } from "./store";
 	import { onMount } from "svelte";
 
 	import { soundManager } from "./Sounds";
 	import { togglePause } from "./pauseMenu";
+
   import LeaderboardService from "./LeaderboardService";
 
 	let showingLeaderboard = false;
 
+	import { load } from "./enemy";
+  
 	// let isGameOver = false;
 	let gameStarted = false;
 	let isPaused = false;
@@ -89,6 +93,7 @@
 			}
 
 			window.addEventListener("click", handleUserInteraction);
+			load();
 		});
 
 		// Set up keyboard event for ESC key
@@ -136,6 +141,10 @@
 			}}
 			{restartGame}
 		></Paused>
+	{/if}
+
+	{#if $showEndMessage}
+		<GameMessage></GameMessage>
 	{/if}
 
 	{#if !gameStarted && !loading}
