@@ -45,13 +45,17 @@
 
     async function submitScoreAndShowLeaderboard(playerName) {
 		if (game.character.healthBar.health <= 0) {
+			// Force synchronization before submission
+			game.syncCoins();
+			
 			const scoreData = {
 				playerName: playerName,
 				score: game.calculateFinalScore(),
-				// level: game.level || 1,
 				enemiesDefeated: game.gameStats.enemiesDefeated,
 				coinsCollected: game.gameStats.coinsCollected
 			};
+			
+			console.log("Submitting score with coins:", scoreData);
 			
 			// Actually submit score
 			try {

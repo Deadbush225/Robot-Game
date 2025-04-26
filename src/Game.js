@@ -742,10 +742,27 @@ export default class Game {
 		console.log("Enemy defeated! Score: " + this.gameStats.score);
 	}
 
-	collectCoin(value) {
-		this.character.coins++;
-		this.gameStats.coinsCollected += 1; // Just increment by 1 per coin
-		this.gameStats.score += 50; // Add 50 points per coin
-		console.log("Coin collected! Score: " + this.gameStats.score);
+	collectCoin(value = 1) {
+		// Initialize coins if not set
+		if (!this.character.coins) {
+			this.character.coins = 0;
+		}
+		
+		// Add coin value to character
+		this.character.coins += value;
+		
+		// Also update the gameStats tracker
+		this.gameStats.coinsCollected = this.character.coins;
+		
+		// Add to score (10 points per coin)
+		this.gameStats.score += (value * 10);
+		
+		console.log(`Coin collected! Total: ${this.character.coins}, GameStats: ${this.gameStats.coinsCollected}`);
+	}
+
+	syncCoins() {
+		// Make sure gameStats always reflects the character's coins
+		this.gameStats.coinsCollected = this.character.coins || 0;
+		return this.gameStats.coinsCollected;
 	}
 }
