@@ -332,8 +332,8 @@ export default class Game {
 
 			if (!get(isGameOver)) {
 				first = false;
-				this.update(0.016);
-				// this.update(deltaTime);
+				// this.update(0.016);
+				this.update(deltaTime);
 				// this.update(deltaTime);
 				// this.update();
 				this.draw();
