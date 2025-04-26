@@ -13,5 +13,11 @@
     "sass-embedded": "^1.86.3",
     "svelte": "^5.20.2",
     "vite": "^6.2.0"
+  },
+  "dependencies": {
+    "ali-oss": "^6.22.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "uuid": "^11.1.0"
   }
 }

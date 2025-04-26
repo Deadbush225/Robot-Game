@@ -6,12 +6,16 @@
 	import GameOver from "./modals/gameover.svelte";
 	import Menu from "./modals/menu.svelte";
 	import Button from "./modals/button.svelte";
+	import Leaderboard from "./modals/Leaderboard.svelte";
 
 	import { isGameOver } from "./store";
 	import { onMount } from "svelte";
 
 	import { soundManager } from "./Sounds";
 	import { togglePause } from "./pauseMenu";
+  import LeaderboardService from "./LeaderboardService";
+
+	let showingLeaderboard = false;
 
 	// let isGameOver = false;
 	let gameStarted = false;
@@ -33,6 +37,36 @@
 		isGameOver.set(false);
 		console.log("Quit game");
 	}
+
+
+	function showLeaderboard() {
+        showingLeaderboard = true;
+    }
+
+    async function submitScoreAndShowLeaderboard(playerName) {
+		if (game.character.healthBar.health <= 0) {
+			const scoreData = {
+				playerName: playerName,
+				score: game.calculateFinalScore(),
+				// level: game.level || 1,
+				enemiesDefeated: game.gameStats.enemiesDefeated,
+				coinsCollected: game.gameStats.coinsCollected
+			};
+			
+			// Actually submit score
+			try {
+				await game.leaderboardService.submitScore(scoreData);
+				console.log("Score submitted successfully:", scoreData);
+			} catch (error) {
+				console.error("Error submitting score:", error);
+			}
+		}
+	}
+
+	// pang toggle ng leaderboard visibility
+	function toggleLeaderboard() {
+        showingLeaderboard = !showingLeaderboard;
+    }
 
 	function handleUserInteraction() {
 		// soundManager.play("bgm", true, "bgm");
@@ -75,6 +109,7 @@
 		saved_characterProps = characterProps;
 
 		game = new Game(canvas, gl, characterProps);
+		game.leaderboardService = new LeaderboardService();
 		game.createLevel(1);
 
 		gameStarted = true;
@@ -100,7 +135,10 @@
 	{/if}
 
 	{#if !gameStarted && !loading}
-		<Menu onStart={gameStart}></Menu>
+		<Menu 
+			onStart={gameStart}
+			onShowLeaderboard={showLeaderboard}
+		></Menu>
 	{/if}
 
 	{#if $isGameOver}
@@ -108,7 +146,18 @@
 			message="Game Over! You died."
 			onRestart={restartGame}
 			onQuit={quitGame}
+			onSubmitScore={submitScoreAndShowLeaderboard}
+			scoreData={{
+				score: game.calculateFinalScore(),
+				// level: game.level || 1,
+				enemiesDefeated: game.gameStats.enemiesDefeated,
+				coinsCollected: game.gameStats.coinsCollected
+			}}
 		/>
+	{/if}
+
+	{#if showingLeaderboard}
+		<Leaderboard onClose={() => showingLeaderboard = false} />
 	{/if}
 	<div>
 		<canvas id="glCanvas" bind:this={canvas}></canvas>
