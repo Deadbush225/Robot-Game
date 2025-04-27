@@ -1,12 +1,12 @@
 {
 	"version": 2,
-	"outputDirectory": "dist",
+
 	"builds": [
-		{ "src": "robot-game-server/server.js", "use": "@vercel/node" },
+		{ "src": "robot-game-server/server.cjs", "use": "@vercel/node" },
 		{ "src": "dist/**", "use": "@vercel/static" }
 	],
 	"routes": [
-		{ "src": "/api/(.*)", "dest": "robot-game-server/server.js" },
+		{ "src": "/api/(.*)", "dest": "robot-game-server/server.cjs" },
 		{ "src": "/(.*)", "dest": "/dist/$1" }
 	]
 }
