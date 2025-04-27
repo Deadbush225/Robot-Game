@@ -82,7 +82,7 @@
 	}
 
 	function handleUserInteraction() {
-		// soundManager.play("bgm", true, "bgm");
+		soundManager.play("bgm", true, "bgm");
 		// Remove the event listener after first interaction
 		window.removeEventListener("click", handleUserInteraction);
 	}

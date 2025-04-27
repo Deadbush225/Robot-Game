@@ -100,7 +100,7 @@ export let assets = {
 
 // separated bgm and sfx para madaling ma-toggle
 export let bgm = {
-	bgm: { src: bgm_src, audio: null, volume: 0.3 },
+	bgm: { src: bgm_src, audio: null, volume: 0.2 },
 };
 export let sfx = {
 	shoot: { src: plasmaShoot_src, audio: null, volume: 0.3 },
