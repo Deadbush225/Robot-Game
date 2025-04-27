@@ -3,7 +3,7 @@
 	"outputDirectory": "dist",
 	"builds": [
 		{ "src": "robot-game-server/server.js", "use": "@vercel/node" },
-		{ "src": "**", "use": "@vercel/static" }
+		{ "src": "dist/**", "use": "@vercel/static" }
 	],
 	"routes": [
 		{ "src": "/api/(.*)", "dest": "robot-game-server/server.js" },
