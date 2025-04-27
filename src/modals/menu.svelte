@@ -62,7 +62,7 @@
 		},
 		{
 			scr: gundam,
-			name: "Sir Ironheart",
+			name: "Ironheart",
 			descriptions: ["Life steal", "Lower speed"],
 			speed: 210,
 			// health: 20,
