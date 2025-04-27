@@ -2,7 +2,7 @@
 
 export default class LeaderboardService {
 	constructor(apiUrl = "/api") {
-		this.apiUrl = apiUrl;
+		this.apiUrl = "/api";
 	}
 
 	async getLeaderboard() {
