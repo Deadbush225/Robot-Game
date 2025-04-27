@@ -575,6 +575,8 @@ export default class Game {
 
 		this.healthBar.draw(this.gl);
 
+		this.hud.draw(this.gl, this.canvas);
+
 		// Draw reddish vignette on borders when taking damage
 		if (this.character.isTakingDamage) {
 			const alpha = 1; // Opacity of the vignette
@@ -629,7 +631,6 @@ export default class Game {
 		// }
 
 		// HUD on top of everythhing
-		this.hud.draw(this.gl, this.canvas);
 	}
 
 	moveCharacter(deltaTime) {

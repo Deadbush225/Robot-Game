@@ -8,6 +8,7 @@
 	import Button from "./modals/button.svelte";
 	import Leaderboard from "./modals/Leaderboard.svelte";
 	import GameMessage from "./modals/gameMessage.svelte";
+	import Tutorial from "./modals/Tutorial.svelte";
 
 	import { isGameOver, showEndMessage } from "./store";
 	import { onMount } from "svelte";
@@ -86,6 +87,19 @@
 		window.removeEventListener("click", handleUserInteraction);
 	}
 
+	let showTutorial = false;
+	let pendingCharacterProps = null;
+
+	function handleMenuStart(characterProps) {
+		pendingCharacterProps = characterProps;
+		showTutorial = true;
+	}
+
+	function handleTutorialClose() {
+		showTutorial = false;
+		gameStart(pendingCharacterProps); // your existing start logic
+	}
+
 	onMount(() => {
 		assetLoader(() => {
 			loading = false;
@@ -152,8 +166,13 @@
 		<GameMessage></GameMessage>
 	{/if}
 
-	{#if !gameStarted && !loading}
+	<!-- {#if !gameStarted && !loading}
 		<Menu onStart={gameStart} onShowLeaderboard={showLeaderboard}></Menu>
+	{/if} -->
+	{#if showTutorial}
+		<Tutorial on:close={handleTutorialClose} />
+	{:else if !gameStarted && !loading}
+		<Menu onStart={handleMenuStart} onShowLeaderboard={showLeaderboard} />
 	{/if}
 
 	{#if $isGameOver}

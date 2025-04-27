@@ -118,7 +118,11 @@
 		</div>
 
 		<div class="buttons">
-			<Button onClick={() => onStart(characters[selected])}>Play</Button>
+			<Button
+				onClick={() => {
+					onStart(characters[selected]);
+				}}>Play</Button
+			>
 			<!-- <Button onClick={onQuit}>Quit</Button> -->
 		</div>
 
@@ -216,7 +220,8 @@
 		flex-direction: column;
 		justify-content: space-evenly;
 
-		padding: 1em;
+		// padding: 1em ;
+		padding: 0em;
 		box-sizing: border-box;
 	}
 

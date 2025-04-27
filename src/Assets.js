@@ -50,6 +50,20 @@ import collect_coins from "./assets/sounds/collect-points-190037.mp3";
 import collect_potions from "./assets/sounds/collect-potions.mp3";
 import gameOver from "./assets/sounds/gameover.mp3";
 
+import hint1 from "./assets/ui/Tutorials/Hint1.png";
+import hint2 from "./assets/ui/Tutorials/Hint2.png";
+import hint3 from "./assets/ui/Tutorials/Hint3.png";
+import hint4 from "./assets/ui/Tutorials/Hint4.png";
+import hint5 from "./assets/ui/Tutorials/Hint5.png"; // If you have 5 hints, adjust as needed
+
+export let paths = {
+	hint1,
+	hint2,
+	hint3,
+	hint4,
+	hint5,
+};
+
 export let assets = {
 	map: map,
 	barriers: barriers_map,
