@@ -11,7 +11,8 @@ import rifle_src from "./assets/guns/rifle.png";
 import toxic_src from "./assets/guns/toxic.png";
 import blaster_src from "./assets/guns/blaster.png";
 import coin_src from "./assets/coin.png";
-import vending_src from "./assets/vending-machine.png";
+import vending_src from "./assets/vending-machine-gun.png";
+import vending_potion_src from "./assets/vending-machine-potion.png";
 import bullet_blue_src from "./assets/bullets/blue.png";
 import bullet_red_src from "./assets/bullets/red.png";
 import bullet_rifle1_src from "./assets/bullets/rifle.png";
@@ -32,8 +33,22 @@ import horizontal_door_src from "./assets/Door Horizontal.png";
 import vertical_door_src from "./assets/Door Vertical.png";
 
 import plasmaShoot_src from "./assets/sounds/enemyShoot.mp3";
+import hit1_src from "./assets/sounds/footsteps-01.mp3";
+import hit2_src from "./assets/sounds/footsteps-02.mp3";
+import hit3_src from "./assets/sounds/footsteps-03.mp3";
+import hit4_src from "./assets/sounds/footsteps-04.mp3";
 import bgm_src from "./assets/sounds/bgm.mp3";
 import ui_select_src from "./assets/sounds/ui-select.mp3";
+import shoot from "./assets/sounds/shoot.mp3";
+import chomp from "./assets/sounds/chomp-155392.mp3";
+import shing from "./assets/sounds/metal-whoosh-hit-4-201906.mp3";
+import woman_hurt from "./assets/sounds/female-ow.mp3";
+import man_hurt from "./assets/sounds/man-ow.mp3";
+import enemy_hurt from "./assets/sounds/enemy hurt.mp3";
+import slidingDoor_src from "./assets/sounds/sliding-door-6758.mp3";
+import collect_coins from "./assets/sounds/collect-points-190037.mp3";
+import collect_potions from "./assets/sounds/collect-potions.mp3";
+import gameOver from "./assets/sounds/gameover.mp3";
 
 export let assets = {
 	map: map,
@@ -58,6 +73,7 @@ export let assets = {
 	portal: portalSrc,
 	coin: coin_src,
 	vending: vending_src,
+	vendingPotion: vending_potion_src,
 	bullet_blue: bullet_blue_src,
 	bullet_red: bullet_red_src,
 	bullet_rifle1: bullet_rifle1_src,
@@ -73,8 +89,62 @@ export let bgm = {
 	bgm: { src: bgm_src, audio: null, volume: 0.3 },
 };
 export let sfx = {
-	plasmaShoot: { src: plasmaShoot_src, audio: null, volume: 0.7 },
-	ui_select: { src: ui_select_src, audio: null, volume: 0.7 },
+	shoot: { src: plasmaShoot_src, audio: null, volume: 0.3 },
+	ui_select: { src: ui_select_src, audio: null, volume: 0.3 },
+	footstep1: { src: hit1_src, audio: null, volume: 0.6 },
+	footstep2: { src: hit2_src, audio: null, volume: 0.6 },
+	footstep3: { src: hit3_src, audio: null, volume: 0.6 },
+	footstep4: { src: hit4_src, audio: null, volume: 0.6 },
+	plasmaShoot: {
+		src: shoot,
+		audio: null,
+		volume: 0.7,
+	},
+	chomp: {
+		src: chomp,
+		audio: null,
+		volume: 1,
+	},
+	shing: {
+		src: shing,
+		audio: null,
+		volume: 0.7,
+	},
+	man_hurt: {
+		src: man_hurt,
+		audio: null,
+		volume: 0.7,
+	},
+	female_hurt: {
+		src: woman_hurt,
+		audio: null,
+		volume: 0.7,
+	},
+	enemy_hurt: {
+		src: enemy_hurt,
+		audio: null,
+		volume: 0.7,
+	},
+	slidingDoor: {
+		src: slidingDoor_src,
+		audio: null,
+		volume: 1,
+	},
+	collectCoins: {
+		src: collect_coins,
+		audio: null,
+		volume: 0.7,
+	},
+	collectPotions: {
+		src: collect_potions,
+		audio: null,
+		volume: 0.7,
+	},
+	gameOver: {
+		src: gameOver,
+		audio: null,
+		volume: 0.7,
+	},
 };
 
 let loadedCount = 0;

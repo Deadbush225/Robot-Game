@@ -48,6 +48,7 @@ export function load() {
 			dead: [{ x: 320, y: 287, width: 64, height: 96 }],
 		},
 		src: assets.enemy,
+		attackSfx: "shoot",
 	};
 
 	iceCubeFrameData = {
@@ -109,6 +110,7 @@ export function load() {
 			dead: [{ x: 1024, y: 256, width: 128, height: 128 }],
 		},
 		src: assets.ice_cube,
+		attackSfx: "shoot",
 	};
 
 	heaterFrameData = {
@@ -146,6 +148,7 @@ export function load() {
 			dead: [{ x: 278, y: 394, width: 97, height: 97 }],
 		},
 		src: assets.toaster,
+		attackSfx: "shing",
 	};
 
 	fridgeFrameData = {
@@ -193,6 +196,7 @@ export function load() {
 			dead: [{ x: 320, y: 192, width: 64, height: 64 }],
 		},
 		src: assets.ref,
+		attackSfx: "chomp",
 	};
 }
 
@@ -202,6 +206,8 @@ import {
 	getRandomAllowed,
 	getRandomAllowedRoom,
 } from "./boundary";
+import { coinManager } from "./coins";
+import { soundManager } from "./Sounds";
 
 class BaseEnemy {
 	constructor(x, y, speed, health, damage, frameData) {
@@ -246,7 +252,13 @@ class BaseEnemy {
 			this.damageTimer = Date.now();
 		} else {
 			this.state = "killed"; // Change state to killed
+			let coins = this.isBoss ? 7 : 1;
+			while (coins > 0) {
+				coinManager.spawnCoin(this.x, this.y);
+				coins--;
+			}
 		}
+		soundManager.play("enemy_hurt");
 		// }
 	}
 
@@ -395,6 +407,15 @@ export default class MeleeEnemy extends BaseEnemy {
 		} else if (distance < 10) {
 			// Attack the character if close enough
 			this.state = "attacking";
+			if (!this.attackSoundPlaying) {
+				this.attackSoundPlaying = true;
+				soundManager.play(this.frameData.attackSfx);
+
+				// Reset the flag after the sound finishes (replace 500 with your sound's duration in ms)
+				setTimeout(() => {
+					this.attackSoundPlaying = false;
+				}, 500);
+			}
 			character.takeDamage(this.damage);
 		} else if (distance < 1500) {
 			// Move toward the character if within the spawning radius
@@ -585,6 +606,7 @@ export class RangedEnemy extends BaseEnemy {
 			angle,
 			speed,
 		});
+		soundManager.play("shoot");
 	}
 
 	draw(gl, camera, canvas, character) {
@@ -659,6 +681,7 @@ export class BossRangedEnemy extends RangedEnemy {
 				angle,
 				speed,
 			});
+			soundManager.play("shoot");
 		}
 	}
 }

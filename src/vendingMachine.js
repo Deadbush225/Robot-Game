@@ -67,7 +67,7 @@ export class VendingMachine {
 	}
 
 	isOverlapping(character) {
-		if (character.coins < 10) {
+		if (character.coins < 25) {
 			return;
 		}
 
@@ -91,7 +91,7 @@ export class VendingMachine {
 			characterPoint.y > vendingBounds.top &&
 			characterPoint.y < vendingBounds.bottom
 		) {
-			character.coins -= 10;
+			character.coins -= 25;
 			this.summonRandomGun();
 			console.log("VENDING!!");
 			// this.summonRandomGun();

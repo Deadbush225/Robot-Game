@@ -24,12 +24,25 @@ class SoundManager {
 		}
 	}
 
+	resume(name, loop, type = "sfx") {
+		if (this.muted[type]) return;
+
+		const sound =
+			type === "bgm" ? this.bgm[name]?.audio : this.sfx[name]?.audio;
+		if (sound) {
+			sound.loop = loop;
+			sound.play().catch((error) => {
+				console.error(`Error resuming sound ${name}:`, error);
+			});
+		}
+	}
+
 	stop(name, type = "sfx") {
 		const sound =
 			type === "bgm" ? this.bgm[name]?.audio : this.sfx[name]?.audio;
 		if (sound) {
 			sound.pause();
-			sound.currentTime = 0;
+			// sound.currentTime = 0;
 		}
 	}
 

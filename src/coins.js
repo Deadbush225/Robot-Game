@@ -1,6 +1,7 @@
 import { assets } from "./Assets";
+import { soundManager } from "./Sounds";
 
-export class CoinManager {
+class CoinManager {
 	constructor() {
 		this.coins = [];
 		// this.coinCount = 0;
@@ -35,6 +36,7 @@ export class CoinManager {
 
 			if (distance < 80) {
 				// Collision radius
+				soundManager.play("collectCoins");
 				this.coins.splice(i, 1);
 				player.coins++;
 			}
@@ -80,4 +82,10 @@ export class CoinManager {
 		gl.fillText(`Coins: ${character.coins}`, 20, 80);
 		gl.restore();
 	}
+}
+
+export let coinManager = new CoinManager();
+
+export function resetCoins() {
+	coinManager = new CoinManager();
 }

@@ -32,7 +32,7 @@ export class PotionVendingMachine {
 		);
 
 		gl.drawImage(
-			assets.vending,
+			assets.vendingPotion,
 			this.currentFrame + 1,
 			0 + 11,
 			this.frameWidth,
@@ -45,7 +45,7 @@ export class PotionVendingMachine {
 	}
 
 	isOverlapping(character) {
-		if (character.coins < 5) {
+		if (character.coins < 10) {
 			return;
 		}
 
@@ -69,7 +69,7 @@ export class PotionVendingMachine {
 			characterPoint.y > vendingBounds.top &&
 			characterPoint.y < vendingBounds.bottom
 		) {
-			character.coins -= 5;
+			character.coins -= 10;
 			this.dispensePotion();
 			console.log("POTION VENDED!!");
 		}

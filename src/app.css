@@ -79,13 +79,17 @@ h1 {
     transition: border-color 0.25s;
 } */
 
-button:hover {
+/* button:hover {
     border-color: #646cff;
-}
+} */
 
+input:focus-within,
+input:focus,
+input:hover,
 button:focus,
 button:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
+    /* outline: 4px auto -webkit-focus-ring-color; */
+    outline: none
 }
 
 @media (prefers-color-scheme: light) {

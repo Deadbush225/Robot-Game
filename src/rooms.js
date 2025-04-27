@@ -37,11 +37,24 @@ export class RoomManager {
 			if (room.cleared) continue;
 
 			if (room.enemies && room.door) {
-				if (
-					// we can try to keep the number of the number of enemies and decrement it when an enemy dies to be efficient
-					room.enemies.filter((val) => val.state !== "dead").length === 0 &&
-					room.enemiesSpawned
-				) {
+				const types = ["melee", "range", "bossRange"];
+				const allSpawned = types.every((type) => {
+					if (!room.summons[type]) {
+						return true;
+					}
+					return (
+						room.spawnedCount[type] - room.pendingSpawn[type] >=
+						room.summons[type].total
+					);
+				});
+				const allDead =
+					game.enemies.length > 0 &&
+					game.enemies.every(
+						(val) => val.state === "dead" || val.state === "killed"
+					);
+
+				// console.log(allSpawned, " && ", allDead);
+				if (allSpawned && allDead && room.enemiesSpawned) {
 					console.log("ROOM CLEARED: ");
 					room.door.openDoor();
 					room.cleared = true;

@@ -1,4 +1,6 @@
 <script>
+	import { soundManager } from "../Sounds";
+	import { showLeaderBoards } from "../store";
 	import Button from "./button.svelte";
 
 	export let message = "Game Over!";
@@ -11,9 +13,12 @@
 		enemiesDefeated: 0,
 		coinsCollected: 0,
 	};
+	export let onShowLeaderboard = () => {};
 
 	let playerName = "";
 	let scoreSubmitted = false;
+
+	soundManager.play("gameOver");
 
 	async function submitScore() {
 		if (playerName.trim() === "") {
@@ -22,8 +27,10 @@
 		}
 
 		try {
+			// try to return a promise to make sure that the new leaderboard has the score in it
 			await onSubmitScore(playerName);
 			scoreSubmitted = true;
+			onShowLeaderboard();
 		} catch (error) {
 			console.error("Error submitting score:", error);
 		}
@@ -35,36 +42,43 @@
 		<h1>{message}</h1>
 
 		<div class="score-details">
-            <h2>Your Score: {scoreData.score}</h2>
-            <div class="stats-grid">
-                <!-- <div class="stat-box">
+			<h2>Your Score: {scoreData.score}</h2>
+			<div class="stats-grid">
+				<!-- <div class="stat-box">
                     <span class="stat-label">Level</span>
                     <span class="stat-value">{scoreData.level}</span>
                 </div> -->
-                <div class="stat-box">
-                    <span class="stat-label">Enemies Defeated</span>
-                    <span class="stat-value">{scoreData.enemiesDefeated}</span>
-                </div>
+				<div class="stat-box">
+					<span class="stat-label">Enemies Defeated</span>
+					<span class="stat-value">{scoreData.enemiesDefeated}</span>
+				</div>
 				<!-- naka comment yan siya kasi di naa-update ng maayos (diko ma debug 😀) -->
-                <!-- <div class="stat-box">
+				<!-- <div class="stat-box">
                     <span class="stat-label">Coins Collected</span>
                     <span class="stat-value">{scoreData.coinsCollected}</span>
                 </div> -->
-            </div>
-        </div>
+			</div>
+		</div>
 
 		{#if !scoreSubmitted}
-            <div class="name-input">
-                <label for="playerName">Enter your name:</label>
-                <input type="text" id="playerName" bind:value={playerName} maxlength="15">
-                <button on:click={submitScore}>Submit Score</button>
-            </div>
-        {:else}
-            <div class="score-submitted">
-                <p>Score submitted!</p>
-            </div>
-        {/if}
-
+			<div class="name-input">
+				<!-- <label for="playerName">Enter your name:</label> -->
+				<div class="hBox">
+					<input
+						type="text"
+						id="playerName"
+						bind:value={playerName}
+						maxlength="15"
+						placeholder="Enter Your name"
+					/>
+					<button on:click={submitScore}>Submit Score</button>
+				</div>
+			</div>
+		{:else}
+			<div class="score-submitted">
+				<p>Score submitted!</p>
+			</div>
+		{/if}
 
 		<div class="buttons">
 			<Button onClick={onRestart}>Restart</Button>
@@ -110,6 +124,8 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: space-evenly;
+		padding: 1em;
+		box-sizing: border-box;
 	}
 
 	.modal-skin {
@@ -131,84 +147,88 @@
 		display: flex;
 		justify-content: space-around;
 		padding: 10px;
-		
 	}
 
 	.score-details {
-        margin: 0.5rem 0;
-        padding: 0.5rem;
-        background-color: rgba(0, 0, 0, 0.2);
-        border-radius: 5px;
-    }
+		/* margin: 0.5rem 0; */
+		/* padding: 0.5rem; */
+		background-color: rgba(0, 0, 0, 0.2);
+		border-radius: 5px;
 
-    .score-details h2 {
-        margin: 0 0 0.5rem 0;
-        font-size: 2rem;
-        color: gold;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    }
+		h2 {
+			margin: 0 0 0.5rem 0;
+			font-size: 3rem;
+			color: gold;
+			text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+		}
+	}
 
-    .stats-grid {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-    }
+	.stats-grid {
+		display: flex;
+		justify-content: center;
+		gap: 15px;
+	}
 
-    .stat-box {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 0.5rem;
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 5px;
-        min-width: 80px;
-    }
+	.stat-box {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 0.5rem 1.5em;
+		background-color: rgba(255, 255, 255, 0.1);
+		border-radius: 5px;
+		min-width: 80px;
 
-    .stat-label {
-        font-size: 0.9rem;
-        color: #ccc;
-    }
+		.stat-label {
+			font-size: 1.7em;
+			color: #ccc;
+		}
 
-    .stat-value {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: white;
-    }
+		.stat-value {
+			font-size: 2.3rem;
+			font-weight: bold;
+			color: white;
+		}
+	}
 
-    .name-input {
-        margin: 5px 0;
-        font-size: 18px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+	.name-input {
+		margin: 5px 0;
+		font-size: 1.7em;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 
-    .name-input input {
-        padding: 8px 12px;
-        margin-left: 10px;
-        margin-top: 5px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        font-size: 18px;
-        width: 200px;
-        height: 24px;
-    }
+	.name-input input {
+		padding: 0 0 0 0.3em;
+		/* border-radius: 5px; */
+		/* border: 1px solid #ccc; */
+		font-size: 1em;
+		width: 200px;
+		height: 100%;
+	}
 
-    .name-input button {
-        margin-top: 10px;
-        padding: 8px 16px;
-        background-color: #ff4444;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-    }
+	.name-input button {
+		/* margin-top: 10px; */
+		padding: 0.5em 0.7em;
+		background-color: #ff4444;
+		color: white;
+		border: none;
+		/* border-radius: 5px; */
+		cursor: pointer;
+		font-size: 1em;
+	}
 
-    .score-submitted {
-        color: #4caf50;
-        font-weight: bold;
-        font-size: 1.2rem;
-        margin: 1rem 0;
-    }
+	.score-submitted {
+		color: #4caf50;
+		font-weight: bold;
+		font-size: 1.2rem;
+		margin: 1rem 0;
+	}
+
+	.hBox {
+		display: flex;
+		border-radius: 5px;
+		border: 2px solid #ff4444;
+		overflow: hidden;
+	}
 </style>

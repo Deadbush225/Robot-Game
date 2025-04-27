@@ -1,5 +1,6 @@
 import { assets } from "./Assets";
 import { addTempBlockedRect, removeTempBlockedRect } from "./boundary";
+import { soundManager } from "./Sounds";
 
 export default class Door {
 	constructor(x, y, orientation = "Vertical", camera, character) {
@@ -49,6 +50,7 @@ export default class Door {
 		// console.log("width: ", this.width, " ", "height: ", this.height);
 	}
 	openDoor() {
+		soundManager.play("slidingDoor");
 		console.log("CLOSING DOOR:");
 		console.log(this.doorId);
 		this.state = "opening";

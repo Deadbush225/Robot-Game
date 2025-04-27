@@ -21,6 +21,7 @@
 			// health: 20,
 			gun: "pistol",
 			imgName: "character",
+			hurtSfx: "man_hurt",
 			animationMap: {
 				0: { frames: 6, speed: 200, sx: 0, sy: 0, sw: 64, sh: 64 }, // Standing
 				1: { frames: 3, speed: 100, sx: 0, sy: 128, sw: 64, sh: 64 }, // Walking
@@ -44,6 +45,7 @@
 			health: 400,
 			gun: "rifle",
 			imgName: "eve",
+			hurtSfx: "female_hurt",
 			animationMap: {
 				0: { frames: 4, speed: 200, sx: 0, sy: 0, sw: 64, sh: 64 }, // Standing
 				1: { frames: 4, speed: 100, sx: 0, sy: 0, sw: 64, sh: 64 }, // Walking
@@ -67,6 +69,7 @@
 			health: 150,
 			gun: "shotgun",
 			imgName: "gundam",
+			hurtSfx: "man_hurt",
 			animationMap: {
 				0: { frames: 4, speed: 200, sx: 0, sy: 0, sw: 64, sh: 64 }, // Standing
 				1: { frames: 4, speed: 200, sx: 0, sy: 0, sw: 64, sh: 64 }, // Walking

@@ -6,6 +6,7 @@
 
 	export let onGamePause = () => {};
 	export let restartGame = () => {};
+	export let onShowMenu = () => {};
 
 	function H_toggleMusic() {
 		musicEnabled = toggleMusic();
@@ -26,6 +27,7 @@
 		<Button onClick={H_toggleSFX}>
 			{sfxEnabled ? "Mute SFX" : "Unmute SFX"}
 		</Button>
+		<Button onClick={onShowMenu}>Menu</Button>
 	</div>
 </div>
 

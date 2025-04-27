@@ -1,5 +1,6 @@
 import { getRandomAllowed } from "./boundary";
 import { assets } from "./Assets";
+import { soundManager } from "./Sounds";
 
 export class PotionManager {
 	constructor() {
@@ -47,6 +48,7 @@ export class PotionManager {
 
 			if (distance < 80) {
 				// Player collects the potion
+				soundManager.play("collectPotions");
 				this.potions.splice(i, 1); // Remove the potion from the array
 
 				if (player.healthBar.health + 20 > player.healthBar.originalHealth) {

@@ -32,6 +32,11 @@
 	let canvas, gl, game;
 	let saved_characterProps;
 
+	function showMenu() {
+		isPaused = false;
+		gameStarted = false;
+	}
+
 	function restartGame() {
 		gameStart(saved_characterProps);
 	}
@@ -138,6 +143,7 @@
 				isPaused = togglePause(game);
 				console.log("Paused: ", isPaused);
 			}}
+			onShowMenu={showMenu}
 			{restartGame}
 		></Paused>
 	{/if}
@@ -161,7 +167,11 @@
 				// level: game.level || 1,
 				enemiesDefeated: game.gameStats.enemiesDefeated,
 				coinsCollected: game.gameStats.coinsCollected,
+				// score: 10000,
+				// enemiesDefeated: 1000,
+				// coinsCollected: 1000,
 			}}
+			onShowLeaderboard={showLeaderboard}
 		/>
 	{/if}
 

@@ -2,6 +2,7 @@ const frameWidth = 64; // Width of each frame in the sprite sheet
 const frameHeight = 64; // Height of each frame in the sprite sheet
 import { assets } from "./Assets";
 import { Gun } from "./Gun";
+import { soundManager } from "./Sounds";
 import { spawnPointX, spawnPointY } from "./store";
 import { get } from "svelte/store";
 
@@ -68,6 +69,7 @@ export class Character {
 		this.dashTimer = 0; // time left for dash or cooldown
 
 		this.animationMap = characterProps.animationMap;
+		this.hurtSfx = characterProps.hurtSfx;
 	}
 
 	takeDamage(amount) {
@@ -82,6 +84,7 @@ export class Character {
 				this.state = 3;
 			}
 			// this.healthBar.setHealth(this.health);
+			soundManager.play(this.hurtSfx);
 		}
 	}
 
@@ -96,7 +99,12 @@ export class Character {
 	}
 
 	healFromInventory() {
-		if (this.healthBar.health > 80 || this.potions <= 0) return;
+		// console.log(this.healthBar.health, " ", this.potions);
+		if (
+			this.healthBar.health > this.healthBar.originalHealth - 20 ||
+			this.potions <= 0
+		)
+			return;
 
 		this.heal(20);
 		this.potions--;

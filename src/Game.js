@@ -5,7 +5,7 @@ import HealthBar from "./HealthBar";
 import Character from "./character";
 // import Portal from "./portal";
 import { GunMachine } from "./Gun";
-import { CoinManager } from "./coins";
+import { coinManager, resetCoins } from "./coins";
 import { PotionManager } from "./potion";
 import Camera from "./Camera";
 
@@ -91,11 +91,15 @@ export default class Game {
 		console.log(this.characterProps);
 		this.healthBar = new HealthBar(this.characterProps.health);
 		this.gunMachine = new GunMachine();
-		this.coinManager = new CoinManager();
+
+		resetCoins();
+
+		this.coinManager = coinManager;
 		this.potionManager = new PotionManager();
 		this.potionVendingMachines = [
 			new PotionVendingMachine(1573, 3212, this.potionManager),
 		];
+		this.lastFootstepIndex = 1;
 
 		this.vendingMachines = [
 			new VendingMachine(170, 5424, this.gunMachine),
@@ -110,13 +114,15 @@ export default class Game {
 		this.enemies = [];
 		this.bullets = [];
 
+		this.footstepsPlaying = false;
+
 		this.roomManager = new RoomManager();
 
 		// track score in real time
 		this.gameStats = {
 			score: 0,
 			enemiesDefeated: 0,
-			coinsCollected: 0
+			coinsCollected: 0,
 		};
 		this.hud = new HUD(this);
 
@@ -267,6 +273,7 @@ export default class Game {
 				this.character.gunAngle - Math.floor(burstCount / 2) * spreadAngle;
 
 			for (let i = 0; i < burstCount; i++) {
+				soundManager.play("plasmaShoot");
 				const angle = startAngle + i * spreadAngle;
 
 				// Calculate the direction of the bullet based on the spread angle
@@ -367,17 +374,17 @@ export default class Game {
 			// Ensure stats are synchronized before game over
 			console.log("GAME OVER STATS BEFORE SYNC:", {
 				coins: this.character.coins,
-				coinsCollected: this.gameStats.coinsCollected
+				coinsCollected: this.gameStats.coinsCollected,
 			});
-			
+
 			// Force synchronization to ensure consistency
 			this.gameStats.coinsCollected = this.character.coins;
-			
+
 			console.log("GAME OVER STATS AFTER SYNC:", {
 				coins: this.character.coins,
-				coinsCollected: this.gameStats.coinsCollected
+				coinsCollected: this.gameStats.coinsCollected,
 			});
-			
+
 			isGameOver.set(true);
 			return;
 		}
@@ -393,6 +400,7 @@ export default class Game {
 		this.moveCharacter(deltaTime);
 
 		if (this.keys.e) {
+			// console.log("HEALING FROM INV");
 			this.character.healFromInventory();
 		}
 
@@ -466,11 +474,6 @@ export default class Game {
 			this.canvas.height // Destination height (stretch to fit canvas)
 		);
 
-		// Draw enemies
-		this.enemies.forEach((enemy) =>
-			enemy.draw(this.gl, this.camera, this.canvas, this.character)
-		);
-
 		/* ━━━━━━━━━━━━━━━━ Draw the character ━━━━━━━━━━━━━━━━━━ */
 		this.character.draw(
 			this.gl,
@@ -517,6 +520,11 @@ export default class Game {
 
 		this.gl.restore();
 
+		// Draw enemies
+		this.enemies.forEach((enemy) =>
+			enemy.draw(this.gl, this.camera, this.canvas, this.character)
+		);
+
 		/* ━━━━━━━━━━━━━━━━━━━━ Draw bullets ━━━━━━━━━━━━━━━━━━━━ */
 		this.bullets.forEach((bullet) => {
 			this.gl.save();
@@ -550,7 +558,7 @@ export default class Game {
 			potionVending.draw(this.gl, this.camera, this.character);
 		});
 
-		/* ━━━━━ Draw barriers or other elements if needed ━━━━ */
+		// /* ━━━━━ Draw barriers or other elements if needed ━━━━ */
 		// this.gl.drawImage(
 		// 	this.barriersImg,
 		// 	this.character.realX - this.camera.width / 2, // Source X (character centered horizontally)
@@ -562,6 +570,8 @@ export default class Game {
 		// 	this.canvas.width, // Destination width (stretch to fit canvas)
 		// 	this.canvas.height // Destination height (stretch to fit canvas)
 		// );
+
+		this.roomManager.draw(this.gl, this.camera, this.character);
 
 		this.healthBar.draw(this.gl);
 
@@ -586,39 +596,37 @@ export default class Game {
 			this.gl.restore();
 		}
 
-		this.roomManager.draw(this.gl, this.camera, this.character);
-
 		/* ━━━━━━━━━━━━━━━━━━━━━ Dotted Grid ━━━━━━━━━━━━━━━━━━━━ */
-		const gridGap = 64; // Gap between dots in pixels
-		const dotRadius = 2; // Radius of each dot
+		// const gridGap = 64; // Gap between dots in pixels
+		// const dotRadius = 2; // Radius of each dot
 
-		const endX = this.character.realX + this.camera.width / 2;
-		const endY = this.character.realY + this.camera.height / 2;
+		// const endX = this.character.realX + this.camera.width / 2;
+		// const endY = this.character.realY + this.camera.height / 2;
 
-		// Loop through the visible portion of the world to draw the grid CLUTCHED BY COPILOT
-		for (let x = 32; x <= endX; x += gridGap) {
-			for (let y = 0; y <= endY; y += gridGap) {
-				// Convert world coordinates to screen coordinates
-				// const screenX = this.camera.worldToScreen(x - this.character.realX);
-				// const screenY = this.camera.worldToScreen(y - this.character.realY);
-				const { x: screenX, y: screenY } = this.camera.worldToScreen(
-					x,
-					y,
-					this.character
-				);
+		// // Loop through the visible portion of the world to draw the grid CLUTCHED BY COPILOT
+		// for (let x = 32; x <= endX; x += gridGap) {
+		// 	for (let y = 0; y <= endY; y += gridGap) {
+		// 		// Convert world coordinates to screen coordinates
+		// 		// const screenX = this.camera.worldToScreen(x - this.character.realX);
+		// 		// const screenY = this.camera.worldToScreen(y - this.character.realY);
+		// 		const { x: screenX, y: screenY } = this.camera.worldToScreen(
+		// 			x,
+		// 			y,
+		// 			this.character
+		// 		);
 
-				// Draw the dot
-				// this.gl.fillStyle = isBlocked(x, y)
-				// 	? "rgba(255, 255, 255, 0.5)"
-				// 	: "rgba(255, 0, 255, 0)"; // Semi-transparent white
-				this.gl.fillStyle = isBlocked(x, y)
-					? "rgba(255, 255, 255, 0.5)"
-					: "rgba(255, 0, 255, 1)"; // Semi-transparent white
-				this.gl.beginPath();
-				this.gl.arc(screenX, screenY, dotRadius, 0, Math.PI * 2); // Draw a small circle
-				this.gl.fill();
-			}
-		}
+		// 		// Draw the dot
+		// 		// this.gl.fillStyle = isBlocked(x, y)
+		// 		// 	? "rgba(255, 255, 255, 0.5)"
+		// 		// 	: "rgba(255, 0, 255, 0)"; // Semi-transparent white
+		// 		this.gl.fillStyle = isBlocked(x, y)
+		// 			? "rgba(255, 255, 255, 0.5)"
+		// 			: "rgba(255, 0, 255, 1)"; // Semi-transparent white
+		// 		this.gl.beginPath();
+		// 		this.gl.arc(screenX, screenY, dotRadius, 0, Math.PI * 2); // Draw a small circle
+		// 		this.gl.fill();
+		// 	}
+		// }
 
 		// HUD on top of everythhing
 		this.hud.draw(this.gl, this.canvas);
@@ -653,6 +661,46 @@ export default class Game {
 		) {
 			this.character.isDashing = true;
 			this.character.dashTimer = this.character.dashDuration;
+		}
+
+		let isMoving =
+			this.keys.ArrowLeft ||
+			this.keys.ArrowRight ||
+			this.keys.ArrowUp ||
+			this.keys.ArrowDown ||
+			this.keys.a ||
+			this.keys.d ||
+			this.keys.w ||
+			this.keys.s ||
+			this.keys.A ||
+			this.keys.D ||
+			this.keys.W ||
+			this.keys.S;
+
+		if (isMoving) {
+			if (!this.footstepsPlaying) {
+				this.footstepsPlaying = true;
+				const playStep = (step) => {
+					const idx = step;
+					// || this.lastFootstepIndex;
+					soundManager.play(`footstep${idx}`);
+					// this.lastFootstepIndex = idx < 4 ? idx + 1 : 1;
+					if (idx < 4) {
+						this.footstepTimeout = setTimeout(() => playStep(idx + 1), 350);
+					} else {
+						this.footstepTimeout = setTimeout(() => {
+							this.footstepsPlaying = false;
+						}, 350);
+					}
+				};
+				playStep(1);
+			}
+		} else {
+			// Stop any pending timeouts and reset playing state
+			if (this.footstepsPlaying) {
+				clearTimeout(this.footstepTimeout);
+				this.footstepsPlaying = false;
+			}
 		}
 
 		// Apply dash speed if dashing
@@ -750,14 +798,12 @@ export default class Game {
 		console.log(this.enemies);
 	}
 
-
-
 	// pang leaderboard
 	calculateFinalScore() {
 		const baseScore = this.gameStats.score;
 		const healthBonus = Math.max(0, this.character.healthBar.health) * 5;
 		const levelMultiplier = this.level * 0.5;
-		
+
 		return Math.floor((baseScore + healthBonus) * (1 + levelMultiplier));
 	}
 
@@ -772,17 +818,19 @@ export default class Game {
 		if (!this.character.coins) {
 			this.character.coins = 0;
 		}
-		
+
 		// Add coin value to character
 		this.character.coins += value;
-		
+
 		// Also update the gameStats tracker
 		this.gameStats.coinsCollected = this.character.coins;
-		
+
 		// Add to score (10 points per coin)
-		this.gameStats.score += (value * 10);
-		
-		console.log(`Coin collected! Total: ${this.character.coins}, GameStats: ${this.gameStats.coinsCollected}`);
+		this.gameStats.score += value * 10;
+
+		console.log(
+			`Coin collected! Total: ${this.character.coins}, GameStats: ${this.gameStats.coinsCollected}`
+		);
 	}
 
 	syncCoins() {
