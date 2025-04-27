@@ -3,6 +3,10 @@
 	import tv_man from "../assets/ui/tv man (1).gif";
 	import { showEndMessage, showLeaderBoards } from "../store";
 	import { fade } from "svelte/transition";
+	import SubmitScore from "./submitScore.svelte";
+
+	export let onSubmitScore = (player) => {};
+	export let onShowMenu = () => {};
 </script>
 
 <div class="modal-backdrop" transition:fade={{ duration: 700 }}>
@@ -15,21 +19,28 @@
 			and being part of this journey!
 		</p>
 
+		<SubmitScore {onSubmitScore}></SubmitScore>
+
 		<div class="buttons">
-			<Button
+			<!-- <Button
 				onClick={() => {
 					showEndMessage.set(false);
 					showLeaderBoards.set(true);
 				}}>Leaderboards</Button
+			> -->
+			<Button
+				onClick={() => {
+					showEndMessage.set(false);
+					onShowMenu();
+				}}>Quit</Button
 			>
-			<!-- <Button onClick={onQuit}>Quit</Button> -->
 		</div>
 	</div>
 </div>
 
 <style lang="scss">
 	.image {
-		margin: 1em auto 2em;
+		margin: 1em auto 0;
 		width: 7em;
 	}
 

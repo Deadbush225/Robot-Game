@@ -5,7 +5,7 @@
 	import gundam from "../assets/ui/gundam-avatar.gif";
 	import { soundManager } from "../Sounds";
 
-	export let message = "Robot Game!";
+	export let message = "RoBolts!";
 	export let onStart = (characterProps) => {};
 
 	export let onShowLeaderboard;
@@ -14,7 +14,7 @@
 	let characters = [
 		{
 			scr: tv_man,
-			name: "TV man",
+			name: "Cathode Cody",
 			descriptions: ["Faster speed", "Lower health"],
 			speed: 350,
 			health: 100,
@@ -38,7 +38,7 @@
 		},
 		{
 			scr: eve,
-			name: "Skibidi man",
+			name: "Celeste 4X",
 			descriptions: ["Lower speed", "Freezing Bullets"],
 			speed: 210,
 			// health: 20,
@@ -62,7 +62,7 @@
 		},
 		{
 			scr: gundam,
-			name: "Toilet man",
+			name: "Sir Ironheart",
 			descriptions: ["Life steal", "Lower speed"],
 			speed: 210,
 			// health: 20,

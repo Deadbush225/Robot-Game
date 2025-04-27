@@ -98,9 +98,9 @@ export default class Game {
 		this.potionManager = new PotionManager();
 		this.potionVendingMachines = [
 			new PotionVendingMachine(1573, 3212, this.potionManager),
+			new PotionVendingMachine(4226, 4400, this.potionManager),
 		];
 		this.lastFootstepIndex = 1;
-
 		this.vendingMachines = [
 			new VendingMachine(170, 5424, this.gunMachine),
 			new VendingMachine(5232, 3024, this.gunMachine),
@@ -405,13 +405,6 @@ export default class Game {
 		}
 
 		// const deltaTime = 16; // Approximate time between frames (in ms)
-		//
-		//this.roomManager.updateBulletsAndEnemies(
-		// 	this.bullets,
-		// 	this.enemies,
-		// 	this.character
-		// );
-		// this..updateBulletsAndEnemies(this.bullets, this.enemies);
 
 		this.bullets.forEach((bullet, index) => {
 			bullet.x += bullet.dx * deltaTime;

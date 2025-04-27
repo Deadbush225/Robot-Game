@@ -10,15 +10,16 @@
 	import GameMessage from "./modals/gameMessage.svelte";
 	import Tutorial from "./modals/Tutorial.svelte";
 
-	import { isGameOver, showEndMessage } from "./store";
+	import { isGameOver, showEndMessage, showLeaderBoards } from "./store";
 	import { onMount } from "svelte";
+	import { get } from "svelte/store";
 
 	import { soundManager } from "./Sounds";
 	import { togglePause } from "./pauseMenu";
 
 	import LeaderboardService from "./LeaderboardService";
 
-	let showingLeaderboard = false;
+	// let showingLeaderboard = false;
 
 	import { load } from "./enemy";
 
@@ -49,7 +50,7 @@
 	}
 
 	function showLeaderboard() {
-		showingLeaderboard = true;
+		showLeaderBoards.set(true);
 	}
 
 	async function submitScoreAndShowLeaderboard(playerName) {
@@ -78,7 +79,7 @@
 
 	// pang toggle ng leaderboard visibility
 	function toggleLeaderboard() {
-		showingLeaderboard = !showingLeaderboard;
+		showLeaderBoards.set(!get(showLeaderBoards));
 	}
 
 	function handleUserInteraction() {
@@ -162,8 +163,11 @@
 		></Paused>
 	{/if}
 
-	{#if $showEndMessage}
-		<GameMessage></GameMessage>
+	{#if $showEndMessage == true}
+		<GameMessage
+			onSubmitScore={submitScoreAndShowLeaderboard}
+			onShowMenu={showMenu}
+		></GameMessage>
 	{/if}
 
 	<!-- {#if !gameStarted && !loading}
@@ -190,12 +194,11 @@
 				// enemiesDefeated: 1000,
 				// coinsCollected: 1000,
 			}}
-			onShowLeaderboard={showLeaderboard}
 		/>
 	{/if}
 
-	{#if showingLeaderboard}
-		<Leaderboard onClose={() => (showingLeaderboard = false)} />
+	{#if $showLeaderBoards}
+		<Leaderboard onClose={() => showLeaderBoards.set(false)} />
 	{/if}
 	<div>
 		<canvas id="glCanvas" bind:this={canvas}></canvas>

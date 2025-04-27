@@ -169,7 +169,7 @@ export let rooms = {
 		y: 2981,
 		width: 704,
 		height: 572,
-		spawnPoint: { x: 5491, y: 3227 },
+		spawnPoint: { x: 5500, y: 3227 },
 	},
 	end: {
 		cleared: false,

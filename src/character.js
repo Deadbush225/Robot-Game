@@ -53,13 +53,13 @@ export class Character {
 
 		this.bullets = [];
 		this.floatingTexts = [];
-		this.potions = 0;
 		// this.health = 100; // Character's health
 		this.isTakingDamage = false; // Flag to track if the character is taking damage
 		this.damageTimer = 0; // Timer to control the duration of the damaged state
 		this.healthBar = healthBar;
 		this.currentGun = new Gun(characterProps.gun);
-		this.coins = 1000;
+		this.coins = 5;
+		this.potions = 2;
 
 		this.moveTime = 0;
 

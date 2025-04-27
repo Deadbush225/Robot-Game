@@ -16,12 +16,17 @@
 	];
 	let currentHint = 0;
 
+	if (localStorage.getItem("tutorialSeen") === "true") {
+		dispatch("close");
+	}
+
 	function nextHint() {
 		if (currentHint < hints.length - 1) {
 			currentHint++;
 		} else {
 			// Close or proceed (emit event or call a function)
 			// For example: dispatch("close") or call a prop function
+			localStorage.setItem("tutorialSeen", "true");
 			dispatch("close");
 		}
 	}
