@@ -1,11 +1,7 @@
 {
 	"version": 2,
 	"builds": [
-		{ "src": "robot-game-server/server.js", "use": "@vercel/node" },
+		{ "src": "api/*.js", "use": "@vercel/node" },
 		{ "src": "**", "use": "@vercel/static" }
-	],
-	"routes": [
-		{ "src": "/api/(.*)", "dest": "robot-game-server.js" },
-		{ "src": "/(.*)", "dest": "/$1" }
 	]
 }
