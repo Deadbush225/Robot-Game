@@ -54,27 +54,27 @@
 	}
 
 	async function submitScoreAndShowLeaderboard(playerName) {
-		if (game.character.healthBar.health <= 0) {
-			// Force synchronization before submission
-			game.syncCoins();
+		// if (game.character.healthBar.health <= 0) {
+		// Force synchronization before submission
+		game.syncCoins();
 
-			const scoreData = {
-				playerName: playerName,
-				score: game.calculateFinalScore(),
-				enemiesDefeated: game.gameStats.enemiesDefeated,
-				coinsCollected: game.gameStats.coinsCollected,
-			};
+		const scoreData = {
+			playerName: playerName,
+			score: game.calculateFinalScore(),
+			enemiesDefeated: game.gameStats.enemiesDefeated,
+			coinsCollected: game.gameStats.coinsCollected,
+		};
 
-			console.log("Submitting score with coins:", scoreData);
+		console.log("Submitting score with coins:", scoreData);
 
-			// Actually submit score
-			try {
-				await game.leaderboardService.submitScore(scoreData);
-				console.log("Score submitted successfully:", scoreData);
-			} catch (error) {
-				console.error("Error submitting score:", error);
-			}
+		// Actually submit score
+		try {
+			await game.leaderboardService.submitScore(scoreData);
+			console.log("Score submitted successfully:", scoreData);
+		} catch (error) {
+			console.error("Error submitting score:", error);
 		}
+		// }
 	}
 
 	// pang toggle ng leaderboard visibility
