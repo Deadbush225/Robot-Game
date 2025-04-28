@@ -708,7 +708,7 @@ export function spawnEnemy(spawn_origin_x, spawn_origin_y, type, skinVersion) {
 			coords.y,
 			70,
 			700,
-			10,
+			17,
 			// spawnY,
 			// 300,
 			// 200, // Speed
@@ -728,7 +728,7 @@ export function spawnEnemy(spawn_origin_x, spawn_origin_y, type, skinVersion) {
 			// 300,
 			80, // Speed
 			100, // Health
-			10, // Damage
+			17, // Damage
 			{ skinVersion }
 		);
 		enemy.type = type;
@@ -743,7 +743,7 @@ export function spawnEnemy(spawn_origin_x, spawn_origin_y, type, skinVersion) {
 			// 300,
 			80, // Speed
 			100, // Health
-			10, // Damage
+			17, // Damage
 			{ skinVersion: skinVersion }
 		);
 		enemy.type = type;

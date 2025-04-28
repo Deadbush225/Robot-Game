@@ -69,6 +69,8 @@ export class RoomManager {
 
 				if (room.displayEnd) {
 					showEndMessage.set(true);
+					game.character.realX = 300;
+					game.character.realY = 5989;
 					return;
 				}
 

@@ -4,6 +4,7 @@
 	import { showEndMessage, showLeaderBoards } from "../store";
 	import { fade } from "svelte/transition";
 	import SubmitScore from "./submitScore.svelte";
+	import { spawnPointX, spawnPointY } from "../store";
 
 	export let onSubmitScore;
 	export let onShowMenu = () => {};
@@ -32,6 +33,8 @@
 				onClick={() => {
 					showEndMessage.set(false);
 					onShowMenu();
+					spawnPointX.set(300);
+					spawnPointY.set(5689);
 				}}>Quit</Button
 			>
 		</div>
