@@ -168,13 +168,10 @@ let totalAssets =
 	Object.keys(sfx).length;
 
 function updateCount(onAssetsLoaded) {
-	// console.log("Loaded: " + key);
 	loadedCount++;
 	if (loadedCount === totalAssets) {
 		// this.loading = false; // All assets are loaded
 		onAssetsLoaded(); // Callback to notify that loading is complete
-		console.log("Assets Loaded");
-		console.log(assets);
 	}
 }
 

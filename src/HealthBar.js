@@ -31,7 +31,6 @@ class HealthBar {
 		this.healthWidth = Math.floor(
 			(healthPercentage / this.originalHealth) * this.originalHealthWidth
 		);
-		console.log("HEALTH BAR: " + this.healthWidth);
 	}
 
 	draw(gl) {

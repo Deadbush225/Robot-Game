@@ -30,11 +30,6 @@ export class VendingMachine {
 			character
 		);
 
-		// console.log(screenX, screenY);
-
-		// gl.save();
-		// gl.translate(screenX, screenY);
-
 		// Draw the current frame of the coin animation
 		gl.drawImage(
 			assets.vending,
@@ -93,8 +88,6 @@ export class VendingMachine {
 		) {
 			character.coins -= 25;
 			this.summonRandomGun();
-			console.log("VENDING!!");
-			// this.summonRandomGun();
 		}
 	}
 }

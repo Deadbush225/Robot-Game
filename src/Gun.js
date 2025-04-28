@@ -55,7 +55,7 @@ export class Gun {
 		this.name = name; // Name of the gun
 
 		const gunProps = gunDictionary[name];
-		console.log(gunProps);
+
 		this.damage = gunProps.damage; // Damage per shot
 		this.fireRate = gunProps.fireRate; // Shots per second
 		this.range = gunProps.range; // Range of the gun

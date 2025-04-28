@@ -5,7 +5,7 @@
 	import { fade } from "svelte/transition";
 	import SubmitScore from "./submitScore.svelte";
 
-	export let onSubmitScore = (player) => {};
+	export let onSubmitScore;
 	export let onShowMenu = () => {};
 </script>
 

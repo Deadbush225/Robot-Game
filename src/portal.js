@@ -53,10 +53,7 @@ export default class Portal {
 					this.currentFrameIndex = 0;
 				}
 			}
-			// console.log("Updated!!");
 		}
-		console.log("F: " + this.currentFrameIndex);
-		console.log("S: " + this.currentFrameSet.y);
 	}
 
 	draw(context, camera, canvas, character) {
@@ -86,10 +83,6 @@ export default class Portal {
 	}
 
 	checkCollision(player) {
-		// console.log(player.x);
-		// console.log(player.width);
-		// console.log(player.height);
-		// console.log(player.y);
 		if (
 			this.isActive &&
 			player.realX < this.x + this.width &&
@@ -97,7 +90,6 @@ export default class Portal {
 			player.realY < this.y + this.height &&
 			player.realY + player.height > this.y
 		) {
-			console.log("NEXT LEVEL!");
 			return true; // Player has entered the portal
 		}
 		return false;

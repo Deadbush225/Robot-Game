@@ -53,9 +53,7 @@ export class RoomManager {
 						(val) => val.state === "dead" || val.state === "killed"
 					);
 
-				// console.log(allSpawned, " && ", allDead);
 				if (allSpawned && allDead && room.enemiesSpawned) {
-					console.log("ROOM CLEARED: ");
 					room.door.openDoor();
 					room.cleared = true;
 					return;
@@ -76,13 +74,12 @@ export class RoomManager {
 
 				currentRoom.set(key);
 				if (room.enemies.length === 0) {
-					// console.log("SPAWINGIN ONE TIME");
 					room.enemies = this.spawnEnemies(room, game);
-					// console.log(room.enemies);
+
 					game.enemies.push(...room.enemies);
 					room.enemiesSpawned = true;
 				}
-				console.log("Entered Room");
+
 				this.replenishEnemies(room, game);
 			}
 		}
@@ -138,20 +135,10 @@ export class RoomManager {
 					(e) => e.type == type && e.state !== "dead" && e.state !== "killed"
 				).length + room.pendingSpawn[type];
 
-			// console.log(
-			// 	aliveCount,
-			// 	" < ",
-			// 	max,
-			// 	" && ",
-			// 	room.spawnedCount[type],
-			// 	" < ",
-			// 	total
-			// );
 			// Only schedule one spawn per frame if needed
 			if (aliveCount < max && room.spawnedCount[type] < total) {
 				room.spawnedCount[type]++; // Reserve the spawn immediately
 				room.pendingSpawn[type]++;
-				// console.log("ROOM: ", room.skinVersion);
 
 				setTimeout(() => {
 					const enemy = spawnEnemy(
@@ -189,7 +176,6 @@ export class RoomManager {
 		const distance = Math.sqrt(dx * dx + dy * dy);
 
 		// Check if the distance is less than the sum of their radii
-		// console.log(`${distance} < ${enemy.enemySize / 2}`);
 		return distance < enemy.sHeight;
 	}
 
@@ -203,8 +189,6 @@ export class RoomManager {
 				if (enemy.state === "killed" || enemy.state === "dead") {
 					continue;
 				}
-
-				// console.log("CHECKING COLLISION");
 
 				if (this.checkCollision(bullet, enemy)) {
 					// Handle collision
@@ -227,12 +211,12 @@ export class RoomManager {
 					}
 
 					if (bullet.effect == "life-steal") {
-						character.heal(bullet.damage * 0.25);
+						character.heal(bullet.damage * 0.09);
 					} else if (bullet.effect == "freeze") {
 						if (enemy.froze) {
 							return;
 						}
-						console.log("FREEZING:");
+
 						let origSpeed = enemy.speed;
 						enemy.speed = 0;
 						enemy.froze = true;

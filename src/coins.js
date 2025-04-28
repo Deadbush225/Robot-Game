@@ -15,7 +15,6 @@ class CoinManager {
 
 	spawnCoin(x, y) {
 		this.coins.push({ x, y });
-		// console.log(this.coins);
 	}
 
 	update(currentTime, player) {
@@ -23,7 +22,6 @@ class CoinManager {
 		if (currentTime - this.lastFrameTime > this.frameInterval) {
 			this.currentFrame = (this.currentFrame + 1) % this.frameCount;
 			this.lastFrameTime = currentTime;
-			// console.log("F: " + this.currentFrame);
 		}
 
 		// Check collisions
@@ -50,8 +48,6 @@ class CoinManager {
 				coin.y,
 				character
 			);
-
-			// console.log(screenX, screenY);
 
 			// gl.save();
 			// gl.translate(screenX, screenY);

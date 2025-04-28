@@ -187,7 +187,6 @@ function getBoundaryData(image) {
 
 	canvas.width = image.width;
 	canvas.height = image.height;
-	// console.log(image.width, image.height);
 
 	context.drawImage(image, 0, 0);
 
@@ -232,25 +231,14 @@ function getBoundaryData(image) {
 				// rgb(16, 183, 197)
 				rooms.boss_2.positions.push({ x, y });
 			}
-
-			// if (
-			// 	!(red === 255 && green === 255 && blue === 255) &&
-			// 	!(red === 0 && green === 0 && blue === 0)
-			// ) {
-			// 	console.log(
-			// 		`Non-white/non-black pixel at (${x}, ${y}): R=${red}, G=${green}, B=${blue}`
-			// 	);
-			// }
 		}
 	}
-	// console.log(rooms.start.positions);
 
 	return imageData;
 }
 
 boundaryImg.onload = () => {
 	boundaryData = getBoundaryData(boundaryImg);
-	console.log("Boundary map loaded");
 	boundaryWidth = boundaryData.width;
 	boundaryHeight = boundaryData.height;
 };
@@ -266,7 +254,6 @@ export function getRandomAllowed() {
 }
 
 export function getRandomAllowedRoom() {
-	console.log("CURRENT ROOM: " + get(currentRoom));
 	return rooms[get(currentRoom)].positions[
 		Math.floor(Math.random() * rooms[get(currentRoom)].positions.length)
 	];
@@ -293,11 +280,8 @@ export function addTempBlockedRect(rect) {
 }
 
 export function removeTempBlockedRect(id) {
-	console.log("REMOVING TEMP BLOCKS");
-	console.log(tempBlockedRects);
 	tempBlockedRects.get(id).active = false;
 	tempBlockedRects.delete(id);
-	console.log(tempBlockedRects);
 }
 
 export function isBlocked(x, y) {
@@ -327,7 +311,6 @@ export function isBlocked(x, y) {
 		pixelY < 0 ||
 		pixelY >= boundaryHeight
 	) {
-		// console.log("OUT OF BOUNDS");
 		return true; // Treat out-of-bounds as blocked
 	}
 

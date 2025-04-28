@@ -23,7 +23,6 @@ import HUD from "./HUD";
 
 export default class Game {
 	constructor(canvas, gl, characterProps) {
-		console.log("INITIALIZING GAME: ");
 		this.canvas = canvas;
 		this.gl = gl;
 		this.characterProps = characterProps;
@@ -148,7 +147,6 @@ export default class Game {
 				isBlocked(coords.x - 200, coords.y) &&
 				isBlocked(coords.x + 200, coords.y)
 			);
-			// console.log("x: " + coords.x + " y: " + coords.y);
 
 			// this.gunMachine.summonGun(coords.x, coords.y);
 			this.coinManager.spawnCoin(coords.x, coords.y);
@@ -220,7 +218,6 @@ export default class Game {
 		document.addEventListener("keydown", (e) => {
 			if (this.keys.hasOwnProperty(e.key)) {
 				this.keys[e.key] = true;
-				console.log("KEY: ", e.key);
 			}
 		});
 
@@ -259,8 +256,6 @@ export default class Game {
 
 			if (rows == null) {
 				rows = gun.rows;
-				// console.log("ROWS RESET ");
-				// console.log("ROWS: " + rows);
 			}
 
 			const bulletSpeed = 500; // px per second
@@ -335,24 +330,7 @@ export default class Game {
 			}
 			const deltaTime = (currentTime - lastTime) / 1000;
 
-			// frameCount++;
-			// if (currentTime - fpsLastTime >= 1000) {
-			// 	fps = frameCount;
-			// 	frameCount = 0;
-			// 	fpsLastTime = currentTime;
-			// 	console.log(`FPS: ${fps}`);
-			// 	console.log("Delta: ", deltaTime);
-			// 	// Log the FPS to the console
-			// }
-
-			if (first) {
-				console.log("DELTA TIME: ", deltaTime);
-				console.log("current: ", currentTime);
-				console.log("last: ", lastTime);
-			}
 			lastTime = currentTime;
-
-			// console.log("D: " + deltaTime);
 
 			if (this.character.healthBar.health <= 0 && !get(isGameOver)) {
 				isGameOver.set(true);
@@ -400,7 +378,6 @@ export default class Game {
 		this.moveCharacter(deltaTime);
 
 		if (this.keys.e) {
-			// console.log("HEALING FROM INV");
 			this.character.healFromInventory();
 		}
 
@@ -751,7 +728,6 @@ export default class Game {
 		// Update grid position based on real position
 		// character.gridX = Math.round(character.realX / 50);
 		// character.gridY = Math.round(character.realY / 50);
-		// console.log(`Position: ${character.realX} x ${character.realY}`);
 
 		if (
 			this.keys.ArrowLeft ||
@@ -787,7 +763,6 @@ export default class Game {
 		// 	const enemy = spawnEnemy(this.character.realX, this.character.realY, 2);
 		// 	this.enemies.push(enemy);
 		// }
-		console.log(this.enemies);
 	}
 
 	// pang leaderboard

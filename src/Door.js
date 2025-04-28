@@ -47,12 +47,10 @@ export default class Door {
 		// 	// this.openStartTime = performance.now();
 		// 	this.openDoor();
 		// }, 10000);
-		// console.log("width: ", this.width, " ", "height: ", this.height);
 	}
 	openDoor() {
 		soundManager.play("slidingDoor");
-		console.log("CLOSING DOOR:");
-		console.log(this.doorId);
+
 		this.state = "opening";
 		removeTempBlockedRect(this.doorId);
 	}

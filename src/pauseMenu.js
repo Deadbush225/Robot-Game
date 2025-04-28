@@ -11,13 +11,10 @@ export function togglePause(game) {
 	}
 
 	game.isPaused = !game.isPaused;
-	console.log(`Game isPaused: ${game.isPaused}`); // Debugging
 
 	if (game.isPaused) {
-		console.log("Game paused");
 		game.pause();
 	} else {
-		console.log("Game resumed");
 		game.resume();
 	}
 	return game.isPaused;
@@ -33,7 +30,7 @@ export function toggleMusic() {
 		soundManager.mute("bgm"); // Mute background music
 	}
 
-	console.log(`Music ${musicEnabled ? "enabled" : "disabled"}`);
+	// console.log(`Music ${musicEnabled ? "enabled" : "disabled"}`);
 	return musicEnabled;
 }
 
@@ -46,6 +43,6 @@ export function toggleSFX() {
 		soundManager.mute("sfx"); // Mute sound effects
 	}
 
-	console.log(`SFX ${sfxEnabled ? "enabled" : "disabled"}`);
+	// console.log(`SFX ${sfxEnabled ? "enabled" : "disabled"}`);
 	return sfxEnabled;
 }

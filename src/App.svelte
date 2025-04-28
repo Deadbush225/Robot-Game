@@ -46,7 +46,6 @@
 	function quitGame() {
 		gameStarted = false;
 		isGameOver.set(false);
-		console.log("Quit game");
 	}
 
 	function showLeaderboard() {
@@ -64,8 +63,6 @@
 			enemiesDefeated: game.gameStats.enemiesDefeated,
 			coinsCollected: game.gameStats.coinsCollected,
 		};
-
-		console.log("Submitting score with coins:", scoreData);
 
 		// Actually submit score
 		try {
@@ -156,7 +153,6 @@
 		<Paused
 			onGamePause={() => {
 				isPaused = togglePause(game);
-				console.log("Paused: ", isPaused);
 			}}
 			onShowMenu={showMenu}
 			{restartGame}

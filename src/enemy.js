@@ -246,7 +246,6 @@ class BaseEnemy {
 	takeDamage(amount) {
 		// if (!this.isTakingdamage) {
 		this.health -= amount;
-		console.log("TAKING DAMAGE!");
 		if (this.health > 0) {
 			this.isTakingdamage = true; // Change state to damaged
 			this.damageTimer = Date.now();
@@ -274,11 +273,9 @@ class BaseEnemy {
 		// Get the current frame data
 		const frame = this.frameData.frameData[this.state][this.currentFrame];
 		if (!frame) {
-			// console.log("FRAME IS UNDEFINED");
-			// console.log(`[${this.state}][${this.currentFrame}]`);
 			return;
 		}
-		// console.log(`DRAWING: ${this.state}`);
+
 		let doFlip = this.face === 1;
 		if (doFlip) {
 			gl.save();
@@ -359,7 +356,7 @@ class BaseEnemy {
 export default class MeleeEnemy extends BaseEnemy {
 	constructor(x, y, speed, health, damage, options = {}) {
 		let frameData;
-		console.log(options);
+
 		switch (options.skinVersion) {
 			case 1:
 				frameData = fridgeFrameData;
@@ -438,7 +435,7 @@ export default class MeleeEnemy extends BaseEnemy {
 			}
 		} else {
 			// Idle if too far from the character
-			// console.log("ENEMY IS IDLE");
+
 			this.state = "idle";
 		}
 
@@ -690,11 +687,8 @@ export function spawnEnemy(spawn_origin_x, spawn_origin_y, type, skinVersion) {
 	// implement summon only to the room coordinates
 
 	let spawnX, spawnY, coords;
-	// console.log(coords);
-	// const radius = 1000;
 
 	do {
-		// coords = getRandomAllowed();
 		coords = getRandomAllowedRoom();
 	} while (
 		isBlocked(coords.x, coords.y) &&
@@ -703,7 +697,6 @@ export function spawnEnemy(spawn_origin_x, spawn_origin_y, type, skinVersion) {
 		isBlocked(coords.x + 200, coords.y)
 	); // Ensure the spawn point is not blocked
 
-	console.log(`${coords.x} x ${coords.y}`);
 	// return { x: spawnX, y: spawnY };
 
 	let enemy;
@@ -755,8 +748,6 @@ export function spawnEnemy(spawn_origin_x, spawn_origin_y, type, skinVersion) {
 		);
 		enemy.type = type;
 	}
-
-	// console.log(enemy);
 
 	return enemy;
 }

@@ -93,13 +93,10 @@ export class Character {
 
 		this.floatingTexts.push(new FloatingText(`+${amount}`, "lime"));
 		// this.healthBar.setHealth(this.health);
-		// console.log(this.healthBar);
-		// console.log(this.healthBar.healthWidth);
-		console.log("HEALED: " + this.healthBar.health);
+		//
 	}
 
 	healFromInventory() {
-		// console.log(this.healthBar.health, " ", this.potions);
 		if (
 			this.healthBar.health > this.healthBar.originalHealth - 20 ||
 			this.potions <= 0

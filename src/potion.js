@@ -69,7 +69,6 @@ export class PotionManager {
 				potion.y,
 				character
 			);
-			// console.log("F: " + potion.frameIndex);
 
 			gl.drawImage(
 				assets.potion, // Potion sprite

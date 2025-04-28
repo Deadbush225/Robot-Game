@@ -71,7 +71,6 @@ export class PotionVendingMachine {
 		) {
 			character.coins -= 10;
 			this.dispensePotion();
-			console.log("POTION VENDED!!");
 		}
 	}
 }

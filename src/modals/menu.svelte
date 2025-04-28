@@ -88,7 +88,6 @@
 
 	let selected = 1;
 	function select(number) {
-		// console.log(number);
 		selected = number;
 	}
 </script>
