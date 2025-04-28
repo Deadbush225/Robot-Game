@@ -213,7 +213,7 @@ export class RoomManager {
 					}
 
 					if (bullet.effect == "life-steal") {
-						character.heal(bullet.damage * 0.09);
+						character.heal((bullet.damage * 5) / 100);
 					} else if (bullet.effect == "freeze") {
 						if (enemy.froze) {
 							return;
