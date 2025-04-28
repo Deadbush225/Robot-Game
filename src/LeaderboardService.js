@@ -1,8 +1,8 @@
 // client-side integration
 
 export default class LeaderboardService {
-	constructor(apiUrl = "http://localhost:3000/api") {
-		this.apiUrl = apiUrl;
+	constructor(apiUrl = "/api") {
+		this.apiUrl = "/api";
 	}
 
 	async getLeaderboard() {

@@ -430,7 +430,7 @@ export default class Game {
 		// this.portal.update(deltaTime);
 		// Check if the player collides with a gun
 		this.gunMachine.checkPlayerCollision(this.character);
-		this.coinManager.update(performance.now(), this.character, this);
+		this.coinManager.update(performance.now(), this.character);
 
 		this.vendingMachines.forEach((vendingMachine) =>
 			vendingMachine.isOverlapping(this.character)
@@ -449,11 +449,11 @@ export default class Game {
 
 	draw() {
 		this.gl.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		/* ━━━━━━━━━━━━━━━ Set the fill color ━━━━━━━━━━━━━━━━━━━ */
+		/* ━━━━━━━━━━ Set the fill color ━━━━━━━━━━━━━━ */
 		this.gl.fillStyle = "#131b32";
 		this.gl.fillRect(0, 0, this.canvas.width, this.canvas.height); // Fill the entire canvas
 
-		/* ━━━━━━━━━━━━━━━━━━━ Draw the map ━━━━━━━━━━━━━━━━━━━━━ */
+		/* ━━━━━━━━━━━━━━ Draw the map ━━━━━━━━━━━━━━━━ */
 		this.gl.drawImage(
 			this.mapImg,
 			// boundaryImg,
@@ -467,14 +467,14 @@ export default class Game {
 			this.canvas.height // Destination height (stretch to fit canvas)
 		);
 
-		/* ━━━━━━━━━━━━━━━━ Draw the character ━━━━━━━━━━━━━━━━━━ */
+		/* ━━━━━━━━━━━ Draw the character ━━━━━━━━━━━━━ */
 		this.character.draw(
 			this.gl,
 			this.canvas.width / 2 - this.character.width / 2, // Center X position on the canvas
 			this.canvas.height / 2 - this.character.height / 2 // Center Y position on the canvas
 		);
 
-		/* ━━━━━━━━━━━━━━━━━━━━ Draw the gun ━━━━━━━━━━━━━━━━━━━━ */
+		/* ━━━━━━━━━━━━━━━ Draw the gun ━━━━━━━━━━━━━━━ */
 		this.gl.save();
 
 		// Translate to the character's position
@@ -518,7 +518,7 @@ export default class Game {
 			enemy.draw(this.gl, this.camera, this.canvas, this.character)
 		);
 
-		/* ━━━━━━━━━━━━━━━━━━━━ Draw bullets ━━━━━━━━━━━━━━━━━━━━ */
+		/* ━━━━━━━━━━━━━━━ Draw bullets ━━━━━━━━━━━━━━━ */
 		this.bullets.forEach((bullet) => {
 			this.gl.save();
 			const screenX =
@@ -539,7 +539,7 @@ export default class Game {
 
 		this.potionManager.draw(this.gl, this.camera, this.character);
 
-		/* ━━━━━━━━━━━━━━━━━ Draw health bar ━━━━━━━━━━━━━━━━━ */
+		/* ━━━━━━━━━━━━━ Draw health bar ━━━━━━━━━━━━━━ */
 
 		this.coinManager.draw(this.gl, this.camera, this.character);
 
@@ -591,7 +591,7 @@ export default class Game {
 			this.gl.restore();
 		}
 
-		/* ━━━━━━━━━━━━━━━━━━━━━ Dotted Grid ━━━━━━━━━━━━━━━━━━━━ */
+		/* ━━━━━━━━━━━━━━━━ Dotted Grid ━━━━━━━━━━━━━━━ */
 		// const gridGap = 64; // Gap between dots in pixels
 		// const dotRadius = 2; // Radius of each dot
 
@@ -622,8 +622,6 @@ export default class Game {
 		// 		this.gl.fill();
 		// 	}
 		// }
-
-		// HUD on top of everythhing
 	}
 
 	moveCharacter(deltaTime) {
